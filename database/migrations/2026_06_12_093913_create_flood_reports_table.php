@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
             $table->integer('water_height_cm');
             $table->string('street_name', 255);
-            $table->decimal('latitude', 10, 8);
+            $table->decimal('latitude', 18, 8);
             $table->decimal('longitude', 11, 8);
             $table->string('photo_evidence', 255)->nullable();
             $table->enum('verification_status', ['pending', 'verified', 'rejected'])->default('pending');
