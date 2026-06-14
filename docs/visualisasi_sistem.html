@@ -395,7 +395,254 @@
                 display: none;
             }
         }
+
+        /* ==========================================
+           Interactive Use Case Visualizer Styles
+           ========================================== */
+        .uc-visualizer-container {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 3rem 1rem;
+            min-height: 900px;
+            background: radial-gradient(circle at center, rgba(139, 92, 246, 0.03) 0%, transparent 70%);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .uc-actors-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            height: 800px;
+            width: 210px;
+            z-index: 10;
+            gap: 2rem;
+        }
+
+        .uc-actor-card {
+            background: rgba(19, 26, 44, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(12px);
+            user-select: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .uc-actor-card:hover, .uc-actor-card.highlighted {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            background: rgba(24, 32, 55, 0.95);
+        }
+
+        .uc-actor-card.warga:hover, .uc-actor-card.warga.highlighted { 
+            border-color: rgba(59, 130, 246, 0.5); 
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.25); 
+        }
+        .uc-actor-card.relawan:hover, .uc-actor-card.relawan.highlighted { 
+            border-color: rgba(16, 185, 129, 0.5); 
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); 
+        }
+        .uc-actor-card.pengelola:hover, .uc-actor-card.pengelola.highlighted { 
+            border-color: rgba(245, 158, 11, 0.5); 
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.25); 
+        }
+        .uc-actor-card.admin:hover, .uc-actor-card.admin.highlighted { 
+            border-color: rgba(244, 63, 94, 0.5); 
+            box-shadow: 0 0 25px rgba(244, 63, 94, 0.25); 
+        }
+
+        .uc-actor-avatar {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 auto 0.75rem auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .uc-actor-avatar svg {
+            width: 2.25rem;
+            height: 2.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .uc-actor-card:hover .uc-actor-avatar {
+            transform: scale(1.1);
+        }
+
+        .uc-actor-card.warga .uc-actor-avatar { color: var(--accent-blue); background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.2); }
+        .uc-actor-card.relawan .uc-actor-avatar { color: var(--accent-emerald); background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); }
+        .uc-actor-card.pengelola .uc-actor-avatar { color: var(--accent-amber); background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.2); }
+        .uc-actor-card.admin .uc-actor-avatar { color: var(--accent-rose); background: rgba(244, 63, 94, 0.08); border-color: rgba(244, 63, 94, 0.2); }
+
+        .uc-actor-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .uc-actor-title {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            margin-top: 0.25rem;
+        }
+
+        .uc-system-boundary {
+            flex: 1;
+            max-width: 680px;
+            margin: 0 2rem;
+            background: rgba(19, 26, 44, 0.55);
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            padding: 2.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: relative;
+            z-index: 10;
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .uc-boundary-header {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #c4b5fd;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 0.4rem 1.25rem;
+            border-radius: 30px;
+            width: fit-content;
+            margin: 0 auto;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .uc-oval-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .uc-columns-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem 2.5rem;
+            width: 100%;
+        }
+
+        .uc-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .uc-oval {
+            background: rgba(11, 15, 25, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50px;
+            padding: 0.9rem 1.25rem;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-text);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            position: relative;
+        }
+
+        .uc-oval:hover, .uc-oval.highlighted {
+            background: rgba(24, 32, 55, 0.95);
+            border-color: #a78bfa;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(139, 92, 246, 0.2);
+        }
+
+        /* SVG Overlay Canvas */
+        #uc-svg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .uc-line {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.06);
+            stroke-width: 1.5;
+            transition: stroke 0.4s ease, stroke-width 0.4s ease, filter 0.4s ease;
+        }
+
+        .uc-line.active {
+            stroke-width: 2.5;
+            stroke-dasharray: 6;
+            animation: ucLineMove 0.8s linear infinite;
+        }
+
+        .uc-line.warga-active { stroke: var(--accent-blue); filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.6)); }
+        .uc-line.relawan-active { stroke: var(--accent-emerald); filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.6)); }
+        .uc-line.pengelola-active { stroke: var(--accent-amber); filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.6)); }
+        .uc-line.admin-active { stroke: var(--accent-rose); filter: drop-shadow(0 0 5px rgba(244, 63, 94, 0.6)); }
+
+        @keyframes ucLineMove {
+            to {
+                stroke-dashoffset: -12;
+            }
+        }
+
+        /* Fallback for small screens */
+        @media (max-width: 1024px) {
+            .uc-visualizer-container {
+                flex-direction: column;
+                min-height: auto;
+                gap: 2rem;
+            }
+            .uc-actors-column {
+                flex-direction: row;
+                height: auto;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .uc-system-boundary {
+                margin: 0;
+                width: 100%;
+            }
+            .uc-columns-grid {
+                grid-template-columns: 1fr;
+            }
+            #uc-svg-canvas {
+                display: none; /* Hide lines on mobile, rely on tabs/clicks */
+            }
+        }
     </style>
+
 </head>
 <body>
 
@@ -441,95 +688,109 @@
                 </div>
 
                 <div class="glass-card">
-                    <h3>Diagram Alur Penggunaan</h3>
-                    <div class="diagram-container">
-                        <pre class="mermaid">
-graph LR
-    %% Konfigurasi Aktor Kiri
-    subgraph AktorKiri [ ]
-        W[Warga Terdampak]
-        R[Relawan Lapangan]
-    end
+                    <h3>Diagram Alur Penggunaan (Interaktif)</h3>
+                    <p style="font-size: 0.875rem; color: var(--color-muted); margin-bottom: 1.5rem;">Sorot (hover) kursor Anda pada Aktor atau Use Case untuk melihat hubungan relasi alur sistem secara langsung.</p>
+                    
+                    <div class="uc-visualizer-container">
+                        <!-- Canvas overlay for drawing connecting lines -->
+                        <svg id="uc-svg-canvas"></svg>
 
-    %% Konfigurasi Aktor Kanan
-    subgraph AktorKanan [ ]
-        P[Pengelola Posko]
-        AD[Admin BPBD / Kelurahan]
-    end
+                        <!-- Left Column: Warga and Relawan -->
+                        <div class="uc-actors-column">
+                            <!-- Warga Terdampak Card -->
+                            <div class="uc-actor-card warga" id="actor-warga">
+                                <div class="uc-actor-avatar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="7" r="4" />
+                                        <path d="M5.5 21c0-4.5 3-7 6.5-7s6.5 2.5 6.5 7" />
+                                    </svg>
+                                </div>
+                                <div class="uc-actor-name">Warga Terdampak</div>
+                                <div class="uc-actor-title">Masyarakat Umum</div>
+                            </div>
 
-    %% Konfigurasi Use Case & System Boundary
-    subgraph TitikAman [Usecase TitikAman]
-        direction TB
-        
-        UC_Login(Login)
-        
-        subgraph ColKiri [ ]
-            direction TB
-            UC_Reg(Registrasi Akun)
-            UC_Map(Lihat Peta & Notifikasi TMA)
-            UC_SOS(Kirim Laporan SOS Evakuasi)
-            UC_Report(Kirim Laporan Banjir)
-            UC_Donate(Donasi Logistik Pengungsian)
-            UC_Mission(Ambil Misi Penyelamatan)
-            UC_Evac(Selesaikan Evakuasi Korban)
-        end
-        
-        subgraph ColKanan [ ]
-            direction TB
-            UC_Shelter(Kelola Kapasitas & Status Posko)
-            UC_Needs(Input Kebutuhan Logistik)
-            UC_VerifDon(Verifikasi Kedatangan Donasi)
-            UC_TMA(Update TMA & Pintu Air)
-            UC_VerifFlood(Verifikasi Laporan Banjir)
-            UC_Dash(Lihat Dashboard Kebencanaan)
-        end
-        
-        UC_Logout(Logout)
-    end
+                            <!-- Relawan Lapangan Card -->
+                            <div class="uc-actor-card relawan" id="actor-relawan">
+                                <div class="uc-actor-avatar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="7" r="4" />
+                                        <path d="M5.5 21c0-4.5 3-7 6.5-7s6.5 2.5 6.5 7" />
+                                        <path d="M12 11v6m-3-3h6" stroke-width="1.5" />
+                                    </svg>
+                                </div>
+                                <div class="uc-actor-name">Relawan Lapangan</div>
+                                <div class="uc-actor-title">Personel Evakuasi</div>
+                            </div>
+                        </div>
 
-    %% Hubungan Aktor Kiri (Warga & Relawan)
-    W --> UC_Login
-    W --> UC_Reg
-    W --> UC_Map
-    W --> UC_SOS
-    W --> UC_Report
-    W --> UC_Donate
-    W --> UC_Logout
+                        <!-- Center: System Boundary and Use Cases -->
+                        <div class="uc-system-boundary">
+                            <div class="uc-boundary-header">Batasan Sistem: TitikAman</div>
 
-    R --> UC_Login
-    R --> UC_Map
-    R --> UC_Mission
-    R --> UC_Evac
-    R --> UC_Logout
+                            <!-- Top: Login -->
+                            <div class="uc-oval-wrapper">
+                                <div class="uc-oval" id="uc-login">Login</div>
+                            </div>
 
-    %% Hubungan Aktor Kanan (Pengelola & Admin)
-    P --> UC_Login
-    P --> UC_Shelter
-    P --> UC_Needs
-    P --> UC_VerifDon
-    P --> UC_Logout
+                            <!-- Middle Grid: Two Columns -->
+                            <div class="uc-columns-grid">
+                                <!-- Left Column Use Cases -->
+                                <div class="uc-column">
+                                    <div class="uc-oval" id="uc-reg">Registrasi Akun</div>
+                                    <div class="uc-oval" id="uc-map">Lihat Peta &amp; Notifikasi TMA</div>
+                                    <div class="uc-oval" id="uc-sos">Kirim Laporan SOS Evakuasi</div>
+                                    <div class="uc-oval" id="uc-report">Kirim Laporan Banjir</div>
+                                    <div class="uc-oval" id="uc-donate">Donasi Logistik Pengungsian</div>
+                                    <div class="uc-oval" id="uc-mission">Ambil Misi Penyelamatan</div>
+                                    <div class="uc-oval" id="uc-evac">Selesaikan Evakuasi Korban</div>
+                                </div>
 
-    AD --> UC_Login
-    AD --> UC_TMA
-    AD --> UC_VerifFlood
-    AD --> UC_Dash
-    AD --> UC_Logout
+                                <!-- Right Column Use Cases -->
+                                <div class="uc-column">
+                                    <div class="uc-oval" id="uc-shelter">Kelola Kapasitas &amp; Status Posko</div>
+                                    <div class="uc-oval" id="uc-needs">Input Kebutuhan Logistik</div>
+                                    <div class="uc-oval" id="uc-verifdon">Verifikasi Kedatangan Donasi</div>
+                                    <div class="uc-oval" id="uc-tma">Update TMA &amp; Pintu Air</div>
+                                    <div class="uc-oval" id="uc-verifflood">Verifikasi Laporan Banjir</div>
+                                    <div class="uc-oval" id="uc-dash">Lihat Dashboard Kebencanaan</div>
+                                </div>
+                            </div>
 
-    %% Custom Styling Aktor
-    style W fill:#3b82f6,stroke:#1d4ed8,stroke-width:2px,color:#fff
-    style R fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff
-    style P fill:#f59e0b,stroke:#b45309,stroke-width:2px,color:#fff
-    style AD fill:#f43f5e,stroke:#be123c,stroke-width:2px,color:#fff
+                            <!-- Bottom: Logout -->
+                            <div class="uc-oval-wrapper">
+                                <div class="uc-oval" id="uc-logout">Logout</div>
+                            </div>
+                        </div>
 
-    %% Sembunyikan Border Subgraph Kolom & Aktor
-    style AktorKiri fill:none,stroke:none
-    style AktorKanan fill:none,stroke:none
-    style ColKiri fill:none,stroke:none
-    style ColKanan fill:none,stroke:none
-    
-    classDef usecase fill:#1e293b,stroke:#475569,stroke-width:1.5px,color:#f1f5f9
-    class UC_Login,UC_Reg,UC_Map,UC_SOS,UC_Report,UC_Donate,UC_Mission,UC_Evac,UC_Shelter,UC_Needs,UC_VerifDon,UC_TMA,UC_VerifFlood,UC_Dash,UC_Logout usecase
-                        </pre>
+                        <!-- Right Column: Pengelola and Admin -->
+                        <div class="uc-actors-column">
+                            <!-- Pengelola Posko Card -->
+                            <div class="uc-actor-card pengelola" id="actor-pengelola">
+                                <div class="uc-actor-avatar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="7" r="4" />
+                                        <path d="M5.5 21c0-4.5 3-7 6.5-7s6.5 2.5 6.5 7" />
+                                        <rect x="10" y="11" width="4" height="4" rx="1" stroke-width="1.5" />
+                                    </svg>
+                                </div>
+                                <div class="uc-actor-name">Pengelola Posko</div>
+                                <div class="uc-actor-title">Staff Pengungsian</div>
+                            </div>
+
+                            <!-- Admin BPBD Card -->
+                            <div class="uc-actor-card admin" id="actor-admin">
+                                <div class="uc-actor-avatar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="7" r="4" />
+                                        <path d="M5.5 21c0-4.5 3-7 6.5-7s6.5 2.5 6.5 7" />
+                                        <path d="M12 12v4" stroke-width="1.5" />
+                                        <circle cx="12" cy="18" r="0.5" fill="currentColor" />
+                                    </svg>
+                                </div>
+                                <div class="uc-actor-name">Admin BPBD</div>
+                                <div class="uc-actor-title">Pemerintah / Kelurahan</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -813,8 +1074,162 @@ erDiagram
         });
     </script>
 
-    <!-- Tab Switch Script -->
+    <!-- Interactive Use Case Diagram Script & Tab Switch -->
     <script>
+        const connections = [
+            // Warga connections
+            { actor: 'warga', usecase: 'uc-login' },
+            { actor: 'warga', usecase: 'uc-reg' },
+            { actor: 'warga', usecase: 'uc-map' },
+            { actor: 'warga', usecase: 'uc-sos' },
+            { actor: 'warga', usecase: 'uc-report' },
+            { actor: 'warga', usecase: 'uc-donate' },
+            { actor: 'warga', usecase: 'uc-logout' },
+
+            // Relawan connections
+            { actor: 'relawan', usecase: 'uc-login' },
+            { actor: 'relawan', usecase: 'uc-map' },
+            { actor: 'relawan', usecase: 'uc-mission' },
+            { actor: 'relawan', usecase: 'uc-evac' },
+            { actor: 'relawan', usecase: 'uc-logout' },
+
+            // Pengelola connections
+            { actor: 'pengelola', usecase: 'uc-login' },
+            { actor: 'pengelola', usecase: 'uc-shelter' },
+            { actor: 'pengelola', usecase: 'uc-needs' },
+            { actor: 'pengelola', usecase: 'uc-verifdon' },
+            { actor: 'pengelola', usecase: 'uc-logout' },
+
+            // Admin connections
+            { actor: 'admin', usecase: 'uc-login' },
+            { actor: 'admin', usecase: 'uc-tma' },
+            { actor: 'admin', usecase: 'uc-verifflood' },
+            { actor: 'admin', usecase: 'uc-dash' },
+            { actor: 'admin', usecase: 'uc-logout' }
+        ];
+
+        function drawUcLines() {
+            const svg = document.getElementById('uc-svg-canvas');
+            const container = document.querySelector('.uc-visualizer-container');
+            if (!svg || !container || container.offsetParent === null) return; // Skip if hidden
+            
+            // Clear existing lines
+            svg.innerHTML = '';
+            
+            const containerRect = container.getBoundingClientRect();
+            svg.setAttribute('width', containerRect.width);
+            svg.setAttribute('height', containerRect.height);
+            
+            connections.forEach(conn => {
+                const actorEl = document.getElementById(`actor-${conn.actor}`);
+                const ucEl = document.getElementById(conn.usecase);
+                
+                if (!actorEl || !ucEl) return;
+                
+                const actorRect = actorEl.getBoundingClientRect();
+                const ucRect = ucEl.getBoundingClientRect();
+                
+                let x1, y1, x2, y2;
+                
+                // If left actors
+                if (conn.actor === 'warga' || conn.actor === 'relawan') {
+                    x1 = actorRect.right - containerRect.left;
+                    y1 = actorRect.top + (actorRect.height / 2) - containerRect.top;
+                    
+                    if (conn.usecase === 'uc-login' || conn.usecase === 'uc-logout') {
+                        x2 = ucRect.left + (ucRect.width / 4) - containerRect.left;
+                    } else {
+                        x2 = ucRect.left - containerRect.left;
+                    }
+                    y2 = ucRect.top + (ucRect.height / 2) - containerRect.top;
+                } else {
+                    // Right actors
+                    x1 = actorRect.left - containerRect.left;
+                    y1 = actorRect.top + (actorRect.height / 2) - containerRect.top;
+                    
+                    if (conn.usecase === 'uc-login' || conn.usecase === 'uc-logout') {
+                        x2 = ucRect.right - (ucRect.width / 4) - containerRect.left;
+                    } else {
+                        x2 = ucRect.right - containerRect.left;
+                    }
+                    y2 = ucRect.top + (ucRect.height / 2) - containerRect.top;
+                }
+                
+                // Curve calculation
+                const dx = Math.abs(x2 - x1) * 0.45;
+                const controlX1 = x1 + (x2 > x1 ? dx : -dx);
+                const controlY1 = y1;
+                const controlX2 = x2 + (x2 > x1 ? -dx : dx);
+                const controlY2 = y2;
+                
+                const pathData = `M ${x1} ${y1} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${x2} ${y2}`;
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', pathData);
+                path.setAttribute('class', 'uc-line');
+                path.setAttribute('data-actor', conn.actor);
+                path.setAttribute('data-usecase', conn.usecase);
+                svg.appendChild(path);
+            });
+        }
+
+        function initUcInteractions() {
+            const actorCards = document.querySelectorAll('.uc-actor-card');
+            const ovals = document.querySelectorAll('.uc-oval');
+            
+            actorCards.forEach(card => {
+                const actorId = card.id.replace('actor-', '');
+                
+                card.addEventListener('mouseenter', () => {
+                    card.classList.add('highlighted');
+                    const lines = document.querySelectorAll(`.uc-line[data-actor="${actorId}"]`);
+                    lines.forEach(line => {
+                        line.classList.add('active', `${actorId}-active`);
+                        const ucId = line.getAttribute('data-usecase');
+                        const ucEl = document.getElementById(ucId);
+                        if (ucEl) ucEl.classList.add('highlighted');
+                    });
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.classList.remove('highlighted');
+                    const lines = document.querySelectorAll(`.uc-line[data-actor="${actorId}"]`);
+                    lines.forEach(line => {
+                        line.classList.remove('active', `${actorId}-active`);
+                        const ucId = line.getAttribute('data-usecase');
+                        const ucEl = document.getElementById(ucId);
+                        if (ucEl) ucEl.classList.remove('highlighted');
+                    });
+                });
+            });
+            
+            ovals.forEach(oval => {
+                const ucId = oval.id;
+                
+                oval.addEventListener('mouseenter', () => {
+                    oval.classList.add('highlighted');
+                    const lines = document.querySelectorAll(`.uc-line[data-usecase="${ucId}"]`);
+                    lines.forEach(line => {
+                        const actorId = line.getAttribute('data-actor');
+                        line.classList.add('active', `${actorId}-active`);
+                        const actorCard = document.getElementById(`actor-${actorId}`);
+                        if (actorCard) actorCard.classList.add('highlighted');
+                    });
+                });
+                
+                oval.addEventListener('mouseleave', () => {
+                    oval.classList.remove('highlighted');
+                    const lines = document.querySelectorAll(`.uc-line[data-usecase="${ucId}"]`);
+                    lines.forEach(line => {
+                        const actorId = line.getAttribute('data-actor');
+                        line.classList.remove('active', `${actorId}-active`);
+                        const actorCard = document.getElementById(`actor-${actorId}`);
+                        if (actorCard) actorCard.classList.remove('highlighted');
+                    });
+                });
+            });
+        }
+
         function switchTab(sectionId) {
             // Hide all sections
             const sections = document.querySelectorAll('.view-section');
@@ -835,7 +1250,22 @@ erDiagram
             if (clickedBtn) {
                 clickedBtn.classList.add('active');
             }
+            
+            // Redraw Use Case lines if active
+            if (sectionId === 'usecase-section') {
+                setTimeout(drawUcLines, 100);
+            }
         }
+
+        // Initialize on Load and Bind Resize
+        window.addEventListener('load', () => {
+            setTimeout(drawUcLines, 200);
+            initUcInteractions();
+        });
+        
+        window.addEventListener('resize', () => {
+            drawUcLines();
+        });
     </script>
 </body>
 </html>
