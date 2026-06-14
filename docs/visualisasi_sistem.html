@@ -1260,66 +1260,99 @@
                             <tr>
                                 <th>Relasi / Foreign Key</th>
                                 <th>Tabel Asal (Parent)</th>
+                                <th>Kata Kerja (Verb)</th>
                                 <th>Tabel Tujuan (Child)</th>
                                 <th>Jenis Relasi</th>
-                                <th>Aturan Aksi Hapus (On Delete)</th>
+                                <th>On Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td><span class="text-fk">reporter_id</span></td>
-                                <td>`users`</td>
-                                <td>`flood_reports`</td>
-                                <td>One-to-Many (1 Warga -> N Laporan)</td>
+                                <td><code>users</code></td>
+                                <td style="text-align:center;">
+                                    <span style="background:rgba(16,185,129,0.12);color:#34d399;border:1px solid rgba(16,185,129,0.3);padding:0.2rem 0.7rem;border-radius:20px;font-weight:700;font-size:0.8rem;letter-spacing:0.03em;">melaporkan</span>
+                                    <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">Warga <em>melaporkan</em> genangan air ke sistem</div>
+                                </td>
+                                <td><code>flood_reports</code></td>
+                                <td>One-to-Many (1 Warga &rarr; N Laporan)</td>
                                 <td><span style="color:var(--accent-rose)">Cascade</span></td>
                             </tr>
                             <tr>
                                 <td><span class="text-fk">gate_id</span></td>
-                                <td>`water_gates`</td>
-                                <td>`flood_reports`</td>
-                                <td>One-to-Many (1 Pintu Air -> N Laporan)</td>
-                                <td><span style="color:var(--accent-blue)">Set Null (Laporan tetap ada jika data Pintu Air dihapus)</span></td>
+                                <td><code>water_gates</code></td>
+                                <td style="text-align:center;">
+                                    <span style="background:rgba(245,158,11,0.12);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);padding:0.2rem 0.7rem;border-radius:20px;font-weight:700;font-size:0.8rem;letter-spacing:0.03em;">terdampak pada</span>
+                                    <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">Pintu air <em>terdampak pada</em> laporan genangan</div>
+                                </td>
+                                <td><code>flood_reports</code></td>
+                                <td>One-to-Many (1 Pintu Air &rarr; N Laporan)</td>
+                                <td><span style="color:var(--accent-blue)">Set Null</span></td>
                             </tr>
                             <tr>
                                 <td><span class="text-fk">shelter_id</span></td>
-                                <td>`shelters`</td>
-                                <td>`shelter_needs`</td>
-                                <td>One-to-Many (1 Posko -> N Kebutuhan Barang)</td>
+                                <td><code>shelters</code></td>
+                                <td style="text-align:center;">
+                                    <span style="background:rgba(59,130,246,0.12);color:#60a5fa;border:1px solid rgba(59,130,246,0.3);padding:0.2rem 0.7rem;border-radius:20px;font-weight:700;font-size:0.8rem;letter-spacing:0.03em;">membutuhkan</span>
+                                    <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">Posko <em>membutuhkan</em> barang logistik darurat</div>
+                                </td>
+                                <td><code>shelter_needs</code></td>
+                                <td>One-to-Many (1 Posko &rarr; N Kebutuhan)</td>
                                 <td><span style="color:var(--accent-rose)">Cascade</span></td>
                             </tr>
                             <tr>
                                 <td><span class="text-fk">donor_id</span></td>
-                                <td>`users`</td>
-                                <td>`donations`</td>
-                                <td>One-to-Many (1 User -> N Donasi)</td>
+                                <td><code>users</code></td>
+                                <td style="text-align:center;">
+                                    <span style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);padding:0.2rem 0.7rem;border-radius:20px;font-weight:700;font-size:0.8rem;letter-spacing:0.03em;">menyumbang</span>
+                                    <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">Donatur <em>menyumbang</em> barang ke posko</div>
+                                </td>
+                                <td><code>donations</code></td>
+                                <td>One-to-Many (1 Donatur &rarr; N Donasi)</td>
                                 <td><span style="color:var(--accent-rose)">Cascade</span></td>
                             </tr>
                             <tr>
                                 <td><span class="text-fk">need_id</span></td>
-                                <td>`shelter_needs`</td>
-                                <td>`donations`</td>
-                                <td>One-to-Many (1 Kebutuhan -> N Log Kirim)</td>
+                                <td><code>shelter_needs</code></td>
+                                <td style="text-align:center;">
+                                    <span style="background:rgba(16,185,129,0.12);color:#34d399;border:1px solid rgba(16,185,129,0.3);padding:0.2rem 0.7rem;border-radius:20px;font-weight:700;font-size:0.8rem;letter-spacing:0.03em;">terpenuhi oleh</span>
+                                    <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">Kebutuhan <em>terpenuhi oleh</em> donasi masuk</div>
+                                </td>
+                                <td><code>donations</code></td>
+                                <td>One-to-Many (1 Kebutuhan &rarr; N Log Donasi)</td>
                                 <td><span style="color:var(--accent-rose)">Cascade</span></td>
                             </tr>
                             <tr>
                                 <td><span class="text-fk">sender_id</span></td>
-                                <td>`users`</td>
-                                <td>`sos_requests`</td>
-                                <td>One-to-Many (1 Warga -> N SOS Request)</td>
+                                <td><code>users</code></td>
+                                <td style="text-align:center;">
+                                    <span style="background:rgba(244,63,94,0.12);color:#f87171;border:1px solid rgba(244,63,94,0.3);padding:0.2rem 0.7rem;border-radius:20px;font-weight:700;font-size:0.8rem;letter-spacing:0.03em;">mengirim</span>
+                                    <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">Warga <em>mengirim</em> sinyal SOS darurat</div>
+                                </td>
+                                <td><code>sos_requests</code></td>
+                                <td>One-to-Many (1 Warga &rarr; N SOS)</td>
                                 <td><span style="color:var(--accent-rose)">Cascade</span></td>
                             </tr>
                             <tr>
                                 <td><span class="text-fk">sos_id</span></td>
-                                <td>`sos_requests`</td>
-                                <td>`rescue_missions`</td>
-                                <td>One-to-Many (1 SOS -> N Tugas Penyelamatan)</td>
+                                <td><code>sos_requests</code></td>
+                                <td style="text-align:center;">
+                                    <span style="background:rgba(245,158,11,0.12);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);padding:0.2rem 0.7rem;border-radius:20px;font-weight:700;font-size:0.8rem;letter-spacing:0.03em;">memicu</span>
+                                    <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">SOS <em>memicu</em> penugasan misi penyelamatan</div>
+                                </td>
+                                <td><code>rescue_missions</code></td>
+                                <td>One-to-One (1 SOS &rarr; 1 Misi)</td>
                                 <td><span style="color:var(--accent-rose)">Cascade</span></td>
                             </tr>
                             <tr>
                                 <td><span class="text-fk">volunteer_id</span></td>
-                                <td>`users`</td>
-                                <td>`rescue_missions`</td>
-                                <td>One-to-Many (1 Relawan -> N Misi Evakuasi)</td>
+                                <td><code>users</code></td>
+                                <td style="text-align:center;">
+                                    <span style="background:rgba(59,130,246,0.12);color:#60a5fa;border:1px solid rgba(59,130,246,0.3);padding:0.2rem 0.7rem;border-radius:20px;font-weight:700;font-size:0.8rem;letter-spacing:0.03em;">menangani</span>
+                                    <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">Relawan <em>menangani</em> misi evakuasi korban</div>
+                                </td>
+                                <td><code>rescue_missions</code></td>
+                                <td>One-to-Many (1 Relawan &rarr; N Misi)</td>
                                 <td><span style="color:var(--accent-rose)">Cascade</span></td>
                             </tr>
                         </tbody>
