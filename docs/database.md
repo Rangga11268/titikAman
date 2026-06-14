@@ -2,108 +2,108 @@
 
 Sistem TitikAman menggunakan basis data relasional untuk mengelola status kedaruratan, logistik, pengungsian, dan data pengguna. Di bawah ini adalah detail skema dari 8 tabel utama.
 
+---
+
 ## 1. Tabel: `users`
-Tabel bawaan Laravel yang dimodifikasi untuk menyimpan data autentikasi dan informasi tambahan pengguna.
-* **`id`** (BigInt, PK, Auto Increment)
-* **`name`** (String) - Nama lengkap pengguna.
-* **`email`** (String, Unique)
-* **`email_verified_at`** (Timestamp, Nullable)
-* **`password`** (String)
-* **`phone`** (String, Nullable) - Nomor telepon aktif untuk koordinasi darurat.
+Tabel untuk mengelola autentikasi dan peran hak akses di dalam sistem.
+* **`user_id`** (BigInt, PK, Auto Increment)
+* **`fullname`** (String, 100) - Nama lengkap pengguna.
+* **`email`** (String, 100, Unique)
+* **`password`** (String, 250)
+* **`phone`** (String, 20) - Nomor telepon aktif untuk koordinasi.
+* **`role`** (Enum: `'Warga'`, `'Relawan'`, `'Pengelola_Posko'`, `'Admin_BPBD'`)
 * **`remember_token`** (String, Nullable)
 * **`created_at` / `updated_at`** (Timestamp)
-
-*Catatan: Hak akses/peran (role: warga, relawan, pengelola, admin) diatur secara terpisah menggunakan tabel relasi bawaan package Spatie Laravel Permission.*
 
 ---
 
 ## 2. Tabel: `water_gates`
-Pencatatan kondisi teknis sungai-sungai utama untuk memantau air kiriman (bogor) dan peringatan dini.
-* **`id`** (BigInt, PK, Auto Increment)
-* **`gate_name`** (String) - Contoh: "Pintu Air Pondok Gede Permai".
-* **`river_name`** (String) - Contoh: "Sungai Cileungsi", "Sungai Bekasi".
-* **`water_level_cm`** (Integer) - Tinggi Muka Air (TMA) saat ini dalam cm.
-* **`danger_status`** (Enum: `Normal`, `Siaga 3`, `Siaga 2`, `Siaga 1`) - Ditentukan otomatis berdasarkan tinggi air.
+Pencatatan kondisi teknis sungai-sungai utama untuk sistem peringatan dini.
+* **`gate_id`** (BigInt, PK, Auto Increment)
+* **`gate_name`** (String, 100) - Contoh: "Pintu Air Pondok Gede Permai".
+* **`river_name`** (String, 100) - Contoh: "Sungai Cileungsi", "Sungai Bekasi".
+* **`water_level_cm`** (Decimal, 5,2) - Tinggi Muka Air (TMA) saat ini dalam cm.
+* **`danger_status`** (Enum: `'Normal'`, `'Siaga_3'`, `'Siaga_2'`, `'Siaga_1'`)
 * **`last_updated`** (Timestamp) - Waktu update TMA terakhir oleh petugas.
 * **`created_at` / `updated_at`** (Timestamp)
 
 ---
 
-## 3. Tabel: `shelters`
-Daftar posko pengungsian darurat beserta kapasitas tampung dan status operasional.
-* **`id`** (BigInt, PK, Auto Increment)
-* **`shelter_name`** (String) - Contoh: "Masjid Raya Al-Muwahhidin".
+## 3. Tabel: `flood_reports`
+Laporan genangan banjir berbasis kontribusi warga (*crowdsourcing*).
+* **`report_id`** (BigInt, PK, Auto Increment)
+* **`user_id`** (BigInt, FK to `users.user_id`, Cascade) - ID warga pelapor.
+* **`water_height_cm`** (Integer) - Perkiraan tinggi air dalam cm.
+* **`street_name`** (String, 255) - Lokasi detail/nama jalan terdampak.
+* **`latitude`** (Decimal, 10,8)
+* **`longitude`** (Decimal, 11,8)
+* **`photo_evidence`** (String, 255, Nullable) - Jalur file foto bukti genangan air.
+* **`verification_status`** (Enum: `'pending'`, `'verified'`, `'rejected'` - Default: `'pending'`)
+* **`created_at` / `updated_at`** (Timestamp)
+
+---
+
+## 4. Tabel: `shelters`
+Mengelola data posko pengungsian, termasuk ketersediaan fasilitas krusial seperti toilet.
+* **`shelter_id`** (BigInt, PK, Auto Increment)
+* **`shelter_name`** (String, 100) - Contoh: "Masjid Raya Al-Muwahhidin".
 * **`address`** (Text) - Alamat posko.
 * **`max_capacity`** (Integer) - Kapasitas maksimal jiwa yang ditampung.
 * **`current_occupants`** (Integer, Default: 0) - Jumlah pengungsi aktif saat ini.
-* **`status`** (Enum: `active`, `full`, `inactive` - Default: `active`)
+* **`has_toilet_facilities`** (Enum: `'Yes'`, `'No'` - Default: `'Yes'`) - Mengatasi gap sanitasi di posko darurat.
+* **`status`** (Enum: `'active'`, `'full'`, `'closed'` - Default: `'active'`)
 * **`latitude`** (Decimal, 10,8) - Koordinat GPS lintang.
 * **`longitude`** (Decimal, 11,8) - Koordinat GPS bujur.
 * **`created_at` / `updated_at`** (Timestamp)
 
 ---
 
-## 4. Tabel: `flood_reports`
-Laporan genangan banjir berbasis kontribusi mandiri warga (*crowdsourcing*).
-* **`id`** (BigInt, PK, Auto Increment)
-* **`reporter_id`** (BigInt, FK to `users.id`, Cascade) - ID warga pelapor.
-* **`gate_id`** (BigInt, FK to `water_gates.id`, Nullable, Set Null) - Pintu air terdekat untuk validasi silang (opsional).
-* **`water_height_cm`** (Integer) - Perkiraan tinggi air dalam cm.
-* **`street_name`** (String) - Lokasi detail/nama jalan terdampak.
-* **`latitude`** (Decimal, 10,8)
-* **`longitude`** (Decimal, 11,8)
-* **`photo_evidence`** (String, Nullable) - Jalur file foto bukti genangan air.
-* **`status`** (Enum: `waiting`, `verified`, `rejected` - Default: `waiting`)
-* **`created_at` / `updated_at`** (Timestamp)
-
----
-
 ## 5. Tabel: `shelter_needs`
-Kebutuhan logistik mendesak hasil asesmen pengelola posko di lapangan.
-* **`id`** (BigInt, PK, Auto Increment)
-* **`shelter_id`** (BigInt, FK to `shelters.id`, Cascade) - Lokasi posko yang membutuhkan.
-* **`item_name`** (String) - Contoh: "Selimut", "Susu Bayi Formula".
-* **`quantity_needed`** (Integer) - Jumlah barang yang dibutuhkan.
+Mencatat kebutuhan logistik mendesak hasil asesmen pengelola posko di lapangan.
+* **`need_id`** (BigInt, PK, Auto Increment)
+* **`shelter_id`** (BigInt, FK to `shelters.shelter_id`, Cascade) - Lokasi posko yang membutuhkan.
+* **`item_name`** (String, 100) - Contoh: "Selimut", "Susu Bayi Formula".
+* **`quantity_need`** (Integer) - Jumlah barang yang dibutuhkan.
 * **`quantity_fulfilled`** (Integer, Default: 0) - Jumlah barang yang sudah terpenuhi/didonasikan.
-* **`urgency`** (Enum: `low`, `medium`, `high` - Default: `medium`)
+* **`urgency`** (Enum: `'low'`, `'medium'`, `'high'`)
 * **`created_at` / `updated_at`** (Timestamp)
 
 ---
 
 ## 6. Tabel: `donations`
-Log kontribusi donatur untuk memenuhi kebutuhan posko secara langsung tanpa jalur birokrasi.
-* **`id`** (BigInt, PK, Auto Increment)
-* **`donor_id`** (BigInt, FK to `users.id`, Cascade) - ID donatur.
-* **`need_id`** (BigInt, FK to `shelter_needs.id`, Cascade) - Kebutuhan barang posko yang ingin dipenuhi.
+Log transaksi bantuan dari masyarakat/donatur untuk memotong panjangnya jalur birokrasi konvensional.
+* **`donation_id`** (BigInt, PK, Auto Increment)
+* **`donor_id`** (BigInt, FK to `users.user_id`, Cascade) - ID donatur.
+* **`need_id`** (BigInt, FK to `shelter_needs.need_id`, Cascade) - Kebutuhan barang posko yang ingin dipenuhi.
 * **`quantity_donated`** (Integer) - Jumlah barang yang dikirim.
-* **`shipping_receipt_no`** (String, Nullable) - Resi kurir pengiriman.
-* **`status`** (Enum: `pending`, `shipped`, `received` - Default: `pending`)
+* **`shipping_receipt_no`** (String, 100, Nullable) - Resi kurir pengiriman.
+* **`proof_photo`** (String, 255) - Bukti foto pengiriman donasi.
+* **`status`** (Enum: `'pending'`, `'accepted'`, `'delivered'` - Default: `'pending'`)
 * **`donated_at`** (Timestamp) - Waktu pengiriman donasi.
 * **`created_at` / `updated_at`** (Timestamp)
 
 ---
 
 ## 7. Tabel: `sos_requests`
-Permintaan evakuasi darurat dari warga yang terjebak banjir di rumahnya.
-* **`id`** (BigInt, PK, Auto Increment)
-* **`sender_id`** (BigInt, FK to `users.id`, Cascade) - ID warga yang meminta bantuan.
+Modifikasi penting pada penambahan kolom kelompok rentan untuk filter skala prioritas relawan.
+* **`sos_id`** (BigInt, PK, Auto Increment)
+* **`user_id`** (BigInt, FK to `users.user_id`, Cascade) - ID warga yang meminta bantuan.
 * **`latitude`** (Decimal, 10,8) - Lokasi persis korban terjebak.
 * **`longitude`** (Decimal, 11,8)
-* **`people_trapped`** (Integer, Default: 1) - Jumlah total orang di lokasi.
-* **`elderly_count`** (Integer, Default: 0) - Jumlah lansia (kelompok rentan).
-* **`infant_count`** (Integer, Default: 0) - Jumlah balita (kelompok rentan).
-* **`pregnant_count`** (Integer, Default: 0) - Jumlah ibu hamil (kelompok rentan).
+* **`people_trapped`** (Integer) - Jumlah total orang di lokasi.
+* **`vulnerable_groups_count`** (Integer, Default: 0) - Jumlah Lansia/Balita/Ibu Hamil di lokasi.
+* **`priority_level`** (Enum: `'low'`, `'medium'`, `'high'` - Default: `'low'`) - Tingkat prioritas evakuasi.
 * **`description`** (Text, Nullable) - Catatan khusus (misal: "butuh obat asma").
-* **`status`** (Enum: `waiting`, `assigned`, `resolved` - Default: `waiting`)
+* **`status`** (Enum: `'waiting'`, `'assigned'`, `'rescued'`, `'completed'` - Default: `'waiting'`)
 * **`created_at` / `updated_at`** (Timestamp)
 
 ---
 
 ## 8. Tabel: `rescue_missions`
-Tabel pencatatan misi penyelamatan korban SOS oleh relawan.
-* **`id`** (BigInt, PK, Auto Increment)
-* **`sos_id`** (BigInt, FK to `sos_requests.id`, Cascade) - Sinyal SOS yang ditangani.
-* **`volunteer_id`** (BigInt, FK to `users.id`, Cascade) - ID relawan/personel penyelamat.
+Tabel pencatatan misi penyelamatan di lapangan oleh relawan.
+* **`mission_id`** (BigInt, PK, Auto Increment)
+* **`sos_id`** (BigInt, FK to `sos_requests.sos_id`, Cascade, Unique) - Sinyal SOS yang ditangani (Relasi 1:1).
+* **`volunteer_id`** (BigInt, FK to `users.user_id`, Cascade) - ID relawan/personel penyelamat.
 * **`assigned_at`** (Timestamp) - Waktu penugasan relawan.
-* **`resolved_at`** (Timestamp, Nullable) - Waktu korban berhasil tiba di posko terry-safe.
+* **`resolved_at`** (Timestamp, Nullable) - Waktu korban berhasil tiba di posko.
 * **`created_at` / `updated_at`** (Timestamp)
