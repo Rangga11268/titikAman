@@ -12,16 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sos_requests', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
+            $table->id('sos_id');
+            $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
-            $table->integer('people_trapped')->default(1);
-            $table->integer('elderly_count')->default(0);
-            $table->integer('infant_count')->default(0);
-            $table->integer('pregnant_count')->default(0);
+            $table->integer('people_trapped');
+            $table->integer('vulnerable_groups_count')->default(0);
+            $table->enum('priority_level', ['low', 'medium', 'high'])->default('low');
             $table->text('description')->nullable();
-            $table->enum('status', ['waiting', 'assigned', 'resolved'])->default('waiting');
+            $table->enum('status', ['waiting', 'assigned', 'rescued', 'completed'])->default('waiting');
             $table->timestamps();
         });
     }

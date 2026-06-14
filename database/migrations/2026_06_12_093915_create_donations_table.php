@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('donations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('donor_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('need_id')->constrained('shelter_needs')->onDelete('cascade');
+            $table->id('donation_id');
+            $table->foreignId('donor_id')->constrained('users', 'user_id')->onDelete('cascade');
+            $table->foreignId('need_id')->constrained('shelter_needs', 'need_id')->onDelete('cascade');
             $table->integer('quantity_donated');
-            $table->string('shipping_receipt_no')->nullable();
-            $table->enum('status', ['pending', 'shipped', 'received'])->default('pending');
+            $table->string('shipping_receipt_no', 100)->nullable();
+            $table->string('proof_photo', 255);
+            $table->enum('status', ['pending', 'accepted', 'delivered'])->default('pending');
             $table->timestamp('donated_at')->useCurrent();
             $table->timestamps();
         });

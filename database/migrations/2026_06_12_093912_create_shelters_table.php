@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('shelters', function (Blueprint $table) {
-            $table->id();
-            $table->string('shelter_name');
+            $table->id('shelter_id');
+            $table->string('shelter_name', 100);
             $table->text('address');
             $table->integer('max_capacity');
             $table->integer('current_occupants')->default(0);
-            $table->enum('status', ['active', 'full', 'inactive'])->default('active');
+            $table->enum('has_toilet_facilities', ['Yes', 'No'])->default('Yes');
+            $table->enum('status', ['active', 'full', 'closed'])->default('active');
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
             $table->timestamps();

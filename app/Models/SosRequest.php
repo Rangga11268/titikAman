@@ -6,26 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class SosRequest extends Model
 {
+    protected $primaryKey = 'sos_id';
+
     protected $fillable = [
-        'sender_id',
+        'user_id',
         'latitude',
         'longitude',
         'people_trapped',
+        'vulnerable_groups_count',
         'priority_level',
-        'elderly_count',
-        'infant_count',
-        'pregnant_count',
         'description',
         'status',
     ];
 
-    public function sender()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'sender_id');
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
-    public function rescueMissions()
+    public function rescueMission()
     {
-        return $this->hasMany(RescueMission::class, 'sos_id');
+        return $this->hasOne(RescueMission::class, 'sos_id', 'sos_id');
     }
 }

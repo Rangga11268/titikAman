@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Donation extends Model
 {
+    protected $primaryKey = 'donation_id';
+
     protected $fillable = [
         'donor_id',
         'need_id',
@@ -22,11 +24,11 @@ class Donation extends Model
 
     public function donor()
     {
-        return $this->belongsTo(User::class, 'donor_id');
+        return $this->belongsTo(User::class, 'donor_id', 'user_id');
     }
 
     public function shelterNeed()
     {
-        return $this->belongsTo(ShelterNeed::class, 'need_id');
+        return $this->belongsTo(ShelterNeed::class, 'need_id', 'need_id');
     }
 }

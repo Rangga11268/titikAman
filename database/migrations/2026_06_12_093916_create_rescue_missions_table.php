@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rescue_missions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('sos_id')->constrained('sos_requests')->onDelete('cascade');
-            $table->foreignId('volunteer_id')->constrained('users')->onDelete('cascade');
+            $table->id('mission_id');
+            $table->foreignId('sos_id')->unique()->constrained('sos_requests', 'sos_id')->onDelete('cascade');
+            $table->foreignId('volunteer_id')->constrained('users', 'user_id')->onDelete('cascade');
             $table->timestamp('assigned_at')->useCurrent();
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();

@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class FloodReport extends Model
 {
+    protected $primaryKey = 'report_id';
+
     protected $fillable = [
-        'reporter_id',
-        'gate_id',
+        'user_id',
         'water_height_cm',
         'street_name',
         'latitude',
@@ -17,13 +18,8 @@ class FloodReport extends Model
         'verification_status',
     ];
 
-    public function reporter()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'reporter_id');
-    }
-
-    public function waterGate()
-    {
-        return $this->belongsTo(WaterGate::class, 'gate_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

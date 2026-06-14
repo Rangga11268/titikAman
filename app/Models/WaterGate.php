@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class WaterGate extends Model
 {
+    protected $primaryKey = 'gate_id';
+
     protected $fillable = [
         'gate_name',
         'river_name',
@@ -17,9 +19,4 @@ class WaterGate extends Model
     protected $casts = [
         'last_updated' => 'datetime',
     ];
-
-    public function floodReports()
-    {
-        return $this->hasMany(FloodReport::class, 'gate_id');
-    }
 }

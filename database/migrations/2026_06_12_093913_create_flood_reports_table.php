@@ -12,15 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('flood_reports', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('reporter_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('gate_id')->nullable()->constrained('water_gates')->onDelete('set null');
+            $table->id('report_id');
+            $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
             $table->integer('water_height_cm');
-            $table->string('street_name');
+            $table->string('street_name', 255);
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
-            $table->string('photo_evidence')->nullable();
-            $table->enum('status', ['waiting', 'verified', 'rejected'])->default('waiting');
+            $table->string('photo_evidence', 255)->nullable();
+            $table->enum('verification_status', ['pending', 'verified', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }

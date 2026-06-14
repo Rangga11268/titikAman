@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('water_gates', function (Blueprint $table) {
-            $table->id();
-            $table->string('gate_name');
-            $table->string('river_name');
-            $table->integer('water_level_cm');
-            $table->enum('danger_status', ['Normal', 'Siaga 3', 'Siaga 2', 'Siaga 1'])->default('Normal');
-            $table->timestamp('last_updated')->useCurrent();
+            $table->id('gate_id');
+            $table->string('gate_name', 100);
+            $table->string('river_name', 100);
+            $table->decimal('water_level_cm', 5, 2);
+            $table->enum('danger_status', ['Normal', 'Siaga_3', 'Siaga_2', 'Siaga_1']);
+            $table->timestamp('last_updated')->useCurrent()->useCurrentOnUpdate();
             $table->timestamps();
         });
     }
