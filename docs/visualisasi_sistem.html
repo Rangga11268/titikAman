@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisasi Sistem TitikAman - Use Case & ERD</title>
+    
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (for quick layout structure) or Vanilla CSS -->
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131a2c;
+            --bg-glass: rgba(19, 26, 44, 0.6);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --color-text: #e2e8f0;
+            --color-muted: #94a3b8;
+            
+            /* Curated Premium Colors */
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--color-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* Top Navigation Header */
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: white;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #3b82f6, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-meta {
+            font-size: 0.875rem;
+            color: var(--color-muted);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            border: 1px solid var(--border-glass);
+        }
+
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Sidebar Tabs */
+        .sidebar {
+            width: 280px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-glass);
+            padding: 2rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-muted);
+            margin-left: 0.5rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--color-muted);
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            color: white;
+            background: var(--bg-primary);
+            border-color: var(--border-glass);
+            box-shadow: inset 0 0 10px rgba(139, 92, 246, 0.05);
+            position: relative;
+        }
+
+        .tab-btn.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 25%;
+            height: 50%;
+            width: 4px;
+            background: var(--gradient-primary);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .tab-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Main Content Panel */
+        main {
+            flex: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+            background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-purple);
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-desc {
+            font-size: 1rem;
+            color: var(--color-muted);
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        /* Card Container with Glassmorphism */
+        .glass-card {
+            background-color: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(8px);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .diagram-container {
+            background-color: rgba(11, 15, 25, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 2.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: auto;
+            min-height: 400px;
+            margin-top: 1rem;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Grid for details */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .detail-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(139, 92, 246, 0.2);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .detail-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .badge-citizen { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-volunteer { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-manager { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-admin { background: rgba(244, 63, 94, 0.15); color: #f87171; border: 1px solid rgba(244, 63, 94, 0.3); }
+
+        .detail-card h4 {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+
+        .detail-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .detail-card li {
+            font-size: 0.875rem;
+            color: var(--color-muted);
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .detail-card li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+
+        /* ERD Specific Elements */
+        .entity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .entity-table th, .entity-table td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .entity-table th {
+            color: white;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .entity-table tr:hover td {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .text-pk { color: var(--accent-amber); font-weight: bold; font-family: monospace; }
+        .text-fk { color: var(--accent-blue); font-weight: bold; font-family: monospace; }
+        .text-type { color: var(--accent-purple); font-family: monospace; }
+
+        /* Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-glass);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--color-muted);
+            margin-top: auto;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-glass);
+                padding: 1.25rem;
+                flex-direction: row;
+                overflow-x: auto;
+                align-items: center;
+            }
+            .sidebar-title {
+                display: none;
+            }
+            .tab-btn {
+                padding: 0.75rem 1rem;
+                white-space: nowrap;
+            }
+            .tab-btn.active::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">TA</div>
+            <div>
+                <h1 class="logo-text">TitikAman</h1>
+            </div>
+        </div>
+        <div class="header-meta">
+            <span>Rencana Arsitektur &amp; Database</span>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <span class="sidebar-title">Menu Visualisasi</span>
+            <button class="tab-btn active" onclick="switchTab('usecase-section')">
+                <span class="tab-icon">👥</span>
+                <span>Use Case Diagram</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('erd-section')">
+                <span class="tab-icon">📊</span>
+                <span>ERD (Relasi Database)</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('desc-section')">
+                <span class="tab-icon">📄</span>
+                <span>Kamus Data &amp; Relasi</span>
+            </button>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main>
+            
+            <!-- SECTION 1: USE CASE DIAGRAM -->
+            <section id="usecase-section" class="view-section active">
+                <div class="section-header">
+                    <span class="section-tag">Analisis Alur Sistem</span>
+                    <h2 class="section-title">Use Case Diagram</h2>
+                    <p class="section-desc">Diagram ini memperlihatkan interaksi antara 4 Aktor utama (Warga, Relawan, Pengelola Posko, dan Admin BPBD) dengan fitur-fitur inti sistem kedaruratan bencana TitikAman.</p>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Diagram Alur Penggunaan</h3>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+graph LR
+    %% Konfigurasi Aktor
+    subgraph Aktor [Aktor Sistem]
+        W[Warga Terdampak]
+        R[Relawan Lapangan]
+        P[Pengelola Posko]
+        AD[Admin BPBD / Kelurahan]
+    end
+
+    %% Konfigurasi Use Case
+    subgraph TitikAman [Batasan Sistem TitikAman]
+        UC1(Autentikasi & Registrasi Akun)
+        UC2(Kirim Laporan SOS Evakuasi)
+        UC3(Kirim Laporan Banjir Crowdsourcing)
+        UC4(Lihat Peta Banjir & Notifikasi TMA)
+        UC5(Donasi Logistik Pengungsian)
+        UC6(Ambil Misi & Evakuasi Korban SOS)
+        UC7(Update Kapasitas & Status Posko)
+        UC8(Input Kebutuhan Logistik Posko)
+        UC9(Verifikasi Kedatangan Donasi)
+        UC10(Update TMA & Pintu Air)
+        UC11(Verifikasi Laporan Banjir Warga)
+    end
+
+    %% Koneksi Aktor ke Use Case
+    W --> UC1
+    W --> UC2
+    W --> UC3
+    W --> UC4
+    W --> UC5
+
+    R --> UC1
+    R --> UC6
+    R --> UC4
+
+    P --> UC1
+    P --> UC7
+    P --> UC8
+    P --> UC9
+
+    AD --> UC1
+    AD --> UC10
+    AD --> UC11
+    AD --> UC4
+
+    %% Custom Styling
+    style W fill:#3b82f6,stroke:#1d4ed8,stroke-width:2px,color:#fff
+    style R fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff
+    style P fill:#f59e0b,stroke:#b45309,stroke-width:2px,color:#fff
+    style AD fill:#f43f5e,stroke:#be123c,stroke-width:2px,color:#fff
+    
+    classDef usecase fill:#1e293b,stroke:#475569,stroke-width:1.5px,color:#f1f5f9
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11 usecase
+                        </pre>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 1rem; color: white;">Aktor &amp; Tanggung Jawab</h3>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <span class="detail-badge badge-citizen">Warga Terdampak</span>
+                        <h4>Warga Umum</h4>
+                        <ul>
+                            <li>Mengirim laporan koordinat SOS saat terjebak banjir.</li>
+                            <li>Melakukan input estimasi tinggi air di jalanannya (crowdsourcing).</li>
+                            <li>Mengakses info status TMA &amp; Peta sebaran banjir.</li>
+                            <li>Menyalurkan donasi barang darurat ke posko.</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <span class="detail-badge badge-volunteer">Relawan Lapangan</span>
+                        <h4>Relawan Kebencanaan</h4>
+                        <ul>
+                            <li>Memantau sinyal SOS prioritas (korban rentan).</li>
+                            <li>Menerima tugas penyelamatan korban.</li>
+                            <li>Melaporkan status misi jika korban telah tiba di posko dengan aman.</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <span class="detail-badge badge-manager">Pengelola Posko</span>
+                        <h4>Petugas Pengungsian</h4>
+                        <ul>
+                            <li>Mengubah data kapasitas pengungsi aktif di lapangan.</li>
+                            <li>Menginput barang kebutuhan darurat (selimut, makanan bayi).</li>
+                            <li>Konfirmasi fisik donasi yang datang di posko.</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <span class="detail-badge badge-admin">Admin BPBD</span>
+                        <h4>Aparatur / BPBD</h4>
+                        <ul>
+                            <li>Memperbarui TMA secara periodik pada pintu air utama.</li>
+                            <li>Validasi (Terima/Tolak) laporan kiriman genangan air dari warga.</li>
+                            <li>Memantau rekap keseluruhan mitigasi bencana di dashboard.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: ENTITY RELATIONSHIP DIAGRAM (ERD) -->
+            <section id="erd-section" class="view-section">
+                <div class="section-header">
+                    <span class="section-tag">Rancangan Database</span>
+                    <h2 class="section-title">Entity Relationship Diagram (ERD)</h2>
+                    <p class="section-desc">ERD ini menggambarkan 8 entitas utama yang ada di sistem database TitikAman berserta tipe data kolom dan relasi kardinalitas antar tabel yang diimplementasikan di Laravel 12.</p>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Hubungan Relasi Antar Tabel</h3>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+erDiagram
+    USERS {
+        bigint id PK
+        string name
+        string email UK
+        timestamp email_verified_at
+        string password
+        string phone
+        enum role
+        string remember_token
+        timestamp created_at
+        timestamp updated_at
+    }
+    WATER_GATES {
+        bigint id PK
+        string gate_name
+        string river_name
+        integer water_level_cm
+        enum danger_status
+        timestamp last_updated
+        timestamp created_at
+        timestamp updated_at
+    }
+    SHELTERS {
+        bigint id PK
+        string shelter_name
+        text address
+        integer max_capacity
+        integer current_occupants
+        enum status
+        decimal latitude
+        decimal longitude
+        timestamp created_at
+        timestamp updated_at
+    }
+    FLOOD_REPORTS {
+        bigint id PK
+        bigint reporter_id FK
+        bigint gate_id FK
+        integer water_height_cm
+        string street_name
+        decimal latitude
+        decimal longitude
+        string photo_evidence
+        enum status
+        timestamp created_at
+        timestamp updated_at
+    }
+    SHELTER_NEEDS {
+        bigint id PK
+        bigint shelter_id FK
+        string item_name
+        integer quantity_needed
+        integer quantity_fulfilled
+        enum urgency
+        timestamp created_at
+        timestamp updated_at
+    }
+    DONATIONS {
+        bigint id PK
+        bigint donor_id FK
+        bigint need_id FK
+        integer quantity_donated
+        string shipping_receipt_no
+        enum status
+        timestamp donated_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    SOS_REQUESTS {
+        bigint id PK
+        bigint sender_id FK
+        decimal latitude
+        decimal longitude
+        integer people_trapped
+        integer elderly_count
+        integer infant_count
+        integer pregnant_count
+        text description
+        enum status
+        timestamp created_at
+        timestamp updated_at
+    }
+    RESCUE_MISSIONS {
+        bigint id PK
+        bigint sos_id FK
+        bigint volunteer_id FK
+        timestamp assigned_at
+        timestamp resolved_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    USERS ||--o{ FLOOD_REPORTS : "reporter_id"
+    USERS ||--o{ DONATIONS : "donor_id"
+    USERS ||--o{ SOS_REQUESTS : "sender_id"
+    USERS ||--o{ RESCUE_MISSIONS : "volunteer_id"
+    
+    WATER_GATES ||--o{ FLOOD_REPORTS : "gate_id"
+    SHELTERS ||--o{ SHELTER_NEEDS : "shelter_id"
+    SHELTER_NEEDS ||--o{ DONATIONS : "need_id"
+    SOS_REQUESTS ||--o{ RESCUE_MISSIONS : "sos_id"
+                        </pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: DATA DICTIONARY -->
+            <section id="desc-section" class="view-section">
+                <div class="section-header">
+                    <span class="section-tag">Kamus Informasi</span>
+                    <h2 class="section-title">Kamus Data &amp; Relasi Relasional</h2>
+                    <p class="section-desc">Penjelasan rinci mengenai relasi kunci (foreign key) dan integritas database untuk 8 tabel yang digunakan oleh sistem.</p>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Penjelasan Relasi Antar Tabel</h3>
+                    <table class="entity-table">
+                        <thead>
+                            <tr>
+                                <th>Relasi / Foreign Key</th>
+                                <th>Tabel Asal (Parent)</th>
+                                <th>Tabel Tujuan (Child)</th>
+                                <th>Jenis Relasi</th>
+                                <th>Aturan Aksi Hapus (On Delete)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="text-fk">reporter_id</span></td>
+                                <td>`users`</td>
+                                <td>`flood_reports`</td>
+                                <td>One-to-Many (1 Warga -> N Laporan)</td>
+                                <td><span style="color:var(--accent-rose)">Cascade</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-fk">gate_id</span></td>
+                                <td>`water_gates`</td>
+                                <td>`flood_reports`</td>
+                                <td>One-to-Many (1 Pintu Air -> N Laporan)</td>
+                                <td><span style="color:var(--accent-blue)">Set Null (Laporan tetap ada jika data Pintu Air dihapus)</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-fk">shelter_id</span></td>
+                                <td>`shelters`</td>
+                                <td>`shelter_needs`</td>
+                                <td>One-to-Many (1 Posko -> N Kebutuhan Barang)</td>
+                                <td><span style="color:var(--accent-rose)">Cascade</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-fk">donor_id</span></td>
+                                <td>`users`</td>
+                                <td>`donations`</td>
+                                <td>One-to-Many (1 User -> N Donasi)</td>
+                                <td><span style="color:var(--accent-rose)">Cascade</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-fk">need_id</span></td>
+                                <td>`shelter_needs`</td>
+                                <td>`donations`</td>
+                                <td>One-to-Many (1 Kebutuhan -> N Log Kirim)</td>
+                                <td><span style="color:var(--accent-rose)">Cascade</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-fk">sender_id</span></td>
+                                <td>`users`</td>
+                                <td>`sos_requests`</td>
+                                <td>One-to-Many (1 Warga -> N SOS Request)</td>
+                                <td><span style="color:var(--accent-rose)">Cascade</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-fk">sos_id</span></td>
+                                <td>`sos_requests`</td>
+                                <td>`rescue_missions`</td>
+                                <td>One-to-Many (1 SOS -> N Tugas Penyelamatan)</td>
+                                <td><span style="color:var(--accent-rose)">Cascade</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-fk">volunteer_id</span></td>
+                                <td>`users`</td>
+                                <td>`rescue_missions`</td>
+                                <td>One-to-Many (1 Relawan -> N Misi Evakuasi)</td>
+                                <td><span style="color:var(--accent-rose)">Cascade</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Catatan Desain &amp; Optimasi</h3>
+                    <p style="line-height: 1.6; margin-bottom: 1rem;">
+                        1. **Integrasi Geospasial**: Kolom `latitude` dan `longitude` disimpan dalam format `decimal(10,8)` dan `decimal(11,8)` di tabel `shelters`, `flood_reports`, dan `sos_requests`. Ini memberikan presisi hingga rentang ~1 milimeter di atas tanah, yang sangat cukup untuk penemuan korban terjebak banjir.
+                    </p>
+                    <p style="line-height: 1.6; margin-bottom: 1rem;">
+                        2. **Pola Evakuasi Kedaruratan**: Kolom `people_trapped`, `elderly_count`, `infant_count`, dan `pregnant_count` di tabel `sos_requests` memungkinkan relawan lapangan memfilter misi evakuasi berdasarkan tingkat kerentanan korban. SOS yang mengandung balita, lansia, atau ibu hamil akan ditandai dengan label prioritas utama.
+                    </p>
+                    <p style="line-height: 1.6;">
+                        3. **Sistem Peran (Role-based Access)**: Peran user (`role`) menggunakan enum bawaan database MySQL/SQLite untuk mencegah dependensi library luar yang berat di backend. Pengaturan role ini mengikat hak akses warga (`warga`), relawan (`relawan`), pengelola (`pengelola`), dan BPBD (`admin`) secara aman.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Proyek TitikAman - Dibuat untuk Mempermudah Koordinasi Tanggap Darurat Banjir</p>
+    </footer>
+
+    <!-- Load Mermaid.js via CDN -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            securityLevel: 'loose',
+            themeVariables: {
+                background: '#131a2c',
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#fff',
+                lineColor: '#94a3b8',
+                secondaryColor: '#8b5cf6',
+                tertiaryColor: '#1e293b'
+            }
+        });
+    </script>
+
+    <!-- Tab Switch Script -->
+    <script>
+        function switchTab(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.view-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            // Show target section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Update active button state
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Find matching button
+            const clickedBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(sectionId));
+            if (clickedBtn) {
+                clickedBtn.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
