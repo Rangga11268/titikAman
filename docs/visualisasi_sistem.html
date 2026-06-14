@@ -445,58 +445,90 @@
                     <div class="diagram-container">
                         <pre class="mermaid">
 graph LR
-    %% Konfigurasi Aktor
-    subgraph Aktor [Aktor Sistem]
+    %% Konfigurasi Aktor Kiri
+    subgraph AktorKiri [ ]
         W[Warga Terdampak]
         R[Relawan Lapangan]
+    end
+
+    %% Konfigurasi Aktor Kanan
+    subgraph AktorKanan [ ]
         P[Pengelola Posko]
         AD[Admin BPBD / Kelurahan]
     end
 
-    %% Konfigurasi Use Case
-    subgraph TitikAman [Batasan Sistem TitikAman]
-        UC1(Autentikasi & Registrasi Akun)
-        UC2(Kirim Laporan SOS Evakuasi)
-        UC3(Kirim Laporan Banjir Crowdsourcing)
-        UC4(Lihat Peta Banjir & Notifikasi TMA)
-        UC5(Donasi Logistik Pengungsian)
-        UC6(Ambil Misi & Evakuasi Korban SOS)
-        UC7(Update Kapasitas & Status Posko)
-        UC8(Input Kebutuhan Logistik Posko)
-        UC9(Verifikasi Kedatangan Donasi)
-        UC10(Update TMA & Pintu Air)
-        UC11(Verifikasi Laporan Banjir Warga)
+    %% Konfigurasi Use Case & System Boundary
+    subgraph TitikAman [Usecase TitikAman]
+        direction TB
+        
+        UC_Login(Login)
+        
+        subgraph ColKiri [ ]
+            direction TB
+            UC_Reg(Registrasi Akun)
+            UC_Map(Lihat Peta & Notifikasi TMA)
+            UC_SOS(Kirim Laporan SOS Evakuasi)
+            UC_Report(Kirim Laporan Banjir)
+            UC_Donate(Donasi Logistik Pengungsian)
+            UC_Mission(Ambil Misi Penyelamatan)
+            UC_Evac(Selesaikan Evakuasi Korban)
+        end
+        
+        subgraph ColKanan [ ]
+            direction TB
+            UC_Shelter(Kelola Kapasitas & Status Posko)
+            UC_Needs(Input Kebutuhan Logistik)
+            UC_VerifDon(Verifikasi Kedatangan Donasi)
+            UC_TMA(Update TMA & Pintu Air)
+            UC_VerifFlood(Verifikasi Laporan Banjir)
+            UC_Dash(Lihat Dashboard Kebencanaan)
+        end
+        
+        UC_Logout(Logout)
     end
 
-    %% Koneksi Aktor ke Use Case
-    W --> UC1
-    W --> UC2
-    W --> UC3
-    W --> UC4
-    W --> UC5
+    %% Hubungan Aktor Kiri (Warga & Relawan)
+    W --> UC_Login
+    W --> UC_Reg
+    W --> UC_Map
+    W --> UC_SOS
+    W --> UC_Report
+    W --> UC_Donate
+    W --> UC_Logout
 
-    R --> UC1
-    R --> UC6
-    R --> UC4
+    R --> UC_Login
+    R --> UC_Map
+    R --> UC_Mission
+    R --> UC_Evac
+    R --> UC_Logout
 
-    P --> UC1
-    P --> UC7
-    P --> UC8
-    P --> UC9
+    %% Hubungan Aktor Kanan (Pengelola & Admin)
+    P --> UC_Login
+    P --> UC_Shelter
+    P --> UC_Needs
+    P --> UC_VerifDon
+    P --> UC_Logout
 
-    AD --> UC1
-    AD --> UC10
-    AD --> UC11
-    AD --> UC4
+    AD --> UC_Login
+    AD --> UC_TMA
+    AD --> UC_VerifFlood
+    AD --> UC_Dash
+    AD --> UC_Logout
 
-    %% Custom Styling
+    %% Custom Styling Aktor
     style W fill:#3b82f6,stroke:#1d4ed8,stroke-width:2px,color:#fff
     style R fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff
     style P fill:#f59e0b,stroke:#b45309,stroke-width:2px,color:#fff
     style AD fill:#f43f5e,stroke:#be123c,stroke-width:2px,color:#fff
+
+    %% Sembunyikan Border Subgraph Kolom & Aktor
+    style AktorKiri fill:none,stroke:none
+    style AktorKanan fill:none,stroke:none
+    style ColKiri fill:none,stroke:none
+    style ColKanan fill:none,stroke:none
     
     classDef usecase fill:#1e293b,stroke:#475569,stroke-width:1.5px,color:#f1f5f9
-    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11 usecase
+    class UC_Login,UC_Reg,UC_Map,UC_SOS,UC_Report,UC_Donate,UC_Mission,UC_Evac,UC_Shelter,UC_Needs,UC_VerifDon,UC_TMA,UC_VerifFlood,UC_Dash,UC_Logout usecase
                         </pre>
                     </div>
                 </div>
