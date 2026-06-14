@@ -11,6 +11,7 @@ class Shelter extends Model
         'address',
         'max_capacity',
         'current_occupants',
+        'has_toilet_facilities',
         'status',
         'latitude',
         'longitude',

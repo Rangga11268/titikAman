@@ -14,7 +14,7 @@ class FloodReport extends Model
         'latitude',
         'longitude',
         'photo_evidence',
-        'status',
+        'verification_status',
     ];
 
     public function reporter()

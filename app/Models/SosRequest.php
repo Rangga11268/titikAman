@@ -11,6 +11,7 @@ class SosRequest extends Model
         'latitude',
         'longitude',
         'people_trapped',
+        'priority_level',
         'elderly_count',
         'infant_count',
         'pregnant_count',

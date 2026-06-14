@@ -9,7 +9,7 @@ class ShelterNeed extends Model
     protected $fillable = [
         'shelter_id',
         'item_name',
-        'quantity_needed',
+        'quantity_need',
         'quantity_fulfilled',
         'urgency',
     ];

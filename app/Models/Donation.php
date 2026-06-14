@@ -11,6 +11,7 @@ class Donation extends Model
         'need_id',
         'quantity_donated',
         'shipping_receipt_no',
+        'proof_photo',
         'status',
         'donated_at',
     ];
