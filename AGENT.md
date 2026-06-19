@@ -54,6 +54,7 @@ TitikAman adalah **platform tanggap darurat banjir** berbasis web yang menghubun
 - Selalu sertakan `$table->index()` pada kolom yang sering digunakan di `WHERE`, `ORDER BY`, dan FK.
 - Gunakan `softDeletes()` untuk tabel data operasional (flood_reports, sos_requests, donations).
 - Seeders harus menggunakan **Factory** — tidak boleh hard-code data dummy langsung di Seeder.
+- **Keputusan Penyelarasan Domisili (Opsi A)**: Kolom `kecamatan` dan `kelurahan` ditambahkan langsung ke tabel `users` sebagai nullable columns via migration terpisah untuk menyimpan data domisili warga saat pendaftaran, guna menyelaraskan dengan UI Figma dan mendukung push notification siaga banjir terarah.
 
 ### 7. Geospasial (Peta & Koordinat)
 - Koordinat disimpan sebagai `DECIMAL(10, 8)` untuk latitude dan `DECIMAL(11, 8)` untuk longitude.
