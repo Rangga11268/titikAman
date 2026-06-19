@@ -12,6 +12,8 @@ Tabel untuk mengelola autentikasi dan peran hak akses di dalam sistem.
 * **`password`** (String, 250)
 * **`phone`** (String, 20) - Nomor telepon aktif untuk koordinasi.
 * **`role`** (Enum: `'Warga'`, `'Relawan'`, `'Pengelola_Posko'`, `'Admin_BPBD'`)
+* **`kecamatan`** (String, 100, Nullable) - Kecamatan domisili warga (untuk push notification peringatan dini).
+* **`kelurahan`** (String, 100, Nullable) - Kelurahan domisili warga (untuk push notification peringatan dini).
 * **`remember_token`** (String, Nullable)
 * **`created_at` / `updated_at`** (Timestamp)
 
