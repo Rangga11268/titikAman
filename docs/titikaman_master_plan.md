@@ -63,7 +63,7 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Innes (Developer 1 - Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya sedang membangun proyek Laravel 12 bernama TitikAman tanpa Laravel Breeze.
+> Saya adalah Innes, Developer 1 - Database & Auth Specialist. Saya sedang membangun proyek Laravel 12 bernama TitikAman tanpa Laravel Breeze.
 > Tolong buatkan kode untuk Fase 1 Autentikasi dengan spesifikasi berikut:
 > 1. Buat migration baru untuk menambahkan kolom `kecamatan` dan `kelurahan` (keduanya string, nullable) ke tabel `users` setelah kolom `role`.
 > 2. Perbarui `$fillable` di model `User` agar menyertakan `kecamatan` dan `kelurahan`.
@@ -89,7 +89,7 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Fatur (Developer 2 - Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya sedang mengimplementasikan modul GIS dan Portal Warga di Laravel 12 menggunakan Leaflet.js (tanpa Tailwind/Breeze, gunakan CSS murni).
+> Saya adalah Fatur, Developer 2 - GIS & Citizen Portal Specialist. Saya sedang mengimplementasikan modul GIS dan Portal Warga di Laravel 12 menggunakan Leaflet.js (tanpa Tailwind/Breeze, gunakan CSS murni).
 > Tolong buatkan komponen berikut dengan arsitektur Service-Repository:
 > 1. Buat `SosRepository` dan `SosService` untuk menyimpan sinyal SOS ke tabel `sos_requests`. Level prioritas harus diset otomatis menjadi 'high' jika `vulnerable_groups_count` (lansia/balita/ibu hamil) lebih besar dari 0, dan 'low' jika 0.
 > 2. Buat `FloodReportRepository` dan `FloodReportService` untuk menyimpan laporan warga ke tabel `flood_reports`. Laporan ini harus menampung upload foto genangan banjir (maksimal 5MB, format gambar). Buat validasi koordinat GPS di Form Request: latitude antara -90 dan 90, serta longitude antara -180 dan 180.
@@ -108,7 +108,7 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Januar (Developer 3 - Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya sedang mengimplementasikan modul Relawan dan fitur Real-Time menggunakan Laravel Reverb dan WebSocket di Laravel 12.
+> Saya adalah Januar, Developer 3 - Real-Time & Relawan Specialist. Saya sedang mengimplementasikan modul Relawan dan fitur Real-Time menggunakan Laravel Reverb dan WebSocket di Laravel 12.
 > Tolong buatkan komponen berikut:
 > 1. Buat `RescueMissionService` dan `RescueMissionRepository` untuk mengelola misi penyelamatan pada tabel `rescue_missions`.
 > 2. Buat Event `SosDispatched` yang mengimplementasikan `ShouldBroadcast` agar data SOS baru langsung terkirim secara real-time via WebSocket ke channel `disaster.{kecamatan_slug}`.
@@ -127,7 +127,7 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Jeffry (Developer 4 - Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya sedang mengimplementasikan modul Logistik Posko dan Hub Donasi Publik di Laravel 12.
+> Saya adalah Jeffry, Developer 4 - Logistics & Donation Specialist. Saya sedang mengimplementasikan modul Logistik Posko dan Hub Donasi Publik di Laravel 12.
 > Tolong buatkan komponen berikut:
 > 1. Buat `ShelterService` untuk memperbarui jumlah pengungsi aktif (`current_occupants`) dan status posko (active, full, closed).
 > 2. Buat `DonationService` untuk mengelola donasi barang logistik dari publik (tabel `donations`). Ketika donatur mengisi form kirim donasi, data bantuan disimpan berstatus 'pending'.
@@ -146,7 +146,7 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Darell (Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya sebagai Lead Developer sedang mengimplementasikan Portal Admin BPBD dan Manajemen Pintu Air di Laravel 12.
+> Saya adalah Darell, Lead Developer & PM. Saya sedang mengimplementasikan Portal Admin BPBD dan Manajemen Pintu Air di Laravel 12.
 > Tolong buatkan komponen berikut:
 > 1. Buat dashboard BPBD yang menampilkan statistik laporan genangan pending, verifikasi laporan genangan (mengubah status genangan warga dari 'pending' menjadi 'verified' atau 'rejected').
 > 2. Buat fitur input Tinggi Muka Air (TMA) pintu air (tabel `water_gates`). Saat petugas memperbarui data TMA, jika status bahaya sungai melewati ambang batas (contoh: naik dari Siaga 3 ke Siaga 2/1), kirim peringatan dini secara otomatis.
