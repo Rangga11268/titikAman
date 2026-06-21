@@ -6,18 +6,18 @@ Dokumen ini adalah rencana komprehensif, panduan arsitektur, dan instruksi promp
 
 ## 👥 1. Struktur Tim & Pembagian Modul Kerja
 
-Tim terdiri dari 5 orang dengan pembagian peran dan kepemilikan modul sebagai berikut:
+Tim terdiri dari 5 orang. Karena anggota tim merupakan non-coder yang sepenuhnya menggunakan bantuan AI Coding Assistant untuk menghasilkan kode, pembagian peran difokuskan pada tanggung jawab pembuatan berkas tampilan halaman (Blade View Templates) beserta seluruh kode logika/database pendukungnya:
 
-* **Darell (Lead Developer & Project Manager)**: 
-  - Penanggung jawab integrasi utama, keamanan, review PR, dan **Fase 5 (Portal Admin BPBD, TMA, & Peringatan Dini)**.
-* **Innes (Developer 1 - Database & Auth Specialist)**:
-  - Penanggung jawab **Fase 1 (Skema Database, Migrasi Alter, & Flow Autentikasi)**.
-* **Fatur (Developer 2 - GIS & Citizen Portal Specialist)**:
-  - Penanggung jawab **Fase 2 (Peta Leaflet.js, Laporan Banjir, & SOS)**.
-* **Januar (Developer 3 - Real-Time & Relawan Portal Specialist)**:
-  - Penanggung jawab **Fase 3 (Laravel Reverb, WebSockets, & Dashboard Relawan)**.
-* **Jeffry (Developer 4 - Logistics & Donation Hub Specialist)**:
-  - Penanggung jawab **Fase 4 (Logistik Posko & Hub Donasi Publik)**.
+* **Darell (Lead Developer & PM)**: 
+  - Penanggung jawab integrasi utama, review PR, dan **Fase 5 (Tampilan Portal Admin BPBD & Peringatan Dini TMA)**.
+* **Innes (Developer 1 - Tampilan Autentikasi & Registrasi)**:
+  - Penanggung jawab **Fase 1 (Tampilan Halaman Login, Pemilihan Peran, & Registrasi Warga)**.
+* **Fatur (Developer 2 - Tampilan Portal Warga & Peta Laporan)**:
+  - Penanggung jawab **Fase 2 (Tampilan Dashboard Warga, Peta Genangan Leaflet.js, & Form Laporan Banjir)**.
+* **Januar (Developer 3 - Tampilan Portal Relawan & Misi Penyelamatan)**:
+  - Penanggung jawab **Fase 3 (Tampilan Dashboard Relawan & WebSocket Notifikasi SOS)**.
+* **Jeffry (Developer 4 - Tampilan Kelola Posko & Hub Donasi)**:
+  - Penanggung jawab **Fase 4 (Tampilan Dashboard Pengelola Posko, Kebutuhan Logistik, & Halaman Donatur)**.
 
 ---
 
@@ -51,109 +51,107 @@ erDiagram
 
 ## 📅 3. Panduan Implementasi per Fase & AI Prompts
 
-Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat menyalin prompt tersebut untuk diinput ke AI coding assistant mereka guna menghasilkan kode yang sesuai dengan standar proyek.
-
----
-
-### 🌐 Fase 1: Fondasi, Layout Utama, & Flow Autentikasi
-*   **Penanggung Jawab**: Innes (Developer 1 - DB & Auth Specialist)
+Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat menyalin prompt tersebut untuk diinput ke AI coding assistant mereka guna menghasilkan kode yang sesuai dengan standar p### 🌐 Fase 1: Halaman Autentikasi & Registrasi (Blade & DB Alter)
+*   **Penanggung Jawab**: Innes (Developer 1 - Tampilan Autentikasi & Registrasi)
 *   **Sinkronisasi Figma**: Login (`211:271`), Register Step 1 (`82:156`), Register Warga (`82:329`)
 *   **Aset Figma Lokal**: `logo-titikaman.png`, `watermark-shield.png`, `role-warga.svg`, `role-relawan.svg`, `role-pengelola.svg`, `role-admin.svg`, `input-email.svg`, `input-password.svg`, `eye-toggle.svg`, `arrow-right-submit.svg`, `bullet-check.svg`, `shield-security.svg`, `input-user.svg`, `input-phone.svg`, `info-verification.svg`, `chevron-down.svg`, `back-arrow.svg`, `next-arrow.svg`.
 
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Innes (Developer 1 - Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya adalah Innes, Developer 1 - Database & Auth Specialist. Saya sedang membangun proyek Laravel 12 bernama TitikAman tanpa Laravel Breeze.
-> Tolong buatkan kode untuk Fase 1 Autentikasi dengan spesifikasi berikut:
-> 1. Buat migration baru untuk menambahkan kolom `kecamatan` dan `kelurahan` (keduanya string, nullable) ke tabel `users` setelah kolom `role`.
-> 2. Perbarui `$fillable` di model `User` agar menyertakan `kecamatan` dan `kelurahan`.
-> 3. Buat `app/Http/Requests/RegisterRequest.php` untuk memvalidasi: fullname, phone (unique), email (nullable, unique), password (min 8), kecamatan, kelurahan, dan persetujuan syarat ketentuan.
-> 4. Buat `AuthController` dengan method:
->    - `showLogin`: menampilkan view 'auth.login'
->    - `login`: menangani login menggunakan input ganda 'login_id' (bisa email atau nomor HP) dan 'password'.
->    - `showRegisterStep1`: menampilkan halaman pemilihan peran 'auth.register-step1'.
->    - `showRegisterStep2Warga`: menampilkan form pengisian data diri warga 'auth.register-step2-warga'.
->    - `registerWarga`: memproses input dari RegisterRequest, menyimpan user dengan role 'Warga', dan melakukan auto-login.
->    - `logout`: menghapus session dan logout.
-> 5. Definisikan rute login, register.step1, register.step2.warga, dan logout di web.php menggunakan middleware guest/auth yang sesuai.
->
-> Tulis kode yang rapi, modular, aman, dan patuhi konvensi penamaan Laravel.
+> Saya adalah Innes, Developer 1. Saya tidak bisa coding dan sedang membangun proyek Laravel 12 bernama TitikAman tanpa Laravel Breeze menggunakan CSS murni (tanpa Tailwind).
+> Tolong buatkan seluruh file tampilan (Blade Views) beserta seluruh berkas controller, request, rute, dan migrasi database pendukung berikut secara lengkap agar saya tinggal menyimpannya dan langsung jalan:
+> 1. File `resources/views/layouts/app.blade.php`: Halaman kerangka layout utama dengan styling CSS modern, premium, dan responsif.
+> 2. File `resources/views/auth/login.blade.php` (Halaman Login - Figma Node 211:271): Tampilan form login ganda dengan input email atau nomor HP, password, tombol toggle tampilkan/sembunyikan password, dan desain premium sesuai aset figma yang disediakan di proyek.
+> 3. File `resources/views/auth/register-step1.blade.php` (Halaman Pilih Peran - Figma Node 82:156): Pilihan opsi pendaftaran peran Warga, Relawan, Pengelola Posko, dan Admin BPBD dengan desain visual kartu grid yang intuitif.
+> 4. File `resources/views/auth/register-step2-warga.blade.php` (Halaman Form Registrasi Warga - Figma Node 82:329): Formulir data diri warga lengkap dengan input Nama Lengkap, No. HP, Password, Kecamatan, Kelurahan, serta checkbox Persetujuan Syarat & Ketentuan.
+> 5. Logika Backend Pendukung:
+>    - Migration untuk menambah kolom string `kecamatan` dan `kelurahan` (nullable) ke tabel `users`.
+>    - `app/Http/Requests/RegisterRequest.php` untuk validasi form registrasi warga.
+>    - `AuthController` untuk menangani login ganda (email/HP), menampilkan view-view di atas, memproses registrasi warga, auto-login, dan logout.
+>    - Rute web.php yang sesuai dengan middleware guest/auth.
+> 
+> Tuliskan kode untuk setiap file secara utuh dan lengkap agar saya tinggal menyalinnya langsung ke dalam folder proyek saya tanpa perlu menulis kode tambahan.
 > ```
 
----
-
-### 🗺️ Fase 2: Portal Warga (SOS, Laporan Genangan, & Peta Evakuasi)
-*   **Penanggung Jawab**: Fatur (Developer 2 - GIS & Citizen Portal Specialist)
+### 🗺️ Fase 2: Tampilan Portal Warga (Peta & Laporan Genangan)
+*   **Penanggung Jawab**: Fatur (Developer 2 - Tampilan Portal Warga & Peta Laporan)
 *   **Sinkronisasi Figma**: Sinyal SOS (`190:2`), Form Lapor Banjir (`163:1375`), Peta Evakuasi (`174:2`)
 
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Fatur (Developer 2 - Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya adalah Fatur, Developer 2 - GIS & Citizen Portal Specialist. Saya sedang mengimplementasikan modul GIS dan Portal Warga di Laravel 12 menggunakan Leaflet.js (tanpa Tailwind/Breeze, gunakan CSS murni).
-> Tolong buatkan komponen berikut dengan arsitektur Service-Repository:
-> 1. Buat `SosRepository` dan `SosService` untuk menyimpan sinyal SOS ke tabel `sos_requests`. Level prioritas harus diset otomatis menjadi 'high' jika `vulnerable_groups_count` (lansia/balita/ibu hamil) lebih besar dari 0, dan 'low' jika 0.
-> 2. Buat `FloodReportRepository` dan `FloodReportService` untuk menyimpan laporan warga ke tabel `flood_reports`. Laporan ini harus menampung upload foto genangan banjir (maksimal 5MB, format gambar). Buat validasi koordinat GPS di Form Request: latitude antara -90 dan 90, serta longitude antara -180 dan 180.
-> 3. Buat rute-rute endpoint untuk Warga (role: Warga) di `web.php` di bawah prefix 'warga' dengan middleware auth.
-> 4. Tulis file JS eksternal modular untuk inisialisasi peta Leaflet.js dengan basemap 'CartoDB Voyager'. Peta harus memetakan marker koordinat genangan terverifikasi (status: verified) dan posko pengungsian aktif.
->
-> Pastikan controller tetap tipis (thin controller) dan semua logika penentuan prioritas dan upload file didelegasikan ke Service Class.
+> Saya adalah Fatur, Developer 2. Saya tidak bisa coding dan sedang mengimplementasikan modul GIS Portal Warga di Laravel 12 menggunakan Leaflet.js dengan CSS murni (tanpa Tailwind).
+> Tolong buatkan seluruh file tampilan (Blade Views) beserta controller, service, repository, dan rute pendukung berikut secara lengkap agar saya tinggal menyimpannya dan langsung jalan:
+> 1. File `resources/views/warga/dashboard.blade.php` (Dashboard Warga - Figma Node 190:2 & 174:2): Berisi peta Leaflet.js dengan basemap 'CartoDB Voyager' yang memetakan marker laporan genangan terverifikasi (status verified) dan posko pengungsian aktif. Sediakan juga tombol mengambang merah mencolok "KIRIM SINYAL SOS".
+> 2. File `resources/views/warga/lapor-banjir.blade.php` (Form Lapor Banjir - Figma Node 163:1375): Formulir untuk warga melaporkan banjir yang mencakup input tinggi air (cm), nama jalan, koordinat GPS (latitude/longitude otomatis didapat dari geolocation browser), dan upload foto bukti genangan (maksimal 5MB).
+> 3. Logika Backend Pendukung:
+>    - `SosRepository` & `SosService` untuk menyimpan sinyal SOS ke tabel `sos_requests` (prioritas high otomatis di-set jika ada kelompok rentan seperti lansia/balita/ibu hamil > 0, sisanya low).
+>    - `FloodReportRepository` & `FloodReportService` untuk menyimpan laporan banjir beserta upload foto ke storage.
+>    - Endpoint API/Controller untuk menyajikan data marker JSON (laporan banjir verified & posko pengungsian aktif) untuk ditampilkan di peta.
+>    - Rute-rute di bawah prefix 'warga' dengan middleware auth di `routes/web.php`.
+> 
+> Tuliskan kode untuk setiap file secara utuh dan lengkap agar saya tinggal menyalinnya langsung ke dalam folder proyek saya tanpa perlu menulis kode tambahan.
 > ```
 
----
-
-### 🚨 Fase 3: Portal Relawan (Misi Evakuasi & Koordinasi Real-Time)
-*   **Penanggung Jawab**: Januar (Developer 3 - Real-Time & Relawan Specialist)
+### 🚨 Fase 3: Tampilan Portal Relawan (Misi Evakuasi & WebSocket Real-Time)
+*   **Penanggung Jawab**: Januar (Developer 3 - Tampilan Portal Relawan & Misi Penyelamatan)
 *   **Sinkronisasi Figma**: Dashboard Relawan (`163:2528`)
 
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Januar (Developer 3 - Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya adalah Januar, Developer 3 - Real-Time & Relawan Specialist. Saya sedang mengimplementasikan modul Relawan dan fitur Real-Time menggunakan Laravel Reverb dan WebSocket di Laravel 12.
-> Tolong buatkan komponen berikut:
-> 1. Buat `RescueMissionService` dan `RescueMissionRepository` untuk mengelola misi penyelamatan pada tabel `rescue_missions`.
-> 2. Buat Event `SosDispatched` yang mengimplementasikan `ShouldBroadcast` agar data SOS baru langsung terkirim secara real-time via WebSocket ke channel `disaster.{kecamatan_slug}`.
-> 3. Buat logic di Controller/Service di mana saat relawan menerima misi, status SOS di tabel `sos_requests` berubah menjadi 'assigned' dan ketika misi selesai berubah menjadi 'completed' dengan mengisi kolom `resolved_at`.
-> 4. Buat halaman dashboard relawan yang menampilkan peta Leaflet.js berisi marker posisi korban SOS yang berstatus 'waiting'. Sediakan tombol "Terima Misi" dan "Evakuasi Selesai" yang melakukan pembaruan status via AJAX/Fetch API.
->
-> Patuhi aturan AGENT.md: jangan gunakan emoji OS, gunakan Lucide Icons, dan pastikan listener WebSocket diinisialisasi dengan bersih.
+> Saya adalah Januar, Developer 3. Saya tidak bisa coding dan sedang mengimplementasikan modul Relawan dan fitur Real-Time menggunakan Laravel Reverb dan WebSocket di Laravel 12 dengan CSS murni (tanpa Tailwind).
+> Tolong buatkan seluruh file tampilan (Blade Views) beserta controller, service, event broadcast, dan rute pendukung berikut secara lengkap agar saya tinggal menyimpannya dan langsung jalan:
+> 1. File `resources/views/relawan/dashboard.blade.php` (Dashboard Relawan - Figma Node 163:2528): Halaman yang menampilkan peta Leaflet.js berisi marker posisi koordinat SOS korban berstatus 'waiting' secara real-time. Sediakan tombol aksi "Terima Misi" dan "Evakuasi Selesai" di dalam pop-up marker atau panel navigasi samping.
+> 2. Logika Real-Time & Backend Pendukung:
+>    - Integrasikan Laravel Reverb. Buatkan Event `SosDispatched` yang mengimplementasikan `ShouldBroadcast` agar data SOS baru langsung dikirim secara real-time via WebSocket ke channel `disaster.{kecamatan_slug}`.
+>    - Buat `RescueMissionService` & `RescueMissionRepository` untuk mengelola data di tabel `rescue_missions`. Saat relawan menerima misi, ubah status SOS korban menjadi 'assigned', dan ketika selesai ubah menjadi 'completed' dengan mengisi kolom `resolved_at`.
+>    - Sediakan endpoint AJAX/Fetch API untuk memproses perubahan status tersebut secara asinkron tanpa reload halaman.
+>    - Rute-rute relawan dengan middleware auth di `routes/web.php`.
+> 
+> Tuliskan kode untuk setiap file secara utuh dan lengkap agar saya tinggal menyalinnya langsung ke dalam folder proyek saya tanpa perlu menulis kode tambahan.
 > ```
 
----
-
-### 📦 Fase 4: Portal Pengelola Posko & Donasi Hub (Logistik & Sanitasi)
-*   **Penanggung Jawab**: Jeffry (Developer 4 - Logistics & Donation Specialist)
+### 📦 Fase 4: Tampilan Kelola Posko & Hub Donasi (Logistik & Sanitasi)
+*   **Penanggung Jawab**: Jeffry (Developer 4 - Tampilan Kelola Posko & Hub Donasi)
 *   **Sinkronisasi Figma**: Kelola Kebutuhan (`163:2917`), Hub Donasi (`186:2`), Posko Pengungsian (`187:2`)
 
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Jeffry (Developer 4 - Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya adalah Jeffry, Developer 4 - Logistics & Donation Specialist. Saya sedang mengimplementasikan modul Logistik Posko dan Hub Donasi Publik di Laravel 12.
-> Tolong buatkan komponen berikut:
-> 1. Buat `ShelterService` untuk memperbarui jumlah pengungsi aktif (`current_occupants`) dan status posko (active, full, closed).
-> 2. Buat `DonationService` untuk mengelola donasi barang logistik dari publik (tabel `donations`). Ketika donatur mengisi form kirim donasi, data bantuan disimpan berstatus 'pending'.
-> 3. Buat Job `CompressDonationImageJob` yang didelegasikan ke Laravel queue untuk memproses dan mengompres foto bukti pengiriman donasi yang diunggah donatur sebelum disimpan ke storage.
-> 4. Buat logic di mana saat pengelola posko memverifikasi bantuan fisik yang datang (mengubah status donasi menjadi 'delivered'), sistem otomatis menambahkan jumlah barang tersebut ke kolom `quantity_fulfilled` pada tabel `shelter_needs` yang berelasi.
->
-> Tulis kode dengan menerapkan validasi Form Request yang ketat dan pisahkan logika donasi ke dalam service class yang modular.
+> Saya adalah Jeffry, Developer 4. Saya tidak bisa coding dan sedang mengimplementasikan modul Logistik Posko dan Hub Donasi Publik di Laravel 12 menggunakan CSS murni (tanpa Tailwind).
+> Tolong buatkan seluruh file tampilan (Blade Views) beserta controller, service, queue job, dan rute pendukung berikut secara lengkap agar saya tinggal menyimpannya dan langsung jalan:
+> 1. File `resources/views/pengelola/dashboard.blade.php` (Dashboard Kelola Posko - Figma Node 163:2917 & 187:2): Halaman untuk pengelola posko memperbarui jumlah pengungsi aktif (`current_occupants`), mengubah status posko (active, full, closed), serta daftar status pemenuhan barang kebutuhan posko.
+> 2. File `resources/views/donasi/hub.blade.php` (Portal Hub Donasi Publik - Figma Node 186:2): Halaman publik yang menampilkan daftar kebutuhan mendesak di setiap posko dan formulir donasi barang bagi masyarakat (menyertakan input jumlah barang, nomor resi pengiriman opsional, dan unggah foto bukti kirim donasi).
+> 3. Logika Backend Pendukung:
+>    - `ShelterService` untuk pembaruan status posko dan kapasitas pengungsi.
+>    - `DonationService` untuk mencatat transaksi donasi (status awal 'pending').
+>    - Queue Job `CompressDonationImageJob` untuk memproses kompresi gambar bukti donasi di background queue.
+>    - Logika bisnis otomatis: saat pengelola posko menyetujui kedatangan barang (mengubah status donasi jadi 'delivered'), otomatis tambahkan jumlah tersebut ke kolom `quantity_fulfilled` di tabel `shelter_needs`.
+>    - Rute-rute terkait di `routes/web.php`.
+> 
+> Tuliskan kode untuk setiap file secara utuh dan lengkap agar saya tinggal menyalinnya langsung ke dalam folder proyek saya tanpa perlu menulis kode tambahan.
 > ```
 
----
-
-### 📊 Fase 5: Portal Admin BPBD, Pemantauan TMA, & Dashboard Analitik
-*   **Penanggung Jawab**: Darell (Lead Developer & PM)
+### 📊 Fase 5: Tampilan Portal Admin BPBD & Pemantauan Tinggi Air
+*   **Penanggung Jawab**: Darell (Lead Developer & PM - Tampilan Portal Admin BPBD & Peringatan Dini TMA)
 *   **Sinkronisasi Figma**: Kelola Laporan Admin (`163:2189`), Data Pintu Air (`163:3941`)
 
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Darell (Copy-Paste ke AI Coder Anda):**
 > ```text
-> Saya adalah Darell, Lead Developer & PM. Saya sedang mengimplementasikan Portal Admin BPBD dan Manajemen Pintu Air di Laravel 12.
-> Tolong buatkan komponen berikut:
-> 1. Buat dashboard BPBD yang menampilkan statistik laporan genangan pending, verifikasi laporan genangan (mengubah status genangan warga dari 'pending' menjadi 'verified' atau 'rejected').
-> 2. Buat fitur input Tinggi Muka Air (TMA) pintu air (tabel `water_gates`). Saat petugas memperbarui data TMA, jika status bahaya sungai melewati ambang batas (contoh: naik dari Siaga 3 ke Siaga 2/1), kirim peringatan dini secara otomatis.
-> 3. Peringatan dini dijalankan via Laravel Event & Listener `TmaThresholdExceeded` yang akan men-dispatch background Job untuk mengirimkan push notification/SMS/WhatsApp broadcast kepada seluruh pengguna (warga) yang memiliki kecocokan domisili `kecamatan` atau `kelurahan` dengan aliran sungai pintu air tersebut.
-> 4. Buat export data laporan banjir ke format Excel/PDF menggunakan Laravel Queue Job agar tidak membebani performa request.
->
-> Pastikan sistem otorisasi menggunakan Policy/Gate Laravel sesuai role 'Admin_BPBD'.
+> Saya adalah Darell, Lead Developer & PM. Saya sedang mengimplementasikan Portal Admin BPBD dan Manajemen Pintu Air di Laravel 12 menggunakan CSS murni (tanpa Tailwind).
+> Tolong buatkan seluruh file tampilan (Blade Views) beserta controller, event listener, queue job, dan rute pendukung berikut secara lengkap agar saya tinggal menyimpannya dan langsung jalan:
+> 1. File `resources/views/admin/dashboard.blade.php` (Halaman Kelola Laporan Admin - Figma Node 163:2189): Dashboard analitik BPBD yang menampilkan statistik laporan banjir warga, daftar laporan masuk, dan tombol verifikasi/penolakan (status pending, verified, rejected).
+> 2. File `resources/views/admin/pintu-air.blade.php` (Halaman Data Pintu Air & TMA - Figma Node 163:3941): Halaman untuk memantau status tinggi muka air sungai pintu air kota Bekasi serta form input pembaruan data Tinggi Muka Air (TMA) pintu air.
+> 3. Logika Backend Pendukung:
+>    - Logika otomatisasi: saat TMA diupdate oleh petugas dan statusnya naik (misal dari Normal ke Siaga 2/1), sistem men-dispatch event & listener `TmaThresholdExceeded` yang menjalankan background Job untuk mengirimkan simulasi push notification/SMS kepada warga yang tinggal di kelurahan/kecamatan yang sama dengan aliran pintu air tersebut.
+>    - Fitur export data rekapitulasi laporan banjir warga ke format Excel/PDF menggunakan Laravel Queue Job di background.
+>    - Konfigurasi Policy/Gate Laravel sesuai role 'Admin_BPBD' untuk mengamankan akses URL admin BPBD.
+>    - Rute-rute admin terkait di `routes/web.php`.
+> 
+> Tuliskan kode untuk setiap file secara utuh dan lengkap agar saya tinggal menyalinnya langsung ke dalam folder proyek saya tanpa perlu menulis kode tambahan.
 > ```
 
 ---
