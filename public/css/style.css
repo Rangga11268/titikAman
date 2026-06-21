@@ -146,7 +146,8 @@ body {
     color: rgba(255, 255, 255, 0.9);
 }
 
-.badge-official i {
+.badge-official i,
+.badge-official svg {
     width: 14px;
     height: 14px;
 }
@@ -281,7 +282,8 @@ body {
     color: var(--color-text-blue-muted);
 }
 
-.info-item i {
+.info-item i,
+.info-item svg {
     width: 16px;
     height: 16px;
     color: var(--color-brand-teal);
@@ -361,7 +363,8 @@ body {
     width: 100%;
 }
 
-.input-wrapper i {
+.input-wrapper > i,
+.input-wrapper > svg {
     position: absolute;
     left: 16px;
     top: 50%;
@@ -404,10 +407,20 @@ body {
     border: none;
     cursor: pointer;
     color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
 }
 
 .password-toggle:hover {
     color: var(--color-neutral-dark);
+}
+
+.password-toggle i,
+.password-toggle svg {
+    width: 18px;
+    height: 18px;
 }
 
 .form-input-info {
@@ -420,7 +433,8 @@ body {
     margin-top: 4px;
 }
 
-.form-input-info i {
+.form-input-info i,
+.form-input-info svg {
     width: 13px;
     height: 13px;
 }
@@ -485,6 +499,13 @@ body {
     gap: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+}
+
+.btn i,
+.btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
 .btn-primary {
@@ -563,7 +584,8 @@ body {
     justify-content: center;
 }
 
-.role-icon-box i {
+.role-icon-box i,
+.role-icon-box svg {
     width: 24px;
     height: 24px;
 }
