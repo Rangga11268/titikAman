@@ -25,10 +25,10 @@ Agar pengerjaan terpantau rapi dan formalitas bootcamp terpenuhi dengan baik:
 
 ### 1. Innes (Developer 1 - Tampilan Autentikasi & Registrasi Warga)
 * **Tanggung Jawab Halaman**:
-  * `resources/views/layouts/app.blade.php` (Kerangka layout utama/wrapper CSS)
-  * `resources/views/auth/login.blade.php` (Form Login ganda: email/nomor HP - Figma Node `211:271`)
-  * `resources/views/auth/register-step1.blade.php` (Halaman pemilihan peran user - Figma Node `82:156`)
-  * `resources/views/auth/register-step2-warga.blade.php` (Form pengisian data diri warga - Figma Node `82:329`)
+  * `resources/views/layouts/app.blade.php` (Kerangka layout utama / CSS wrapper global).
+  * `resources/views/auth/login.blade.php` (**Halaman Login Utama** - Figma Node `211:271`): Tampilan form masuk satu pintu untuk seluruh role, memiliki input ganda (email atau nomor HP), password dengan ikon mata toggle, dan logo TitikAman di bagian atas dengan watermark perisai.
+  * `resources/views/auth/register-step1.blade.php` (**Halaman Pilih Peran** - Figma Node `82:156`): Tampilan pemilihan 4 peran pendaftaran (Warga, Relawan, Pengelola Posko, Admin BPBD) yang digambarkan dalam bentuk kartu pilihan grid berwarna biru dengan ilustrasi ikon di dalamnya.
+  * `resources/views/auth/register-step2-warga.blade.php` (**Form Data Warga** - Figma Node `82:329`): Formulir pengisian data diri warga Bekasi yang mencakup input Nama Lengkap, Nomor HP, Password, Pilihan Kecamatan, Pilihan Kelurahan, dan checkbox persetujuan syarat ketentuan.
 
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Innes (Tinggal Copy-Paste ke AI Coder Anda):**
@@ -47,8 +47,8 @@ Agar pengerjaan terpantau rapi dan formalitas bootcamp terpenuhi dengan baik:
 
 ### 2. Fatur (Developer 2 - Tampilan Portal Warga & Peta Laporan)
 * **Tanggung Jawab Halaman**:
-  * `resources/views/warga/dashboard.blade.php` (Dashboard Warga & Peta Genangan Leaflet.js - Figma Node `190:2` / `174:2`)
-  * `resources/views/warga/lapor-banjir.blade.php` (Form Lapor Genangan Banjir - Figma Node `163:1375`)
+  * `resources/views/warga/dashboard.blade.php` (**Dashboard Warga & Peta Utama** - Figma Node `190:2` / `174:2`): Tampilan peta interaktif Leaflet.js yang menunjukkan marker genangan terverifikasi dan posko aktif. Memiliki tombol mengambang merah besar "KIRIM SINYAL SOS" dan panel samping pemantauan status bahaya aliran sungai.
+  * `resources/views/warga/lapor-banjir.blade.php` (**Form Lapor Genangan Warga** - Figma Node `163:1375`): Tampilan form pelaporan banjir dengan input tinggi genangan (cm), nama jalan/lokasi, koordinat latitude/longitude, dan unggahan foto bukti genangan air.
 
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Fatur (Tinggal Copy-Paste ke AI Coder Anda):**
@@ -65,7 +65,7 @@ Agar pengerjaan terpantau rapi dan formalitas bootcamp terpenuhi dengan baik:
 
 ### 3. Januar (Developer 3 - Tampilan Portal Relawan & Evakuasi SOS)
 * **Tanggung Jawab Halaman**:
-  * `resources/views/relawan/dashboard.blade.php` (Dashboard Relawan & Peta Evakuasi Misi - Figma Node `163:2528`)
+  * `resources/views/relawan/dashboard.blade.php` (**Dashboard Misi Relawan** - Figma Node `163:2528`): Tampilan peta pelacakan misi penyelamatan relawan. Menampilkan sebaran marker koordinat warga yang menekan tombol SOS (status waiting). Memiliki daftar misi evakuasi aktif beserta tombol aksi "Terima Misi" dan "Evakuasi Selesai".
 
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Januar (Tinggal Copy-Paste ke AI Coder Anda):**
@@ -81,8 +81,8 @@ Agar pengerjaan terpantau rapi dan formalitas bootcamp terpenuhi dengan baik:
 
 ### 4. Jeffry (Developer 4 - Tampilan Kelola Posko & Hub Donasi)
 * **Tanggung Jawab Halaman**:
-  * `resources/views/pengelola/dashboard.blade.php` (Dashboard Pengelola Posko - Figma Node `163:2917` & `187:2`)
-  * `resources/views/donasi/hub.blade.php` (Portal Hub Donasi Publik - Figma Node `186:2`)
+  * `resources/views/pengelola/dashboard.blade.php` (**Dashboard Kelola Posko & Kebutuhan** - Figma Node `163:2917` & `187:2`): Halaman posko yang menampilkan kapasitas posko, input jumlah pengungsi aktif, status posko (aktif/penuh/tutup), serta daftar kebutuhan barang logistik posko beserta tingkat urgensinya (low, medium, high).
+  * `resources/views/donasi/hub.blade.php` (**Portal Hub Donasi Publik** - Figma Node `186:2`): Halaman publik yang menampilkan rekap kebutuhan posko dan formulir sumbangan barang untuk donatur (input barang, resi pengiriman, upload foto bukti pengiriman).
 
 > [!IMPORTANT]
 > **🤖 AI Prompt untuk Jeffry (Tinggal Copy-Paste ke AI Coder Anda):**
