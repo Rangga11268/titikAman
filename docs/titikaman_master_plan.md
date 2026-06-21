@@ -162,10 +162,11 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 
 Semua developer dan AI Coding Assistant wajib mematuhi aturan berikut selama menulis kode program:
 
-1.  **Arsitektur Service-Repository**:
-    - **Controller** hanya bertugas menerima request, memanggil service, dan mengembalikan view/response.
+1.  **Arsitektur Service-Repository & Clean Code**:
+    - **Controller** hanya bertugas menerima request, memanggil service, dan mengembalikan view/response (thin controller).
     - **Service Class** mengolah logika bisnis (misal: perhitungan prioritas, upload file, trigger event).
     - **Repository Class** mengolah interaksi database (Eloquent query, update, create).
+    - **Pemisahan File (Modularization)**: Kode wajib bersih (Clean Code) dan terstruktur. Jika file (Controller, Service, Helper, dll.) dirasa sudah terlalu panjang atau memiliki banyak tanggung jawab (*violating Single Responsibility Principle*), **WAJIB** pecah kode tersebut ke dalam file terpisah (seperti membuat Service baru, kustom repository, helper class, atau trait).
 2.  **Validasi Input**:
     - Dilarang keras menggunakan `$request->validate()` di dalam controller.
     - Seluruh form input wajib menggunakan **Form Request** terpisah (di bawah folder `app/Http/Requests`).
@@ -174,5 +175,8 @@ Semua developer dan AI Coding Assistant wajib mematuhi aturan berikut selama men
     - Gunakan Google Fonts (Inter, Plus Jakarta Sans, Poppins) dalam tag HTML.
 4.  **Keamanan Otorisasi**:
     - Cek hak akses menggunakan **Laravel Policy & Gate**. Jangan melakukan cek manual hard-code role di controller (`if (auth()->user()->role === 'admin')`).
-5.  **Pengujian Otomatis (Testing)**:
-    - Setiap fitur baru wajib dilengkapi dengan Feature Test yang memvalidasi request & response database. Gunakan trait `RefreshDatabase` saat testing.
+5.  **Pengujian Otomatis (Testing) & Kebijakan Git**:
+    - Setiap fitur baru wajib dilengkapi dengan Feature/Unit Test yang memvalidasi database dan alur program.
+    - **DILARANG KERAS** melakukan `git push` ke GitHub apabila pengujian (test suite) belum berhasil lolos sepenuhnya (*pass*). Jalankan pengujian secara lokal terlebih dahulu sebelum push.
+6.  **Konvensi Pesan Commit**:
+    - Setiap commit wajib mematuhi panduan pesan commit yang tertuang pada **[docs/COMMIT_CONVENTION.md](file:///d:/laragon/www/titikAman/docs/COMMIT_CONVENTION.md)**. Pastikan tipe dan scope ditulis secara konsisten.
