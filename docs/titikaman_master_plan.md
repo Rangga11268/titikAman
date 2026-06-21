@@ -9,14 +9,14 @@ Dokumen ini adalah rencana komprehensif, panduan arsitektur, dan instruksi promp
 Tim terdiri dari 5 orang dengan pembagian peran dan kepemilikan modul sebagai berikut:
 
 * **Darell (Lead Developer & Project Manager)**: 
-  - Penanggung jawab integrasi utama, keamanan, dan **Fase 5 (Portal Admin BPBD & TMA)**.
-* **Developer 1 (Database & Auth Specialist)**:
+  - Penanggung jawab integrasi utama, keamanan, review PR, dan **Fase 5 (Portal Admin BPBD, TMA, & Peringatan Dini)**.
+* **Innes (Developer 1 - Database & Auth Specialist)**:
   - Penanggung jawab **Fase 1 (Skema Database, Migrasi Alter, & Flow Autentikasi)**.
-* **Developer 2 (GIS & Citizen Portal Specialist)**:
+* **Fatur (Developer 2 - GIS & Citizen Portal Specialist)**:
   - Penanggung jawab **Fase 2 (Peta Leaflet.js, Laporan Banjir, & SOS)**.
-* **Developer 3 (Real-Time & Relawan Portal Specialist)**:
+* **Januar (Developer 3 - Real-Time & Relawan Portal Specialist)**:
   - Penanggung jawab **Fase 3 (Laravel Reverb, WebSockets, & Dashboard Relawan)**.
-* **Developer 4 (Logistics & Donation Hub Specialist)**:
+* **Jeffry (Developer 4 - Logistics & Donation Hub Specialist)**:
   - Penanggung jawab **Fase 4 (Logistik Posko & Hub Donasi Publik)**.
 
 ---
@@ -56,12 +56,12 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 ---
 
 ### 🌐 Fase 1: Fondasi, Layout Utama, & Flow Autentikasi
-*   **Penanggung Jawab**: Developer 1 (DB & Auth Specialist)
+*   **Penanggung Jawab**: Innes (Developer 1 - DB & Auth Specialist)
 *   **Sinkronisasi Figma**: Login (`211:271`), Register Step 1 (`82:156`), Register Warga (`82:329`)
 *   **Aset Figma Lokal**: `logo-titikaman.png`, `watermark-shield.png`, `role-warga.svg`, `role-relawan.svg`, `role-pengelola.svg`, `role-admin.svg`, `input-email.svg`, `input-password.svg`, `eye-toggle.svg`, `arrow-right-submit.svg`, `bullet-check.svg`, `shield-security.svg`, `input-user.svg`, `input-phone.svg`, `info-verification.svg`, `chevron-down.svg`, `back-arrow.svg`, `next-arrow.svg`.
 
 > [!IMPORTANT]
-> **🤖 AI Prompt untuk Developer 1 (Copy-Paste ke AI Coder Anda):**
+> **🤖 AI Prompt untuk Innes (Developer 1 - Copy-Paste ke AI Coder Anda):**
 > ```text
 > Saya sedang membangun proyek Laravel 12 bernama TitikAman tanpa Laravel Breeze.
 > Tolong buatkan kode untuk Fase 1 Autentikasi dengan spesifikasi berikut:
@@ -83,11 +83,11 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 ---
 
 ### 🗺️ Fase 2: Portal Warga (SOS, Laporan Genangan, & Peta Evakuasi)
-*   **Penanggung Jawab**: Developer 2 (GIS & Citizen Portal Specialist)
+*   **Penanggung Jawab**: Fatur (Developer 2 - GIS & Citizen Portal Specialist)
 *   **Sinkronisasi Figma**: Sinyal SOS (`190:2`), Form Lapor Banjir (`163:1375`), Peta Evakuasi (`174:2`)
 
 > [!IMPORTANT]
-> **🤖 AI Prompt untuk Developer 2 (Copy-Paste ke AI Coder Anda):**
+> **🤖 AI Prompt untuk Fatur (Developer 2 - Copy-Paste ke AI Coder Anda):**
 > ```text
 > Saya sedang mengimplementasikan modul GIS dan Portal Warga di Laravel 12 menggunakan Leaflet.js (tanpa Tailwind/Breeze, gunakan CSS murni).
 > Tolong buatkan komponen berikut dengan arsitektur Service-Repository:
@@ -102,11 +102,11 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 ---
 
 ### 🚨 Fase 3: Portal Relawan (Misi Evakuasi & Koordinasi Real-Time)
-*   **Penanggung Jawab**: Developer 3 (Real-Time & Relawan Specialist)
+*   **Penanggung Jawab**: Januar (Developer 3 - Real-Time & Relawan Specialist)
 *   **Sinkronisasi Figma**: Dashboard Relawan (`163:2528`)
 
 > [!IMPORTANT]
-> **🤖 AI Prompt untuk Developer 3 (Copy-Paste ke AI Coder Anda):**
+> **🤖 AI Prompt untuk Januar (Developer 3 - Copy-Paste ke AI Coder Anda):**
 > ```text
 > Saya sedang mengimplementasikan modul Relawan dan fitur Real-Time menggunakan Laravel Reverb dan WebSocket di Laravel 12.
 > Tolong buatkan komponen berikut:
@@ -121,11 +121,11 @@ Setiap fase di bawah dilengkapi dengan **AI Prompt** khusus. Developer dapat men
 ---
 
 ### 📦 Fase 4: Portal Pengelola Posko & Donasi Hub (Logistik & Sanitasi)
-*   **Penanggung Jawab**: Developer 4 (Logistics & Donation Specialist)
+*   **Penanggung Jawab**: Jeffry (Developer 4 - Logistics & Donation Specialist)
 *   **Sinkronisasi Figma**: Kelola Kebutuhan (`163:2917`), Hub Donasi (`186:2`), Posko Pengungsian (`187:2`)
 
 > [!IMPORTANT]
-> **🤖 AI Prompt untuk Developer 4 (Copy-Paste ke AI Coder Anda):**
+> **🤖 AI Prompt untuk Jeffry (Developer 4 - Copy-Paste ke AI Coder Anda):**
 > ```text
 > Saya sedang mengimplementasikan modul Logistik Posko dan Hub Donasi Publik di Laravel 12.
 > Tolong buatkan komponen berikut:
