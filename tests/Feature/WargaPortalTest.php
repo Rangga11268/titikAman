@@ -145,4 +145,36 @@ class WargaPortalTest extends TestCase
             'priority_level' => 'medium',
         ]);
     }
+
+    /**
+     * Test citizen can access the dedicated SOS page.
+     */
+    public function test_warga_can_access_sos_page(): void
+    {
+        $response = $this->actingAs($this->wargaUser)->get(route('warga.sos'));
+        $response->assertStatus(200);
+        $response->assertViewIs('warga.sos');
+        $response->assertViewHas('activeSos', null);
+    }
+
+    /**
+     * Test citizen SOS page shows active SOS details.
+     */
+    public function test_warga_sos_page_displays_active_sos(): void
+    {
+        $sos = SosRequest::create([
+            'user_id' => $this->wargaUser->user_id,
+            'latitude' => -6.2349,
+            'longitude' => 106.9994,
+            'people_trapped' => 2,
+            'vulnerable_groups_count' => 0,
+            'priority_level' => 'low',
+            'status' => 'waiting',
+        ]);
+
+        $response = $this->actingAs($this->wargaUser)->get(route('warga.sos'));
+        $response->assertStatus(200);
+        $response->assertViewHas('activeSos');
+        $response->assertSee('Sinyal SOS Sedang Aktif');
+    }
 }

@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Create Citizen User
-        $user = User::create([
+        // 1. Create Users for all 4 roles
+        $warga = User::create([
             'fullname' => 'Warga Test',
             'email' => 'warga@example.com',
             'phone' => '081234567890',
@@ -25,6 +25,36 @@ class DatabaseSeeder extends Seeder
             'role' => 'Warga',
             'kecamatan' => 'Bekasi Timur',
             'kelurahan' => 'Margahayu',
+        ]);
+
+        $relawan = User::create([
+            'fullname' => 'Relawan Test',
+            'email' => 'relawan@example.com',
+            'phone' => '081299999999',
+            'password' => Hash::make('password'),
+            'role' => 'Relawan',
+            'kecamatan' => 'Bekasi Selatan',
+            'kelurahan' => 'Jaka Setia',
+        ]);
+
+        $pengelola = User::create([
+            'fullname' => 'Pengelola Posko Test',
+            'email' => 'pengelola@example.com',
+            'phone' => '081211111111',
+            'password' => Hash::make('password'),
+            'role' => 'Pengelola_Posko',
+            'kecamatan' => 'Bekasi Timur',
+            'kelurahan' => 'Margahayu',
+        ]);
+
+        $admin = User::create([
+            'fullname' => 'Admin BPBD Test',
+            'email' => 'admin@example.com',
+            'phone' => '081277777777',
+            'password' => Hash::make('password'),
+            'role' => 'Admin_BPBD',
+            'kecamatan' => null,
+            'kelurahan' => null,
         ]);
 
         // 2. Create Active Shelters
@@ -80,7 +110,7 @@ class DatabaseSeeder extends Seeder
 
         // 4. Create Initial Flood Reports
         FloodReport::create([
-            'user_id' => $user->user_id,
+            'user_id' => $warga->user_id,
             'water_height_cm' => 60,
             'street_name' => 'Jl. Kartini Raya RT 03/RW 04, Kel. Margahayu, Kec. Bekasi Timur',
             'latitude' => -6.24250000,
@@ -90,7 +120,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         FloodReport::create([
-            'user_id' => $user->user_id,
+            'user_id' => $warga->user_id,
             'water_height_cm' => 120,
             'street_name' => 'Perumahan Kemang Pratama, Kel. Bojong Rawalumbu, Kec. Rawalumbu',
             'latitude' => -6.26880000,

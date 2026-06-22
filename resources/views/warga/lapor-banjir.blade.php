@@ -9,50 +9,7 @@
 
 @section('content')
 <div class="dashboard-container">
-    <!-- Sidebar (Portal Warga) -->
-    <div class="dashboard-sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-logo-bg">
-                <img class="brand-logo-img" src="{{ asset('assets/logo-titikaman.png') }}" alt="Logo TitikAman" onerror="this.src='https://placehold.co/44x44/f3f3f3/006a60?text=TA'">
-            </div>
-            <div class="brand-text">
-                <span class="brand-title">TitikAman</span>
-                <span class="brand-subtitle">Portal Warga</span>
-            </div>
-        </div>
-
-        <div class="user-profile-section">
-            <div class="user-avatar">
-                <i data-lucide="user" style="width: 20px; height: 20px; color: var(--color-brand-teal);"></i>
-            </div>
-            <div class="user-info">
-                <span class="user-name">{{ auth()->user()->fullname }}</span>
-                <span class="user-role-badge">Warga</span>
-                <span class="user-domicile">
-                    <i data-lucide="map-pin" style="width: 10px; height: 10px;"></i>
-                    {{ auth()->user()->kelurahan }}, {{ auth()->user()->kecamatan }}
-                </span>
-            </div>
-        </div>
-
-        <nav class="sidebar-nav">
-            <a href="{{ route('warga.dashboard') }}" class="nav-item">
-                <i data-lucide="map"></i>
-                <span>Peta Genangan & Posko</span>
-            </a>
-            <a href="{{ route('warga.lapor') }}" class="nav-item active">
-                <i data-lucide="file-plus"></i>
-                <span>Lapor Genangan Banjir</span>
-            </a>
-            <a href="#" class="nav-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i data-lucide="log-out" class="text-red"></i>
-                <span class="text-red">Keluar</span>
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
-        </nav>
-    </div>
+    @include('partials.sidebar')
 
     <!-- Toggle Sidebar (Mobile) -->
     <button class="mobile-sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">

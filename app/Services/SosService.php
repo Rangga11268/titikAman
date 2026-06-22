@@ -37,6 +37,22 @@ class SosService
         $data['priority_level'] = $priority;
         $data['status'] = 'waiting'; // Default status is waiting
 
-        return $this->sosRepository->create($data);
+        $sos = $this->sosRepository->create($data);
+
+        // Broadcast the event
+        event(new \App\Events\SosDispatched($sos));
+
+        return $sos;
+    }
+
+    /**
+     * Get active SOS request for a given user.
+     *
+     * @param int $userId
+     * @return \App\Models\SosRequest|null
+     */
+    public function getActiveRequestByUserId(int $userId)
+    {
+        return $this->sosRepository->getActiveRequestByUserId($userId);
     }
 }

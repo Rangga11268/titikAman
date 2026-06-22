@@ -19,6 +19,20 @@ class SosRepository
     }
 
     /**
+     * Get active SOS request for a given user.
+     *
+     * @param int $userId
+     * @return SosRequest|null
+     */
+    public function getActiveRequestByUserId(int $userId): ?SosRequest
+    {
+        return SosRequest::where('user_id', $userId)
+            ->whereIn('status', ['waiting', 'assigned'])
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
+
+    /**
      * Get active SOS requests.
      *
      * @return Collection
@@ -27,6 +41,19 @@ class SosRepository
     {
         return SosRequest::with('user:user_id,fullname,phone')
             ->whereIn('status', ['waiting', 'assigned'])
+            ->get();
+    }
+
+    /**
+     * Get waiting SOS requests.
+     *
+     * @return Collection
+     */
+    public function getWaitingRequests(): Collection
+    {
+        return SosRequest::with('user:user_id,fullname,phone')
+            ->where('status', 'waiting')
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 }

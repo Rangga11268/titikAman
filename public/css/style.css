@@ -2042,3 +2042,15 @@ body {
         justify-content: center;
     }
 }
+
+/* ==========================================================================
+   SOS NAV ITEM & UTILITIES
+   ========================================================================== */
+.text-red {
+    color: var(--color-accent-red) !important;
+}
+
+.nav-item.active .text-red {
+    color: var(--color-white) !important;
+}
+

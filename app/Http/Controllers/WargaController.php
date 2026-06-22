@@ -34,10 +34,44 @@ class WargaController extends Controller
      */
     public function dashboard()
     {
-        $shelters = $this->shelterRepository->getActiveShelters();
+        $titikBanjir      = \App\Models\FloodReport::where('verification_status', 'verified')->count();
+        $wargaTerdampak   = \App\Models\User::where('role', 'Warga')->count();
+        $sosMenunggu      = \App\Models\SosRequest::where('status', 'waiting')->count();
+        $poskoAktif       = \App\Models\Shelter::whereIn('status', ['available', 'almost_full'])->count();
+
+        $shelters         = \App\Models\Shelter::whereIn('status', ['available', 'almost_full', 'full'])->get();
+        $waterGates       = \App\Models\WaterGate::orderBy('danger_status', 'desc')->get();
+
+        $latestSos        = \App\Models\SosRequest::with('user')
+            ->where('status', 'waiting')
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+
+        $activityLog      = \App\Models\FloodReport::with('user')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $recentSos        = \App\Models\SosRequest::with('user')
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+
         $reports = $this->floodReportRepository->getVerifiedReports();
 
-        return view('warga.dashboard', compact('shelters', 'reports'));
+        return view('warga.dashboard', compact(
+            'titikBanjir',
+            'wargaTerdampak',
+            'sosMenunggu',
+            'poskoAktif',
+            'shelters',
+            'waterGates',
+            'latestSos',
+            'activityLog',
+            'recentSos',
+            'reports'
+        ));
     }
 
     /**
@@ -47,6 +81,15 @@ class WargaController extends Controller
     {
         $myReports = $this->floodReportRepository->getReportsByUserId(auth()->id());
         return view('warga.lapor-banjir', compact('myReports'));
+    }
+
+    /**
+     * Show the dedicated SOS page.
+     */
+    public function showSos()
+    {
+        $activeSos = $this->sosService->getActiveRequestByUserId(auth()->id());
+        return view('warga.sos', compact('activeSos'));
     }
 
     /**

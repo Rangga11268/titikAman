@@ -64,4 +64,39 @@ class ImageService
         
         return $directory . '/' . $filename;
     }
+
+    /**
+     * Compress an existing file on disk in-place.
+     *
+     * @param string $absolutePath Absolute path to the file
+     * @param int $quality Compression quality (0-100)
+     * @return void
+     */
+    public static function compressFileInPlace(string $absolutePath, int $quality = 60): void
+    {
+        if (!file_exists($absolutePath)) {
+            return;
+        }
+
+        $info = getimagesize($absolutePath);
+        $mime = $info['mime'] ?? '';
+
+        if ($mime === 'image/jpeg' || $mime === 'image/jpg') {
+            $image = @imagecreatefromjpeg($absolutePath);
+            if ($image) {
+                @imagejpeg($image, $absolutePath, $quality);
+                @imagedestroy($image);
+            }
+        } elseif ($mime === 'image/png') {
+            $image = @imagecreatefrompng($absolutePath);
+            if ($image) {
+                @imagealphablending($image, false);
+                @imagesavealpha($image, true);
+                $pngQuality = (int) round((100 - $quality) / 10);
+                $pngQuality = max(0, min(9, $pngQuality));
+                @imagepng($image, $absolutePath, $pngQuality);
+                @imagedestroy($image);
+            }
+        }
+    }
 }
