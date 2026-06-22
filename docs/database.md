@@ -35,10 +35,18 @@ Pencatatan kondisi teknis sungai-sungai utama untuk sistem peringatan dini.
 Laporan genangan banjir berbasis kontribusi warga (*crowdsourcing*).
 * **`report_id`** (BigInt, PK, Auto Increment)
 * **`user_id`** (BigInt, FK to `users.user_id`, Cascade) - ID warga pelapor.
+* **`kecamatan`** (String, 100, Nullable) - Nama kecamatan lokasi kejadian.
+* **`kelurahan`** (String, 100, Nullable) - Nama kelurahan lokasi kejadian.
 * **`water_height_cm`** (Integer) - Perkiraan tinggi air dalam cm.
 * **`street_name`** (String, 255) - Lokasi detail/nama jalan terdampak.
-* **`latitude`** (Decimal, 10,8)
+* **`latitude`** (Decimal, 18,8)
 * **`longitude`** (Decimal, 11,8)
+* **`status_akses_jalan`** (Enum: `'Masih Bisa Dilewati'`, `'Sulit Dilewati'`, `'Tidak Bisa Dilewati'` - Default: `'Masih Bisa Dilewati'`) - Kondisi keterbacaan jalan di area banjir.
+* **`listrik_padam`** (Boolean, Default: false) - Menandakan apakah aliran listrik padam.
+* **`air_masih_naik`** (Boolean, Default: false) - Menandakan apakah debit air masih merangkak naik.
+* **`butuh_evakuasi`** (Boolean, Default: false) - Menandakan apakah warga butuh evakuasi segera.
+* **`warga_terisolasi`** (Boolean, Default: false) - Menandakan apakah warga terisolasi dari dunia luar.
+* **`keterangan_bebas`** (Text, Nullable) - Catatan tambahan/detail dari warga.
 * **`photo_evidence`** (String, 255, Nullable) - Jalur file foto bukti genangan air.
 * **`verification_status`** (Enum: `'pending'`, `'verified'`, `'rejected'` - Default: `'pending'`)
 * **`created_at` / `updated_at`** (Timestamp)
