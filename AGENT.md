@@ -81,6 +81,7 @@ TitikAman adalah **platform tanggap darurat banjir** berbasis web yang menghubun
 ### 2. Komponen & Layout
 - Gunakan **Blade Component** (`<x-button>`, `<x-card>`) untuk elemen yang berulang — jangan copy-paste HTML berulang kali.
 - Layout halaman menggunakan `resources/views/layouts/` — wajib pakai `@extends` dan `@section`.
+- **WAJIB** memastikan responsivitas di setiap halaman (responsive per page) dengan penyesuaian tata letak yang rapi untuk ukuran mobile, tablet, dan desktop.
 - Responsive-first: desain mobile-first, kemudian desktop.
 - Hindari inline style (`style="..."`) — gunakan class CSS atau utility.
 

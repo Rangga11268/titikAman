@@ -69,47 +69,60 @@ Fase-fase di bawah ini menjelaskan alur pengembangan dan daftar fitur yang harus
 
 ---
 
-### 🗺️ Fase 2: Tampilan Portal Warga (Peta & Laporan Genangan)
+### 🗺️ Fase 2: Tampilan Portal Warga & Peta Evakuasi (Peta, Laporan Genangan, & Halaman SOS Khusus)
 *   **Penanggung Jawab**: Fatur (Developer 2 - Tampilan Portal Warga & Peta Laporan)
 *   **Sinkronisasi Figma**: Sinyal SOS (`190:2`), Form Lapor Banjir (`163:1375`), Peta Evakuasi (`174:2`)
-*   **Tugas & Komponen**:
-    1. **Dashboard Peta Warga**: Membuat `warga/dashboard.blade.php` dengan peta Leaflet.js (basemap Voyager) dan marker dinamis untuk laporan genangan dan posko aktif.
-    2. **Tombol SOS**: Menyediakan tombol mengambang merah besar untuk trigger darurat SOS.
-    3. **Form Lapor Banjir**: Membuat `warga/lapor-banjir.blade.php` dengan input tinggi air, nama jalan, penentuan koordinat otomatis (geolocation), dan input foto bukti.
-    4. **Backend Laporan**: Menyiapkan database table `sos_requests` dan `flood_reports`, class `SosService`/`FloodReportService`, dan controller untuk memproses unggah file serta kalkulasi prioritas evakuasi.
+*   **Daftar Halaman Portal Warga & All-Role**:
+    1. **Dashboard Utama Warga** (`warga/dashboard.blade.php`): Peta interaktif Leaflet.js (basemap Voyager) menampilkan posko aktif, shelter pengungsian, dan laporan genangan terverifikasi.
+    2. **Halaman SOS Warga** (`warga/sos.blade.php`): Halaman khusus 3 kolom:
+        - Kolom Kiri: Deteksi lokasi GPS aktual (peta mini) + Warning Alert Box.
+        - Kolom Tengah: Form evakuasi dengan tombol denyut SOS 2-detik press-and-hold + counter orang terjebak + grid seleksi kelompok rentan (lansia, ibu hamil, balita, disabilitas) + textarea keterangan.
+        - Kolom Rapat: Timeline status penanganan SOS real-time (Terkirim -> Mencari Relawan -> Relawan Ditugaskan -> Dalam Perjalanan -> Selesai) + Direktori Kontak Darurat.
+    3. **Form Lapor Banjir** (`warga/lapor-banjir.blade.php`): Form wizard multi-langkah (input lokasi/titik koordinat gps, tinggi air, kondisi jalan, kelistrikan, air naik/tidak, dan upload bukti foto).
+    4. **Peta Evakuasi & Shelter Interaktif** (All Roles / Public): Peta terintegrasi pada dashboard/landing page yang menunjukkan shelter terdekat, fasilitas toilet, rute evakuasi aman, dan kapasitas hunian shelter saat ini.
+    5. **Landing Page Publik** (`welcome.blade.php`): Landing page terintegrasi untuk publik, menampilkan status darurat tingkat kota, statistik banjir aktif, dan tautan akses cepat (Lapor, SOS, Donasi, TMA).
+*   **Backend & Servis**:
+    - Skema tabel `sos_requests` dan `flood_reports`.
+    - `SosService` (otomasi prioritas SOS berdasarkan kelompok rentan & jumlah orang terjebak) & `FloodReportService`.
+    - AJAX endpoint untuk SOS submit dan routing portal warga di `routes/web.php` (prefix `/warga`).
 
 ---
 
 ### 🚨 Fase 3: Tampilan Portal Relawan (Misi Evakuasi & WebSocket Real-Time)
 *   **Penanggung Jawab**: Januar (Developer 3 - Tampilan Portal Relawan & Misi Penyelamatan)
 *   **Sinkronisasi Figma**: Dashboard Relawan (`163:2528`)
+*   **Daftar Halaman**:
+    1. **Dashboard Relawan** (`relawan/dashboard.blade.php`): Peta Leaflet pelacakan lokasi korban SOS (status waiting/assigned).
+    2. **Misi Penyelamatan**: Antarmuka detail misi aktif dengan koordinat korban, status kelompok rentan, dan instruksi penanganan.
 *   **Tugas & Komponen**:
-    1. **Dashboard Relawan**: Membuat `relawan/dashboard.blade.php` dengan peta pelacakan lokasi korban SOS (status waiting).
-    2. **Tombol Aksi**: Menyediakan tombol AJAX "Terima Misi" dan "Evakuasi Selesai" untuk memperbarui status misi evakuasi di tabel `rescue_missions`.
-    3. **Notifikasi Real-Time**: Mengonfigurasi Laravel Reverb agar data SOS baru langsung di-broadcast ke dashboard relawan secara real-time via channel `disaster.{kecamatan_slug}`.
-    4. **Backend Relawan**: Event broadcast `SosDispatched`, repository/service untuk missions, dan backend controllers.
+    - Tombol AJAX "Terima Misi" dan "Evakuasi Selesai" untuk memperbarui status misi evakuasi di tabel `rescue_missions`.
+    - Notifikasi Real-Time: Mengonfigurasi Laravel Reverb agar data SOS baru langsung di-broadcast ke dashboard relawan secara real-time via channel `disaster.{kecamatan_slug}`.
+    - Backend Relawan: Event broadcast `SosDispatched`, repository/service untuk missions, dan backend controllers.
 
 ---
 
 ### 📦 Fase 4: Tampilan Kelola Posko & Hub Donasi (Logistik & Sanitasi)
 *   **Penanggung Jawab**: Jeffry (Developer 4 - Tampilan Kelola Posko & Hub Donasi)
 *   **Sinkronisasi Figma**: Kelola Kebutuhan (`163:2917`), Hub Donasi (`186:2`), Posko Pengungsian (`187:2`)
+*   **Daftar Halaman**:
+    1. **Dashboard Pengelola Posko** (`pengelola/dashboard.blade.php`): Kelola kapasitas pengungsi, status posko, toilet, dan pantau barang logistik kebutuhan posko.
+    2. **Portal Hub Donasi Publik** (`donasi/hub.blade.php` - All Role / Public): Menampilkan daftar kebutuhan posko se-Bekasi secara real-time dan form donatur untuk sumbangan barang logistik (input item, jumlah barang, resi kirim, dan upload foto bukti kirim).
 *   **Tugas & Komponen**:
-    1. **Dashboard Pengelola Posko**: Membuat `pengelola/dashboard.blade.php` untuk kelola kapasitas pengungsi, status posko, dan pantau status barang logistik kebutuhan posko.
-    2. **Portal Donasi Publik**: Membuat `donasi/hub.blade.php` yang menampilkan daftar kebutuhan posko dan formulir sumbangan barang logistik (input jumlah barang, resi, upload foto bukti kirim).
-    3. **Backend Logistik**: Tabel `shelters`, `shelter_needs`, `donations`. Job background `CompressDonationImageJob` untuk kompres foto donasi.
-    4. **Auto Update**: Otomasi penambahan jumlah barang terverifikasi ke kolom `quantity_fulfilled` pada kebutuhan posko ketika donasi disetujui.
+    - Backend Logistik: Tabel `shelters`, `shelter_needs`, `donations`. Job background `CompressDonationImageJob` untuk kompres foto donasi.
+    - Auto Update: Otomasi penambahan jumlah barang terverifikasi ke kolom `quantity_fulfilled` pada kebutuhan posko ketika donasi disetujui.
 
 ---
 
 ### 📊 Fase 5: Tampilan Portal Admin BPBD & Pemantauan Tinggi Air
 *   **Penanggung Jawab**: Darell (Lead Developer & PM - Tampilan Portal Admin BPBD & Peringatan Dini TMA)
 *   **Sinkronisasi Figma**: Kelola Laporan Admin (`163:2189`), Data Pintu Air (`163:3941`)
+*   **Daftar Halaman**:
+    1. **Dashboard Admin BPBD** (`admin/dashboard.blade.php`): Verifikasi/tolak laporan genangan banjir (pending, verified, rejected).
+    2. **Informasi Tinggi Muka Air (TMA) & Pintu Air** (`pintu-air.blade.php` - All Role / Public): Halaman publik untuk memantau status siaga pintu air di kota Bekasi (Normal, Siaga 3, Siaga 2, Siaga 1) dilengkapi grafik tren TMA.
 *   **Tugas & Komponen**:
-    1. **Dashboard BPBD**: Membuat `admin/dashboard.blade.php` untuk verifikasi/tolak laporan genangan banjir (pending, verified, rejected).
-    2. **Pemantauan TMA Pintu Air**: Membuat `admin/pintu-air.blade.php` berisi daftar tinggi muka air pintu air dan form input update.
-    3. **Peringatan Dini**: Integrasi event/listener `TmaThresholdExceeded` yang men-dispatch background Job untuk SMS/push broadcast ke warga jika status sungai naik melewati ambang batas siaga.
-    4. **Export Rekap**: Fitur export rekapitulasi data genangan ke Excel/PDF menggunakan Laravel Queue.
+    - Pemantauan TMA Pintu Air: Halaman input update tinggi muka air pintu air (tabel `water_gates`).
+    - Peringatan Dini: Integrasi event/listener `TmaThresholdExceeded` yang men-dispatch background Job untuk SMS/push broadcast ke warga jika status sungai naik melewati ambang batas siaga.
+    - Export Rekap: Fitur export rekapitulasi data genangan ke Excel/PDF menggunakan Laravel Queue.
 
 ---
 
