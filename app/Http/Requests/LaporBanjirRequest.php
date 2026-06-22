@@ -22,10 +22,18 @@ class LaporBanjirRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'kecamatan' => ['required', 'string', 'max:100'],
+            'kelurahan' => ['required', 'string', 'max:100'],
             'water_height_cm' => ['required', 'integer', 'min:1'],
             'street_name' => ['required', 'string', 'max:255'],
             'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
+            'status_akses_jalan' => ['required', 'string', 'in:Masih Bisa Dilewati,Sulit Dilewati,Tidak Bisa Dilewati'],
+            'listrik_padam' => ['nullable', 'boolean'],
+            'air_masih_naik' => ['nullable', 'boolean'],
+            'butuh_evakuasi' => ['nullable', 'boolean'],
+            'warga_terisolasi' => ['nullable', 'boolean'],
+            'keterangan_bebas' => ['nullable', 'string', 'max:2000'],
             'photo_evidence' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:5120'], // Max 5MB
         ];
     }
@@ -36,6 +44,8 @@ class LaporBanjirRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'kecamatan.required' => 'Kecamatan wajib dipilih.',
+            'kelurahan.required' => 'Kelurahan wajib dipilih.',
             'water_height_cm.required' => 'Tinggi air wajib diisi.',
             'water_height_cm.integer' => 'Tinggi air harus berupa angka bulat.',
             'water_height_cm.min' => 'Tinggi air minimal 1 cm.',
@@ -44,6 +54,8 @@ class LaporBanjirRequest extends FormRequest
             'latitude.between' => 'Koordinat lintang tidak valid.',
             'longitude.required' => 'Koordinat bujur (longitude) wajib diisi.',
             'longitude.between' => 'Koordinat bujur tidak valid.',
+            'status_akses_jalan.required' => 'Status akses jalan wajib dipilih.',
+            'status_akses_jalan.in' => 'Status akses jalan tidak valid.',
             'photo_evidence.required' => 'Foto bukti genangan wajib diunggah.',
             'photo_evidence.image' => 'File harus berupa gambar.',
             'photo_evidence.mimes' => 'Format gambar harus jpeg, png, atau jpg.',

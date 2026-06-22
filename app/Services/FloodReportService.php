@@ -29,6 +29,12 @@ class FloodReportService
         $data['photo_evidence'] = $savedPath;
         $data['verification_status'] = 'pending'; // Default status is pending
 
+        // Normalize checkbox values
+        $data['listrik_padam'] = isset($data['listrik_padam']) ? (bool)$data['listrik_padam'] : false;
+        $data['air_masih_naik'] = isset($data['air_masih_naik']) ? (bool)$data['air_masih_naik'] : false;
+        $data['butuh_evakuasi'] = isset($data['butuh_evakuasi']) ? (bool)$data['butuh_evakuasi'] : false;
+        $data['warga_terisolasi'] = isset($data['warga_terisolasi']) ? (bool)$data['warga_terisolasi'] : false;
+
         return $this->floodReportRepository->create($data);
     }
 }

@@ -45,7 +45,8 @@ class WargaController extends Controller
      */
     public function showLapor()
     {
-        return view('warga.lapor-banjir');
+        $myReports = $this->floodReportRepository->getReportsByUserId(auth()->id());
+        return view('warga.lapor-banjir', compact('myReports'));
     }
 
     /**

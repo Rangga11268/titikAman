@@ -60,10 +60,13 @@ class WargaPortalTest extends TestCase
         $photo = UploadedFile::fake()->image('flood.jpg');
 
         $response = $this->actingAs($this->wargaUser)->post(route('warga.lapor.submit'), [
+            'kecamatan' => 'Bekasi Timur',
+            'kelurahan' => 'Margahayu',
             'water_height_cm' => 75,
             'street_name' => 'Jl. Kartini Raya',
             'latitude' => -6.2425,
             'longitude' => 107.0022,
+            'status_akses_jalan' => 'Masih Bisa Dilewati',
             'photo_evidence' => $photo,
         ]);
 
@@ -73,10 +76,13 @@ class WargaPortalTest extends TestCase
         // Check report in database
         $this->assertDatabaseHas('flood_reports', [
             'user_id' => $this->wargaUser->user_id,
+            'kecamatan' => 'Bekasi Timur',
+            'kelurahan' => 'Margahayu',
             'water_height_cm' => 75,
             'street_name' => 'Jl. Kartini Raya',
             'latitude' => -6.2425,
             'longitude' => 107.0022,
+            'status_akses_jalan' => 'Masih Bisa Dilewati',
             'verification_status' => 'pending',
         ]);
 

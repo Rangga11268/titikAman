@@ -29,4 +29,17 @@ class FloodReportRepository
             ->where('verification_status', 'verified')
             ->get();
     }
+
+    /**
+     * Get all flood reports submitted by a specific user.
+     *
+     * @param int $userId
+     * @return Collection
+     */
+    public function getReportsByUserId(int $userId): Collection
+    {
+        return FloodReport::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
 }
