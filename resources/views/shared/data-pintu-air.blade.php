@@ -635,11 +635,19 @@
                     <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
                     <div class="notification-dot"></div>
                 </div>
+                @php
+                    $authUser = auth()->user();
+                    $authInitials = 'TA';
+                    if ($authUser) {
+                        $parts = explode(' ', $authUser->fullname);
+                        $authInitials = strtoupper(substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''));
+                    }
+                @endphp
                 <div class="user-profile-widget">
-                    <div class="user-widget-avatar">PL</div>
+                    <div class="user-widget-avatar">{{ $authInitials }}</div>
                     <div class="user-widget-info">
-                        <span class="user-widget-name">Petugas Lapangan</span>
-                        <span class="user-widget-role">BPBD Kota Bekasi</span>
+                        <span class="user-widget-name">{{ $authUser?->fullname ?? 'Pengguna' }}</span>
+                        <span class="user-widget-role">{{ str_replace('_', ' ', $authUser?->role ?? '') }}</span>
                     </div>
                 </div>
             </div>
@@ -705,8 +713,16 @@
                         </div>
                         <div class="level-large {{ $statusTextClass }}">{{ $gate->water_level_cm }} cm</div>
                         <div class="trend-row">
-                            <span class="trend-badge text-red"><i data-lucide="trending-up" style="width: 12px; height: 12px;"></i> +15 cm</span>
-                            <span>Pukul 10:00 WIB</span>
+                            @php
+                                $pctOfMax = $featuredGate && $featuredGate->water_level_cm > 0
+                                    ? round(($gate->water_level_cm / 300) * 100)
+                                    : 0;
+                            @endphp
+                            <span class="trend-badge {{ $gate->danger_status == 'Siaga_1' || $gate->danger_status == 'Siaga_2' ? 'text-red' : 'text-teal' }}">
+                                <i data-lucide="{{ $gate->danger_status == 'Normal' ? 'trending-down' : 'trending-up' }}" style="width: 12px; height: 12px;"></i>
+                                {{ $pctOfMax }}% dari batas
+                            </span>
+                            <span>{{ $gate->last_updated ? \Carbon\Carbon::parse($gate->last_updated)->format('H:i') . ' WIB' : 'N/A' }}</span>
                         </div>
                         @if($gate->danger_status == 'Siaga_1')
                             <div class="alert-box-mini">
@@ -730,9 +746,9 @@
                         <span class="sungai-desc">Visualisasi tinggi muka air sungai utama</span>
                     </div>
                     <div class="chart-toggle-row">
-                        <button class="chart-btn active">Sungai Cileungsi</button>
-                        <button class="chart-btn">Sungai Cikeas</button>
-                        <button class="chart-btn">Kali Bekasi</button>
+                        @foreach($waterGates->take(4) as $cGate)
+                            <button class="chart-btn {{ $loop->first ? 'active' : '' }}">{{ $cGate->gate_name }}</button>
+                        @endforeach
                         <button class="chart-btn">Hari Ini (24 Jam)</button>
                     </div>
                 </div>
@@ -746,56 +762,44 @@
                 <!-- Left: Table -->
                 <div class="table-card">
                     <div class="table-header">
-                        <span class="table-title">Riwayat TMA Hari Ini — Sungai Cileungsi</span>
+                        <span class="table-title">Status Terkini — Semua Pintu Air
+                            @if($featuredGate)
+                                <span style="font-size:12px;font-weight:500;color:var(--color-text-muted);"> ({{ $totalGates }} pintu air terpantau)</span>
+                            @endif
+                        </span>
                         <button class="btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="window.location.href='{{ route('watergate.export') }}'"><i data-lucide="download" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i> Unduh Data CSV</button>
                     </div>
                     <div class="table-container">
                         <table class="table-data">
                             <thead>
                                 <tr>
-                                    <th>Waktu</th>
+                                    <th>Nama Pintu Air</th>
+                                    <th>Sungai</th>
                                     <th>TMA (cm)</th>
-                                    <th>Perubahan</th>
                                     <th>Status</th>
-                                    <th>Petugas</th>
+                                    <th>Terakhir Diperbarui</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>10:00 WIB</td>
-                                    <td class="text-red font-bold">205 cm</td>
-                                    <td class="text-red font-bold">▲ +12 cm</td>
-                                    <td><span class="badge-pill badge-red">SIAGA 1</span></td>
-                                    <td>Syahroni (BPBD)</td>
-                                </tr>
-                                <tr>
-                                    <td>09:45 WIB</td>
-                                    <td class="text-red font-bold">193 cm</td>
-                                    <td class="text-red font-bold">▲ +15 cm</td>
-                                    <td><span class="badge-pill badge-red">SIAGA 1</span></td>
-                                    <td>Syahroni (BPBD)</td>
-                                </tr>
-                                <tr>
-                                    <td>09:30 WIB</td>
-                                    <td class="text-orange font-bold">178 cm</td>
-                                    <td class="text-red font-bold">▲ +18 cm</td>
-                                    <td><span class="badge-pill badge-orange">SIAGA 2</span></td>
-                                    <td>Syahroni (BPBD)</td>
-                                </tr>
-                                <tr>
-                                    <td>09:15 WIB</td>
-                                    <td class="text-orange font-bold">160 cm</td>
-                                    <td class="text-red font-bold">▲ +10 cm</td>
-                                    <td><span class="badge-pill badge-orange">SIAGA 2</span></td>
-                                    <td>Syahroni (BPBD)</td>
-                                </tr>
-                                <tr>
-                                    <td>09:00 WIB</td>
-                                    <td class="text-yellow font-bold">150 cm</td>
-                                    <td class="text-teal font-bold">▼ -5 cm</td>
-                                    <td><span class="badge-pill badge-yellow">SIAGA 3</span></td>
-                                    <td>Syahroni (BPBD)</td>
-                                </tr>
+                                @forelse($waterGates as $gate)
+                                    @php
+                                        $rowBadge = 'badge-green';
+                                        $rowLabel = 'NORMAL';
+                                        $rowColor = 'text-teal';
+                                        if ($gate->danger_status == 'Siaga_1') { $rowBadge = 'badge-red';    $rowLabel = 'SIAGA 1'; $rowColor = 'text-red'; }
+                                        elseif ($gate->danger_status == 'Siaga_2') { $rowBadge = 'badge-orange'; $rowLabel = 'SIAGA 2'; $rowColor = 'text-orange'; }
+                                        elseif ($gate->danger_status == 'Siaga_3') { $rowBadge = 'badge-yellow'; $rowLabel = 'SIAGA 3'; $rowColor = 'text-yellow'; }
+                                    @endphp
+                                    <tr>
+                                        <td style="font-weight:600;">{{ $gate->gate_name }}</td>
+                                        <td>{{ $gate->river_name }}</td>
+                                        <td class="{{ $rowColor }} font-bold">{{ $gate->water_level_cm }} cm</td>
+                                        <td><span class="badge-pill {{ $rowBadge }}">{{ $rowLabel }}</span></td>
+                                        <td>{{ $gate->last_updated ? \Carbon\Carbon::parse($gate->last_updated)->format('d M Y H:i') . ' WIB' : 'N/A' }}</td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--color-text-muted);">Tidak ada data pintu air.</td></tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -848,36 +852,20 @@
                     <div class="side-card">
                         <span class="side-card-title">Log Notifikasi Otomatis</span>
                         <div class="notif-list">
-                            <div class="notif-item red">
-                                <div class="notif-icon">
-                                    <i data-lucide="smartphone" class="text-red" style="width: 16px; height: 16px;"></i>
+                            @forelse($alertLog as $alert)
+                                <div class="notif-item {{ $alert['type'] }}">
+                                    <div class="notif-icon">
+                                        <i data-lucide="{{ $alert['icon'] }}" class="{{ $alert['type'] == 'red' ? 'text-red' : ($alert['type'] == 'orange' ? 'text-orange' : '') }}" style="width: 16px; height: 16px; {{ $alert['type'] == '' ? 'color: #3b82f6;' : '' }}"></i>
+                                    </div>
+                                    <div class="notif-details">
+                                        <span class="notif-title">{{ $alert['title'] }}</span>
+                                        <span class="notif-text">{{ $alert['text'] }}</span>
+                                        <span class="notif-time">{{ $alert['time'] }}</span>
+                                    </div>
                                 </div>
-                                <div class="notif-details">
-                                    <span class="notif-title">SOS PUSH SENT</span>
-                                    <span class="notif-text">Notifikasi peringatan evakuasi massal dikirim ke aplikasi warga Jatiasih.</span>
-                                    <span class="notif-time">10:00 WIB</span>
-                                </div>
-                            </div>
-                            <div class="notif-item orange">
-                                <div class="notif-icon">
-                                    <i data-lucide="alert-triangle" class="text-orange" style="width: 16px; height: 16px;"></i>
-                                </div>
-                                <div class="notif-details">
-                                    <span class="notif-title">ALERT WARNING</span>
-                                    <span class="notif-text">Pintu Air Cileungsi menembus batas Siaga 2. Status waspada diaktifkan.</span>
-                                    <span class="notif-time">09:45 WIB</span>
-                                </div>
-                            </div>
-                            <div class="notif-item">
-                                <div class="notif-icon">
-                                    <i data-lucide="info" style="width: 16px; height: 16px; color: #3b82f6;"></i>
-                                </div>
-                                <div class="notif-details">
-                                    <span class="notif-title">INFORMASI KELURAHAN</span>
-                                    <span class="notif-text">Aliran sungai terpantau lancar di wilayah jembatan Kemang Pratama.</span>
-                                    <span class="notif-time">07:00 WIB</span>
-                                </div>
-                            </div>
+                            @empty
+                                <p style="font-size:13px;color:var(--color-text-muted);text-align:center;">Tidak ada notifikasi aktif.</p>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -939,67 +927,40 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const ctx = document.getElementById('tmaChart').getContext('2d');
-        
-        // Mock 24 hours readings
-        const hours = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
-        
+
+        const chartLabels   = @json($chartLabels);
+        const chartDatasets = @json($chartDatasets);
+
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: hours,
-                datasets: [
-                    {
-                        label: 'Sungai Cileungsi',
-                        data: [70, 75, 110, 140, 150, 178, 205, 220, 245, 265, 230, 190],
-                        borderColor: '#ba1a1a',
-                        backgroundColor: 'rgba(186, 26, 26, 0.05)',
-                        borderWidth: 3,
-                        tension: 0.3,
-                        fill: true
-                    },
-                    {
-                        label: 'Sungai Cikeas',
-                        data: [60, 65, 75, 90, 85, 95, 110, 120, 115, 130, 110, 95],
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        tension: 0.3
-                    },
-                    {
-                        label: 'Kali Bekasi',
-                        data: [50, 55, 60, 70, 75, 80, 95, 105, 130, 160, 155, 140],
-                        borderColor: '#006a60',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        tension: 0.3
-                    }
-                ]
+                labels: chartLabels,
+                datasets: chartDatasets
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: 'top',
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.dataset.label + ': ' + ctx.parsed.y + ' cm';
+                            }
+                        }
                     }
                 },
                 scales: {
                     y: {
                         min: 0,
-                        max: 300,
-                        title: {
-                            display: true,
-                            text: 'Ketinggian (cm)'
-                        },
-                        grid: {
-                            color: 'rgba(0,0,0,0.05)'
+                        suggestedMax: 320,
+                        title: { display: true, text: 'Ketinggian (cm)' },
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            callback: function(val) { return val + ' cm'; }
                         }
                     },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
+                    x: { grid: { display: false } }
                 }
             }
         });

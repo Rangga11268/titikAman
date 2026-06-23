@@ -155,19 +155,120 @@ class SharedController extends Controller
     {
         $waterGates = WaterGate::orderBy('danger_status', 'desc')->get();
 
-        // Group readings for chart (last 24h — using current data as mock)
-        // In production, this would come from a water_gate_readings table
-        $chartData = $waterGates->map(function ($gate) {
-            return [
-                'name'   => $gate->gate_name,
-                'river'  => $gate->river_name,
-                'level'  => $gate->water_level_cm,
-                'status' => $gate->danger_status,
-            ];
-        });
+        // Summary stats
+        $totalGates   = $waterGates->count();
+        $siaga1Count  = $waterGates->where('danger_status', 'Siaga_1')->count();
+        $siaga2Count  = $waterGates->where('danger_status', 'Siaga_2')->count();
+        $siaga3Count  = $waterGates->where('danger_status', 'Siaga_3')->count();
+        $normalCount  = $waterGates->where('danger_status', 'Normal')->count();
 
-        return view('shared.data-pintu-air', compact('waterGates', 'chartData'));
+        // Highest level gate (for the featured chart + table header)
+        $featuredGate = $waterGates->sortByDesc('water_level_cm')->first();
+
+        // Chart data — each gate becomes a dataset with a simple 12-point simulated reading
+        // using real current level as the peak value (since no readings table exists yet).
+        // Time labels are the last 12 two-hour slots from midnight.
+        $chartLabels  = ['00:00','02:00','04:00','06:00','08:00','10:00','12:00','14:00','16:00','18:00','20:00','22:00'];
+
+        $chartDatasets = [];
+        $colors = ['#ba1a1a','#f59e0b','#006a60','#3b82f6','#8b5cf6','#ec4899'];
+        $i = 0;
+        foreach ($waterGates->take(4) as $gate) {
+            $peak     = $gate->water_level_cm;
+            $base     = max(20, round($peak * 0.35));
+            // Build a rising curve towards the peak at step 9 (18:00) then slight drop
+            $curve = [];
+            for ($h = 0; $h < 12; $h++) {
+                $factor = $h <= 9 ? ($h / 9) : (1 - ($h - 9) / 6 * 0.3);
+                $curve[] = max($base, round($base + ($peak - $base) * $factor));
+            }
+            $color = $colors[$i % count($colors)];
+            $chartDatasets[] = [
+                'label'           => $gate->gate_name,
+                'data'            => $curve,
+                'borderColor'     => $color,
+                'backgroundColor' => $i === 0 ? str_replace(')', ', 0.06)', str_replace('rgb', 'rgba', $color)) : 'transparent',
+                'borderWidth'     => $i === 0 ? 3 : 2,
+                'tension'         => 0.35,
+                'fill'            => $i === 0,
+            ];
+            $i++;
+        }
+
+        // Automatic alert log — built from real DB records
+        $alertLog = collect();
+
+        // Siaga-1 gates → critical alerts
+        foreach ($waterGates->where('danger_status', 'Siaga_1') as $g) {
+            $alertLog->push([
+                'type'  => 'red',
+                'icon'  => 'alert-octagon',
+                'title' => 'SIAGA 1 — ' . $g->gate_name,
+                'text'  => $g->river_name . ' menembus batas Siaga 1 (' . $g->water_level_cm . ' cm). Warga harus siap mengungsi!',
+                'time'  => $g->last_updated ? \Carbon\Carbon::parse($g->last_updated)->format('H:i') . ' WIB' : 'Baru',
+            ]);
+        }
+
+        // Siaga-2 gates → warnings
+        foreach ($waterGates->where('danger_status', 'Siaga_2') as $g) {
+            $alertLog->push([
+                'type'  => 'orange',
+                'icon'  => 'alert-triangle',
+                'title' => 'ALERT — ' . $g->gate_name,
+                'text'  => $g->river_name . ' menembus batas Siaga 2 (' . $g->water_level_cm . ' cm). Status waspada.',
+                'time'  => $g->last_updated ? \Carbon\Carbon::parse($g->last_updated)->format('H:i') . ' WIB' : 'Baru',
+            ]);
+        }
+
+        // Recent SOS waiting → info alerts
+        $recentSos = SosRequest::where('status', 'waiting')->latest()->take(2)->get();
+        foreach ($recentSos as $s) {
+            $alertLog->push([
+                'type'  => 'red',
+                'icon'  => 'smartphone',
+                'title' => 'SOS DARURAT',
+                'text'  => 'Evakuasi ' . $s->people_trapped . ' warga terjebak di ' . ($s->user?->kelurahan ?? 'Bekasi') . '. Relawan diminta segera bergerak.',
+                'time'  => $s->created_at->format('H:i') . ' WIB',
+            ]);
+        }
+
+        // Recent verified flood reports → info
+        $recentReports = FloodReport::where('verification_status', 'verified')->latest()->take(2)->get();
+        foreach ($recentReports as $r) {
+            $alertLog->push([
+                'type'  => '',
+                'icon'  => 'info',
+                'title' => 'LAPORAN TERVERIFIKASI',
+                'text'  => 'Genangan di ' . $r->street_name . ' (Tinggi Air: ' . $r->water_height_cm . ' cm) sudah terverifikasi.',
+                'time'  => $r->created_at->format('H:i') . ' WIB',
+            ]);
+        }
+
+        // If nothing, show a positive notice
+        if ($alertLog->isEmpty()) {
+            $alertLog->push([
+                'type'  => '',
+                'icon'  => 'check-circle',
+                'title' => 'SEMUA NORMAL',
+                'text'  => 'Seluruh pintu air terpantau dalam kondisi aman. Tidak ada peringatan aktif.',
+                'time'  => now()->format('H:i') . ' WIB',
+            ]);
+        }
+
+        return view('shared.data-pintu-air', compact(
+            'waterGates',
+            'chartLabels',
+            'chartDatasets',
+            'featuredGate',
+            'totalGates',
+            'siaga1Count',
+            'siaga2Count',
+            'siaga3Count',
+            'normalCount',
+            'alertLog'
+        ));
     }
+
 
     /**
      * Posko Pengungsian — accessible by all roles.
