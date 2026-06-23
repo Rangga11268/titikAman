@@ -35,27 +35,40 @@ class DonasiController extends Controller
         // Calculate dynamic stats
         $totalNeededObj = \App\Models\ShelterNeed::selectRaw('SUM(quantity_need) as total_need, SUM(quantity_fulfilled) as total_fulfilled')->first();
         
-        $totalNeededVal = $totalNeededObj->total_need ?? 0;
-        $fulfilledVal   = $totalNeededObj->total_fulfilled ?? 0;
+        $totalNeededVal = (int) ($totalNeededObj->total_need ?? 0);
+        $fulfilledVal   = (int) ($totalNeededObj->total_fulfilled ?? 0);
         
-        $totalNeeded = number_format($totalNeededVal / 1000, 1) . 'k';
-        if ($totalNeededVal < 1000) { $totalNeeded = $totalNeededVal; }
-        
-        $fulfilled = number_format($fulfilledVal / 1000, 1) . 'k';
-        if ($fulfilledVal < 1000) { $fulfilled = $fulfilledVal; }
+        $totalNeeded = $totalNeededVal >= 1000 ? number_format($totalNeededVal / 1000, 1) . 'k' : $totalNeededVal;
+        $fulfilled   = $fulfilledVal   >= 1000 ? number_format($fulfilledVal   / 1000, 1) . 'k' : $fulfilledVal;
         
         $remainingVal = max(0, $totalNeededVal - $fulfilledVal);
-        $remaining = number_format($remainingVal / 1000, 1) . 'k';
-        if ($remainingVal < 1000) { $remaining = $remainingVal; }
-        
-        $activeDonors = \App\Models\Donation::where('status', 'accepted')->orWhere('status', 'delivered')->distinct('donor_id')->count('donor_id');
-        if ($activeDonors == 0) { $activeDonors = 248; } // Mock if no data yet to match figma
+        $remaining = $remainingVal >= 1000 ? number_format($remainingVal / 1000, 1) . 'k' : $remainingVal;
 
-        // Recent donations
+        // Fulfillment percentage for the mini progress bar
+        $fulfillmentPercent = $totalNeededVal > 0 ? round(($fulfilledVal / $totalNeededVal) * 100) : 0;
+
+        // Active donors — unique donors with at least one accepted/delivered donation
+        $activeDonors = \App\Models\Donation::whereIn('status', ['accepted', 'delivered'])
+            ->distinct('donor_id')
+            ->count('donor_id');
+
+        // Most active / first active shelter for the Right Column card
+        $topShelter = Shelter::whereIn('status', ['active', 'full'])
+            ->orderByDesc('current_occupants')
+            ->first();
+
+        // Recent donations with status filter support (all by default, filter via JS)
         $recentDonations = \App\Models\Donation::with(['donor', 'shelterNeed.shelter'])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
+            ->latest()
+            ->take(10)
             ->get();
+
+        // Donation status counts for filter badges
+        $donationStats = [
+            'pending'   => \App\Models\Donation::where('status', 'pending')->count(),
+            'accepted'  => \App\Models\Donation::whereIn('status', ['accepted', 'delivered'])->count(),
+            'rejected'  => \App\Models\Donation::where('status', 'rejected')->count(),
+        ];
 
         return view('pengelola.hub-logistik-donasi', compact(
             'shelters',
@@ -63,7 +76,10 @@ class DonasiController extends Controller
             'fulfilled',
             'remaining',
             'activeDonors',
-            'recentDonations'
+            'fulfillmentPercent',
+            'recentDonations',
+            'topShelter',
+            'donationStats'
         ));
     }
 

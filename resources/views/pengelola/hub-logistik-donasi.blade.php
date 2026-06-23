@@ -83,9 +83,17 @@ if (!function_exists('parseNeedItem')) {
                     <i data-lucide="bell" style="width: 20px; height: 20px; margin: 0;"></i>
                     <div class="notification-dot" style="position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background-color: var(--color-accent-red); border-radius: 50%;"></div>
                 </div>
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop" 
-                     alt="Profile" 
-                     style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--color-border-muted); cursor: pointer;">
+@php
+                    $authUser = auth()->user();
+                    $authInitials = 'TA';
+                    if ($authUser) {
+                        $p = explode(' ', $authUser->fullname);
+                        $authInitials = strtoupper(substr($p[0], 0, 1) . (isset($p[1]) ? substr($p[1], 0, 1) : ''));
+                    }
+                @endphp
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-brand-teal); color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--color-border-muted); cursor: pointer;" title="{{ $authUser?->fullname }}">
+                    {{ $authInitials }}
+                </div>
             </div>
         </div>
 
@@ -96,23 +104,28 @@ if (!function_exists('parseNeedItem')) {
 
         <!-- Stats Row -->
         <div class="stats-grid-row">
-            <!-- Stat 1: Total Needed -->
+<!-- Stat 1: Total Needed -->
             <div class="stat-card-widget">
                 <span class="stat-card-label">TOTAL NEEDED</span>
                 <div class="stat-card-value-container">
                     <h2 class="stat-card-value">{{ $totalNeeded }}</h2>
-                    <span class="badge-percent-red">-12%</span>
+                    @if($totalNeeded == 0)
+                        <span class="badge-percent-red" style="background:#e2e8f0;color:#64748b;">No Data</span>
+                    @else
+                        <span class="badge-priority-orange">Logistik</span>
+                    @endif
                 </div>
             </div>
             <!-- Stat 2: Fulfilled -->
             <div class="stat-card-widget">
                 <span class="stat-card-label">FULFILLED</span>
-                <div class="stat-card-value-container">
+<div class="stat-card-value-container">
                     <h2 class="stat-card-value fulfilled-val">{{ $fulfilled }}</h2>
                     <div>
                         <div class="stat-mini-progress">
-                            <div class="stat-mini-progress-fill"></div>
+                            <div class="stat-mini-progress-fill" style="width: {{ $fulfillmentPercent }}%;"></div>
                         </div>
+                        <span style="font-size:10px;color:var(--color-text-muted);font-weight:600;">{{ $fulfillmentPercent }}%</span>
                     </div>
                 </div>
             </div>
@@ -271,14 +284,36 @@ if (!function_exists('parseNeedItem')) {
                     </div>
                 </div>
 
-                <!-- Recent Donations Table Panel -->
+    <!-- Recent Donations Table Panel -->
                 <div class="section-white-card" style="padding: 0; overflow: hidden;">
                     <div class="section-card-header" style="padding: 24px 24px 16px 24px; margin-bottom: 0;">
                         <h2 class="section-card-title">Donasi Terbaru</h2>
-                        <div style="display: flex; gap: 8px;">
-                            <button style="background: none; border: 1px solid var(--color-border-muted); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                <i data-lucide="filter" style="width: 14px; height: 14px; color: #44474e;"></i>
-                            </button>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <!-- Filter Dropdown -->
+                            <div style="position: relative;" id="filterDropdownWrapper">
+                                <button id="filterToggleBtn" style="background: none; border: 1px solid var(--color-border-muted); border-radius: 8px; padding: 0 12px; height: 32px; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600; color: #44474e;">
+                                    <i data-lucide="filter" style="width: 13px; height: 13px;"></i>
+                                    <span id="filterLabel">Semua</span>
+                                </button>
+                                <div id="filterDropdownMenu" style="display:none; position: absolute; right: 0; top: 38px; background: #fff; border: 1px solid var(--color-border-muted); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 100; min-width: 180px; overflow: hidden;">
+                                    <div class="filter-opt" data-filter="all" style="padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--color-brand-teal); background: rgba(0,106,96,0.04);">
+                                        <span>Semua</span>
+                                        <span style="background:#e2e8f0;padding:2px 8px;border-radius:99px;font-size:11px;color:#44474e;">{{ $recentDonations->count() }}</span>
+                                    </div>
+                                    <div class="filter-opt" data-filter="pending" style="padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                        <span>Pending</span>
+                                        <span style="background:#ffdcc5;padding:2px 8px;border-radius:99px;font-size:11px;color:#713700;">{{ $donationStats['pending'] }}</span>
+                                    </div>
+                                    <div class="filter-opt" data-filter="accepted" style="padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                        <span>Diterima</span>
+                                        <span style="background:#8af5be;padding:2px 8px;border-radius:99px;font-size:11px;color:#00714b;">{{ $donationStats['accepted'] }}</span>
+                                    </div>
+                                    <div class="filter-opt" data-filter="rejected" style="padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                        <span>Ditolak</span>
+                                        <span style="background:#ffdad6;padding:2px 8px;border-radius:99px;font-size:11px;color:#93000a;">{{ $donationStats['rejected'] }}</span>
+                                    </div>
+                                </div>
+                            </div>
                             <button onclick="window.location.href='{{ route('donasi.export') }}'" style="background: none; border: 1px solid var(--color-border-muted); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Unduh CSV Donasi">
                                 <i data-lucide="download" style="width: 14px; height: 14px; color: #44474e;"></i>
                             </button>
@@ -316,26 +351,37 @@ if (!function_exists('parseNeedItem')) {
                                             }
                                         }
 
-                                        // Status Pill Mapping
+// Status Pill Mapping
                                         $statusClass = 'status-jalan';
-                                        $statusText = 'DI JALAN';
-                                        if ($donation->status === 'accepted' || $donation->status === 'delivered') {
+                                        $statusText = 'PENDING';
+                                        if ($donation->status === 'pending') {
+                                            $statusClass = 'status-pending';
+                                            $statusText = 'PENDING';
+                                        } elseif ($donation->status === 'accepted' || $donation->status === 'delivered') {
                                             $statusClass = 'status-terima';
-                                            $statusText = 'TERIMA';
+                                            $statusText = 'DITERIMA';
+                                        } elseif ($donation->status === 'rejected') {
+                                            $statusClass = 'status-ditolak';
+                                            $statusText = 'DITOLAK';
                                         }
 
                                         // Category Parsing
                                         $itemName = $donation->shelterNeed ? $donation->shelterNeed->item_name : 'Barang Donasi';
+                                        $itemLower = strtolower($itemName);
                                         $categoryLabel = 'Logistik';
-                                        if (str_contains(strtolower($itemName), 'makan')) {
+                                        if (str_contains($itemLower, 'makan') || str_contains($itemLower, 'beras') || str_contains($itemLower, 'makanan siap')) {
                                             $categoryLabel = 'Logistik';
-                                        } elseif (str_contains(strtolower($itemName), 'obat') || str_contains(strtolower($itemName), 'medis')) {
+                                        } elseif (str_contains($itemLower, 'obat') || str_contains($itemLower, 'medis') || str_contains($itemLower, 'masker') || str_contains($itemLower, 'p3k')) {
                                             $categoryLabel = 'Kesehatan';
-                                        } elseif (str_contains(strtolower($itemName), 'selimut') || str_contains(strtolower($itemName), 'pakaian')) {
+                                        } elseif (str_contains($itemLower, 'selimut') || str_contains($itemLower, 'pakaian') || str_contains($itemLower, 'baju') || str_contains($itemLower, 'tikar')) {
                                             $categoryLabel = 'Sandang';
+                                        } elseif (str_contains($itemLower, 'susu') || str_contains($itemLower, 'bayi') || str_contains($itemLower, 'pampers')) {
+                                            $categoryLabel = 'Kebutuhan Bayi';
+                                        } elseif (str_contains($itemLower, 'air') || str_contains($itemLower, 'mineral') || str_contains($itemLower, 'minum')) {
+                                            $categoryLabel = 'Air Bersih';
                                         }
                                     @endphp
-                                    <tr>
+                                    <tr data-status="{{ $donation->status }}">
                                         <td>
                                             <div class="donatur-profile-cell">
                                                 <div class="initials-avatar-circle {{ $avatarColor }}">
@@ -347,10 +393,10 @@ if (!function_exists('parseNeedItem')) {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
+<td>
                                             <div class="item-category-cell">
-                                                <span class="donation-item-qty">{{ $donation->quantity_donated }} Unit / Box</span>
-                                                <span class="badge-category-mini">{{ $categoryLabel }}</span>
+                                                <span class="donation-item-qty">{{ $donation->quantity_donated }} {{ $donation->shelterNeed?->item_name ? parseNeedItem($donation->shelterNeed->item_name)['unit'] : 'Unit' }}</span>
+                                                <span class="badge-category-mini" data-filter-category="{{ $donation->status }}">{{ $categoryLabel }}</span>
                                             </div>
                                         </td>
                                         <td>
@@ -450,32 +496,49 @@ if (!function_exists('parseNeedItem')) {
                 </div>
             </div>
 
-            <!-- Right Column -->
+<!-- Right Column -->
             <div>
                 <!-- Active Post visual panel card -->
+                @if($topShelter)
+                @php
+                    $capPct = $topShelter->max_capacity > 0
+                        ? round(($topShelter->current_occupants / $topShelter->max_capacity) * 100)
+                        : 0;
+                    $capColor = $capPct >= 90 ? 'var(--color-accent-red)' : ($capPct >= 70 ? 'var(--color-accent-orange)' : 'var(--color-accent-green)');
+                @endphp
                 <div class="active-post-card">
                     <div class="active-post-image-header" 
                          style="background-image: url('https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=600&auto=format&fit=crop');">
                         <div class="active-post-gradient-overlay"></div>
                         <div class="active-post-image-content">
-                            <span class="active-post-lbl">ACTIVE POST</span>
-                            <h3 class="active-post-name">Posko Bekasi Timur</h3>
+                            <span class="active-post-lbl">{{ strtoupper($topShelter->status) }}</span>
+                            <h3 class="active-post-name">{{ $topShelter->shelter_name }}</h3>
                         </div>
                     </div>
                     <div class="active-post-details-body">
                         <div class="active-post-address-row">
                             <span class="active-post-address">
                                 <i data-lucide="map-pin" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
-                                Gedung Juang '45
+                                {{ $topShelter->address }}
                             </span>
-                            <span class="active-post-capacity">92% Kapasitas</span>
+                            <span class="active-post-capacity" style="color: {{ $capColor }};">{{ $capPct }}% Kapasitas</span>
                         </div>
                         <div class="active-post-capacity-bar-container">
-                            <div class="active-post-capacity-bar-fill"></div>
+                            <div class="active-post-capacity-bar-fill" style="width: {{ $capPct }}%; background-color: {{ $capColor }};"></div>
+                        </div>
+                        <div style="font-size: 12px; color: var(--color-text-muted); font-weight: 600; margin: 8px 0;">
+                            {{ number_format($topShelter->current_occupants) }} / {{ number_format($topShelter->max_capacity) }} Jiwa
                         </div>
                         <a href="{{ route('posko') }}" class="btn-lihat-detail-posko">Lihat Detail Posko</a>
                     </div>
                 </div>
+                @else
+                <div class="active-post-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;background:#f5f3f6;border-radius:16px;gap:12px;">
+                    <i data-lucide="map-pin-off" style="width:36px;height:36px;color:var(--color-text-muted);"></i>
+                    <p style="font-size:13px;color:var(--color-text-muted);font-weight:600;margin:0;">Tidak ada posko aktif saat ini</p>
+                    <a href="{{ route('posko') }}" class="btn-lihat-detail-posko">Lihat Semua Posko</a>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -485,7 +548,7 @@ if (!function_exists('parseNeedItem')) {
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Init sidebar toggle for mobile
+        // ─── Sidebar toggle (mobile) ───────────────────────────────────────
         const sidebarToggle = document.getElementById('sidebarToggle');
         const dashboardSidebar = document.querySelector('.dashboard-sidebar');
         const toggleIcon = document.getElementById('toggleIcon');
@@ -493,14 +556,80 @@ if (!function_exists('parseNeedItem')) {
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', function () {
                 dashboardSidebar.classList.toggle('active');
-                if (dashboardSidebar.classList.contains('active')) {
-                    toggleIcon.setAttribute('data-lucide', 'x');
-                } else {
-                    toggleIcon.setAttribute('data-lucide', 'menu');
-                }
+                toggleIcon.setAttribute('data-lucide', dashboardSidebar.classList.contains('active') ? 'x' : 'menu');
                 lucide.createIcons();
             });
         }
+
+        // ─── Donation Status Filter ────────────────────────────────────────
+        const filterToggleBtn  = document.getElementById('filterToggleBtn');
+        const filterDropdownMenu = document.getElementById('filterDropdownMenu');
+        const filterLabel      = document.getElementById('filterLabel');
+        const filterOpts       = document.querySelectorAll('.filter-opt');
+        const tableBody        = document.querySelector('.donations-table tbody');
+
+        if (!filterToggleBtn || !filterDropdownMenu || !tableBody) return;
+
+        // Toggle dropdown open/close
+        filterToggleBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = filterDropdownMenu.style.display === 'block';
+            filterDropdownMenu.style.display = isOpen ? 'none' : 'block';
+        });
+
+        // Close on outside click
+        document.addEventListener('click', function () {
+            filterDropdownMenu.style.display = 'none';
+        });
+        filterDropdownMenu.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+
+        // Filter rows
+        filterOpts.forEach(function (opt) {
+            opt.addEventListener('click', function () {
+                const filter = opt.getAttribute('data-filter');
+                const label  = opt.querySelector('span:first-child').textContent;
+
+                // Highlight active option
+                filterOpts.forEach(o => {
+                    o.style.background = '';
+                    o.style.color = '';
+                });
+                opt.style.background = 'rgba(0,106,96,0.08)';
+                opt.style.color = 'var(--color-brand-teal)';
+
+                filterLabel.textContent = label;
+                filterDropdownMenu.style.display = 'none';
+
+                const rows = tableBody.querySelectorAll('tr[data-status]');
+                let visibleCount = 0;
+
+                rows.forEach(function (row) {
+                    const rowStatus = row.getAttribute('data-status');
+                    const show = filter === 'all'
+                        || rowStatus === filter
+                        || (filter === 'accepted' && (rowStatus === 'accepted' || rowStatus === 'delivered'));
+
+                    row.style.display = show ? '' : 'none';
+                    if (show) visibleCount++;
+                });
+
+                // Empty state row
+                let emptyRow = tableBody.querySelector('.filter-empty-row');
+                if (visibleCount === 0) {
+                    if (!emptyRow) {
+                        emptyRow = document.createElement('tr');
+                        emptyRow.className = 'filter-empty-row';
+                        emptyRow.innerHTML = '<td colspan="4" style="text-align:center;padding:32px;color:var(--color-text-muted);font-size:13px;font-weight:600;">Tidak ada donasi dengan status ini</td>';
+                        tableBody.appendChild(emptyRow);
+                    }
+                    emptyRow.style.display = '';
+                } else if (emptyRow) {
+                    emptyRow.style.display = 'none';
+                }
+            });
+        });
     });
 </script>
 @endsection
