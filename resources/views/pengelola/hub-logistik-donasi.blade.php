@@ -79,7 +79,10 @@ if (!function_exists('parseNeedItem')) {
                     <i data-lucide="alert-triangle" style="width: 14px; height: 14px;"></i>
                     <span>Emergency Alert</span>
                 </button>
-                <i data-lucide="bell" style="width: 20px; height: 20px; color: #44474e; cursor: pointer;"></i>
+                <div class="notification-bell" title="Notifikasi" style="position: relative; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background-color: #f1f3f5; color: #44474e; margin-right: 8px;">
+                    <i data-lucide="bell" style="width: 20px; height: 20px; margin: 0;"></i>
+                    <div class="notification-dot" style="position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background-color: var(--color-accent-red); border-radius: 50%;"></div>
+                </div>
                 <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop" 
                      alt="Profile" 
                      style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--color-border-muted); cursor: pointer;">

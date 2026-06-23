@@ -463,7 +463,11 @@
             <div class="topbar-left">
                 <h1>Moderasi Laporan Warga</h1>
             </div>
-            <div class="topbar-right">
+            <div class="topbar-right" style="display: flex; align-items: center; gap: 16px;">
+                <div class="notification-bell" title="Notifikasi" style="position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background-color: #f1f3f5; color: var(--color-neutral-dark);">
+                    <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
+                    <div class="notification-dot" style="position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background-color: var(--color-accent-red); border-radius: 50%;"></div>
+                </div>
                 <div class="user-profile-widget">
                     <div class="user-widget-avatar">
                         {{ strtoupper(substr(auth()->user()->fullname, 0, 2)) }}

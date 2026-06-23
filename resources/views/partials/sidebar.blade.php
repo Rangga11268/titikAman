@@ -1,38 +1,19 @@
 <div class="dashboard-sidebar">
-    <div class="sidebar-brand">
-        <div class="brand-logo-bg">
-            <img class="brand-logo-img" src="{{ asset('assets/logo-titikaman.png') }}" alt="Logo" onerror="this.src='https://placehold.co/44x44/f3f3f3/006a60?text=TA'">
+    <div class="sidebar-logo-area">
+        <div class="sidebar-brand-row">
+            <div class="sidebar-logo-bg">
+                <img src="{{ asset('assets/logo-titikaman.png') }}" alt="Logo TitikAman" onerror="this.src='https://placehold.co/44x44/f3f3f3/006a60?text=TA'">
+            </div>
+            <div class="sidebar-brand-name">TitikAman</div>
         </div>
-        <div class="brand-text">
-            <span class="brand-title">TitikAman</span>
-            <span class="brand-subtitle">Sistem Siaga Bencana</span>
-            <span class="bpbd-badge">MITRA BPBD KOTA BEKASI</span>
-        </div>
-    </div>
-
-    <div class="user-profile-section">
-        <div class="user-avatar">
-            {{ strtoupper(substr(auth()->user()->fullname, 0, 2)) }}
-        </div>
-        <div class="user-info">
-            <span class="user-name">{{ auth()->user()->fullname }}</span>
-            <span class="user-role-badge">
-                @if(auth()->user()->role == 'Warga')
-                    Warga
-                @elseif(auth()->user()->role == 'Relawan')
-                    Relawan
-                @elseif(auth()->user()->role == 'Pengelola_Posko')
-                    Pengelola Posko
-                @else
-                    Admin BPBD
-                @endif
-            </span>
-            @if(auth()->user()->kecamatan)
-                <span class="user-domicile">
-                    <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
-                    <span>{{ auth()->user()->kelurahan }}, {{ auth()->user()->kecamatan }}</span>
-                </span>
-            @endif
+        <div class="sidebar-partner-badge">
+            <div class="partner-logo">
+                <img src="{{ asset('assets/logo-bpbd.png') }}" alt="BPBD" onerror="this.src='https://placehold.co/24x24/ffffff/031f41?text=B'">
+            </div>
+            <div class="partner-text-wrap">
+                <span class="partner-label">Official Partner</span>
+                <span class="partner-name">BPBD Kota Bekasi</span>
+            </div>
         </div>
     </div>
 
@@ -96,10 +77,7 @@
             </a>
         @endif
         
-        <a href="#" class="nav-item">
-            <i data-lucide="settings"></i>
-            <span>Pengaturan</span>
-        </a>
+
 
         <a href="#" class="nav-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="margin-top: auto;">
             <i data-lucide="log-out" class="text-red"></i>
@@ -109,4 +87,7 @@
             @csrf
         </form>
     </nav>
+    <div class="sidebar-footer">
+        © 2024 BNPB × BPBD Bekasi
+    </div>
 </div>

@@ -10,167 +10,7 @@
    RELAWAN DASHBOARD — Pixel-faithful Figma implementation
    ========================================================= */
 
-/* Sidebar (Figma: bg #1d3557, w-250px) */
-.relawan-sidebar {
-    width: 250px;
-    min-width: 250px;
-    background-color: #1d3557;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    border-right: 1px solid #c4c6cf;
-    position: relative;
-    z-index: 10;
-}
 
-.sidebar-logo-area {
-    padding: 24px 24px 25px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.sidebar-brand-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.sidebar-logo-bg {
-    width: 55px;
-    height: 55px;
-    background: #f3f3f3;
-    border-radius: 8px;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.sidebar-logo-bg img {
-    width: 44px;
-    height: 44px;
-    object-fit: contain;
-}
-
-.sidebar-brand-name {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: -0.5px;
-}
-
-.sidebar-partner-badge {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 9px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.partner-logo {
-    width: 32px;
-    height: 32px;
-    background: white;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.partner-logo img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-}
-
-.partner-text-wrap {
-    display: flex;
-    flex-direction: column;
-}
-
-.partner-label {
-    font-size: 10px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    line-height: 1;
-}
-
-.partner-name {
-    font-size: 12px;
-    font-weight: 600;
-    color: #ffffff;
-    line-height: 1.3;
-}
-
-.sidebar-nav-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: 8px;
-    color: rgba(255,255,255,0.7);
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s;
-}
-
-.nav-item:hover {
-    background: rgba(255,255,255,0.08);
-    color: #ffffff;
-}
-
-.nav-item.active {
-    background: #006a60;
-    color: #ffffff;
-}
-
-.nav-item i {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-}
-
-.nav-item.text-danger {
-    color: #ff8a80;
-}
-
-.nav-item.text-danger:hover {
-    background: rgba(255,100,100,0.1);
-    color: #ff5252;
-}
-
-.nav-divider {
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 17px;
-    margin-top: 4px;
-}
-
-.sidebar-footer {
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding: 16px;
-    text-align: center;
-    font-size: 10px;
-    color: rgba(255,255,255,0.4);
-}
 
 /* =========================================================
    Main Content Canvas
@@ -1105,19 +945,22 @@
 }
 
 @media (max-width: 1024px) {
-    .relawan-sidebar {
+    .dashboard-sidebar {
         position: fixed;
         left: -250px;
         top: 0;
+        bottom: 0;
         height: 100vh;
-        transition: left 0.3s;
-        z-index: 100;
+        transition: left 0.3s ease;
+        z-index: 1500;
+        box-shadow: 10px 0 20px rgba(0,0,0,0.15);
     }
-    .relawan-sidebar.active {
+    .dashboard-sidebar.active {
         left: 0;
     }
     .mobile-sidebar-toggle {
-        display: block;
+        display: flex !important;
+        z-index: 2000;
     }
     .main-grid {
         grid-template-columns: 1fr;
@@ -1133,72 +976,7 @@
 <div class="dashboard-container">
 
     {{-- ===================== SIDEBAR ===================== --}}
-    <aside class="relawan-sidebar" id="relawanSidebar">
-        <div class="sidebar-logo-area">
-            <div class="sidebar-brand-row">
-                <div class="sidebar-logo-bg">
-                    <img src="{{ asset('assets/logo-titikaman.png') }}" alt="Logo TitikAman"
-                         onerror="this.src='https://placehold.co/44x44/f3f3f3/006a60?text=TA'">
-                </div>
-                <div>
-                    <div class="sidebar-brand-name">TitikAman</div>
-                </div>
-            </div>
-            <div class="sidebar-partner-badge">
-                <div class="partner-logo">
-                    <img src="{{ asset('assets/logo-bpbd.png') }}" alt="BPBD"
-                         onerror="this.src='https://placehold.co/24x24/ffffff/031f41?text=B'">
-                </div>
-                <div class="partner-text-wrap">
-                    <span class="partner-label">Official Partner</span>
-                    <span class="partner-name">BPBD Kota Bekasi</span>
-                </div>
-            </div>
-        </div>
-
-        <nav class="sidebar-nav-list">
-            <a href="{{ route('dashboard') }}" class="nav-item">
-                <i data-lucide="layout-dashboard"></i>
-                <span>Dashboard Utama</span>
-            </a>
-            <a href="{{ route('peta.evakuasi') }}" class="nav-item">
-                <i data-lucide="map"></i>
-                <span>Peta Evakuasi</span>
-            </a>
-            <a href="{{ route('pintu.air') }}" class="nav-item">
-                <i data-lucide="droplet"></i>
-                <span>Data Pintu Air</span>
-            </a>
-            <a href="{{ route('posko') }}" class="nav-item">
-                <i data-lucide="home"></i>
-                <span>Posko Pengungsian</span>
-            </a>
-
-            <div class="nav-divider">
-                <a href="{{ route('relawan.dashboard') }}" class="nav-item active">
-                    <i data-lucide="shield-check"></i>
-                    <span>Dashboard Relawan</span>
-                </a>
-            </div>
-
-            <a href="#" class="nav-item">
-                <i data-lucide="settings"></i>
-                <span>Pengaturan</span>
-            </a>
-
-            <a href="#" class="nav-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="margin-top: auto; color: #ff8b8b;">
-                <i data-lucide="log-out" style="color: #ff8b8b;"></i>
-                <span style="font-weight: 700;">Keluar</span>
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
-        </nav>
-
-        <div class="sidebar-footer">
-            © 2024 BNPB × BPBD Bekasi
-        </div>
-    </aside>
+    @include('partials.sidebar')
 
     <button class="mobile-sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
         <i data-lucide="menu" id="toggleIcon"></i>
@@ -1221,8 +999,9 @@
                     <i data-lucide="search"></i>
                     <input type="text" class="topbar-search" placeholder="Cari misi atau koordinat...">
                 </div>
-                <div class="topbar-icon-btn">
-                    <i data-lucide="diamond"></i>
+                <div class="topbar-icon-btn notification-bell" title="Notifikasi" style="position: relative; cursor: pointer;">
+                    <i data-lucide="bell"></i>
+                    <div class="notification-dot" style="position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; background-color: var(--color-accent-red); border-radius: 50%;"></div>
                 </div>
                 <div class="topbar-icon-btn">
                     <i data-lucide="user-circle"></i>
@@ -1589,7 +1368,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ---- Mobile Sidebar Toggle ----
     const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebar = document.getElementById('relawanSidebar');
+    const sidebar = document.querySelector('.dashboard-sidebar');
     const toggleIcon = document.getElementById('toggleIcon');
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', function () {
