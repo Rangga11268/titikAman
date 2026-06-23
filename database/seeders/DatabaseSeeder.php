@@ -9,6 +9,8 @@ use App\Models\FloodReport;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Support\Facades\DB;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -16,6 +18,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Reset transaction tables to prevent duplicate key collisions and orphans
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        \App\Models\RescueMission::truncate();
+        \App\Models\SosRequest::truncate();
+        \App\Models\FloodReport::truncate();
+        \App\Models\Donation::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // 1. Create Users for all 4 roles (idempotent with updateOrCreate)
         $warga = User::updateOrCreate(
             ['email' => 'warga@example.com'],
