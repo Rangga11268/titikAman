@@ -672,17 +672,17 @@
                         $statusBadge = '';
                         $statusTextClass = '';
                         
-                        if($gate->danger_status == 'danger_1') {
+                        if($gate->danger_status == 'Siaga_1') {
                             $statusClass = 'siaga1-active';
                             $statusBadge = 'badge-red';
                             $statusTextClass = 'text-red';
                             $badgeLabel = 'SIAGA 1';
-                        } elseif($gate->danger_status == 'danger_2') {
+                        } elseif($gate->danger_status == 'Siaga_2') {
                             $statusClass = '';
                             $statusBadge = 'badge-orange';
                             $statusTextClass = 'text-orange';
                             $badgeLabel = 'SIAGA 2';
-                        } elseif($gate->danger_status == 'danger_3') {
+                        } elseif($gate->danger_status == 'Siaga_3') {
                             $statusClass = '';
                             $statusBadge = 'badge-yellow';
                             $statusTextClass = 'text-yellow';
@@ -708,7 +708,7 @@
                             <span class="trend-badge text-red"><i data-lucide="trending-up" style="width: 12px; height: 12px;"></i> +15 cm</span>
                             <span>Pukul 10:00 WIB</span>
                         </div>
-                        @if($gate->danger_status == 'danger_1')
+                        @if($gate->danger_status == 'Siaga_1')
                             <div class="alert-box-mini">
                                 <i data-lucide="alert-octagon" style="width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px;"></i>
                                 <span>Warga harus siap mengungsi, air kiriman tiba!</span>

@@ -192,7 +192,7 @@
 
     .panel-bottom {
         bottom: 16px;
-        height: 190px;
+        height: auto;
     }
 
     .panel-header {
@@ -393,6 +393,146 @@
         background-color: #f9fafb;
         color: var(--brand-teal);
     }
+
+    /* Custom Modal Petunjuk */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(3, 31, 65, 0.4);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .custom-modal-card {
+        background-color: white;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        border: 1px solid rgba(196, 198, 207, 0.4);
+        animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .custom-modal-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(196, 198, 207, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fcfcfd;
+    }
+
+    .custom-modal-header h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--navy-dark);
+        margin: 0;
+    }
+
+    .close-modal-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .close-modal-btn:hover {
+        color: var(--navy-dark);
+    }
+
+    .custom-modal-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+
+    .legend-section h4,
+    .instructions-section h4 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--navy-dark);
+        margin-top: 0;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .legend-item-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .legend-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        margin-top: 3px;
+        flex-shrink: 0;
+    }
+
+    .legend-dot.green {
+        background-color: #2e7d32;
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px #2e7d32;
+    }
+
+    .legend-dot.red-poly {
+        background-color: rgba(230, 57, 70, 0.2);
+        border: 2px solid #e63946;
+        border-radius: 4px;
+    }
+
+    .legend-dot.blue-drop {
+        background-color: #3b82f6;
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px #3b82f6;
+    }
+
+    .legend-item-row div strong {
+        font-size: 12px;
+        color: var(--navy-dark);
+        display: block;
+    }
+
+    .legend-item-row div p {
+        font-size: 11px;
+        color: var(--color-text-muted);
+        margin: 2px 0 0 0;
+        line-height: 1.4;
+    }
+
+    .instructions-section ol {
+        margin: 0;
+        padding-left: 16px;
+        font-size: 12px;
+        color: #4b5563;
+    }
+
+    .instructions-section li {
+        margin-bottom: 8px;
+        line-height: 1.5;
+    }
 </style>
 @endsection
 
@@ -503,6 +643,51 @@
         <i data-lucide="minus" style="width: 18px; height: 18px;"></i>
     </button>
 </div>
+
+<!-- Modal Petunjuk / Legenda -->
+<div class="custom-modal-overlay" id="petunjukModal" style="display: none;">
+    <div class="custom-modal-card">
+        <div class="custom-modal-header">
+            <h3>Petunjuk & Legenda Peta</h3>
+            <button class="close-modal-btn" onclick="closePetunjuk()">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+            <div class="legend-section">
+                <h4>Legenda Peta</h4>
+                <div class="legend-item-row">
+                    <span class="legend-dot green"></span>
+                    <div>
+                        <strong>Posko Pengungsian</strong>
+                        <p>Lokasi evakuasi aktif yang aman dari banjir, dikelola oleh BPBD/Relawan.</p>
+                    </div>
+                </div>
+                <div class="legend-item-row">
+                    <span class="legend-dot red-poly"></span>
+                    <div>
+                        <strong>Zona Genangan / Banjir</strong>
+                        <p>Area pemukiman atau jalan raya yang tergenang banjir aktif (hindari area ini).</p>
+                    </div>
+                </div>
+                <div class="legend-item-row">
+                    <span class="legend-dot blue-drop"></span>
+                    <div>
+                        <strong>Pintu Air (TMA)</strong>
+                        <p>Pos pantau Tinggi Muka Air sungai untuk mendeteksi banjir kiriman hulu.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="instructions-section">
+                <h4>Panduan Evakuasi</h4>
+                <ol>
+                    <li>Pilih salah satu <strong>Shelter Terdekat</strong> di panel kiri.</li>
+                    <li>Perhatikan status kapasitas shelter sebelum bergerak menuju lokasi.</li>
+                    <li>Ikuti jalur jalan yang aman dan hindari melintasi area berwarna merah (zona genangan).</li>
+                    <li>Jika membutuhkan bantuan evakuasi segera, gunakan tombol <strong>SOS Darurat</strong> di dashboard.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -602,6 +787,30 @@
                 .bindPopup(`<strong>Zona Bahaya / Genangan</strong><br>${r.description}<br>Tinggi Air: ${r.height} cm`);
             }
         });
+
+        // --- Petunjuk Modal Toggle ---
+        const petunjukBtn = document.querySelector('button[title="Petunjuk"]');
+        const petunjukModal = document.getElementById('petunjukModal');
+        
+        if (petunjukBtn && petunjukModal) {
+            petunjukBtn.addEventListener('click', function() {
+                petunjukModal.style.display = 'flex';
+            });
+        }
+
+        window.closePetunjuk = function() {
+            if (petunjukModal) {
+                petunjukModal.style.display = 'none';
+            }
+        };
+
+        if (petunjukModal) {
+            petunjukModal.addEventListener('click', function(e) {
+                if (e.target === petunjukModal) {
+                    closePetunjuk();
+                }
+            });
+        }
     });
 
     function focusShelter(lat, lng, name) {
