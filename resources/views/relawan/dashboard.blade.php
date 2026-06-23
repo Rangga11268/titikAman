@@ -1533,7 +1533,7 @@
                                     <td class="td-regular">{{ $mission->sosRequest->people_trapped }} Orang</td>
                                     <td class="td-regular">{{ $mission->sosRequest->vulnerable_groups_count }} Orang</td>
                                     <td class="td-duration">
-                                        {{ $mission->resolved_at->diffInMinutes($mission->created_at) }} Menit
+                                        {{ (int) $mission->resolved_at->diffInMinutes($mission->created_at) }} Menit
                                     </td>
                                     <td>
                                         <span class="badge-terkonsepsi">TERKONSEPSI</span>
