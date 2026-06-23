@@ -20,12 +20,6 @@ class SharedController extends Controller
         $role = auth()->user()->role;
         if ($role === 'Warga') {
             return redirect()->route('warga.dashboard');
-        } elseif ($role === 'Relawan') {
-            return redirect()->route('relawan.dashboard');
-        } elseif ($role === 'Pengelola_Posko') {
-            return redirect()->route('pengelola.dashboard');
-        } elseif ($role === 'Admin_BPBD') {
-            return redirect()->route('admin.dashboard');
         }
 
         // Stat Cards
@@ -47,11 +41,67 @@ class SharedController extends Controller
             ->take(3)
             ->get();
 
-        // Recent flood reports for activity log
-        $activityLog      = FloodReport::with('user')
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
+        // Recent flood reports, SOS requests, water gates, and donations for activity log
+        $reportsList = FloodReport::with('user')->orderBy('created_at', 'desc')->take(10)->get();
+        $sosRequestsList = SosRequest::with('user')->orderBy('created_at', 'desc')->take(10)->get();
+        $waterGatesList = WaterGate::orderBy('last_updated', 'desc')->take(5)->get();
+        $donationsList = Donation::with(['donor', 'shelterNeed'])->orderBy('created_at', 'desc')->take(10)->get();
+
+        $logs = collect();
+
+        foreach ($reportsList as $r) {
+            $logs->push([
+                'time' => $r->created_at,
+                'type' => 'laporan',
+                'badge' => 'LAPORAN',
+                'badge_class' => 'badge-gray',
+                'detail' => "Laporan Genangan: " . $r->street_name . " (Tinggi Air: " . $r->water_height_cm . " cm)",
+                'pic' => $r->user?->fullname ?? 'Anonim',
+                'status' => $r->verification_status == 'verified' ? 'Terverifikasi' : ($r->verification_status == 'rejected' ? 'Ditolak' : 'Menunggu'),
+                'status_class' => $r->verification_status == 'verified' ? 'badge-green' : ($r->verification_status == 'rejected' ? 'badge-red' : 'badge-yellow'),
+            ]);
+        }
+
+        foreach ($sosRequestsList as $s) {
+            $logs->push([
+                'time' => $s->created_at,
+                'type' => 'sos',
+                'badge' => 'SOS EMERGENCY',
+                'badge_class' => 'badge-red',
+                'detail' => "Evakuasi " . $s->people_trapped . " warga di " . ($s->user?->kelurahan ?? 'Bekasi') . " (" . ($s->description ?? 'Butuh evakuasi') . ")",
+                'pic' => $s->user?->fullname ?? 'Warga',
+                'status' => $s->status == 'completed' || $s->status == 'rescued' ? 'Selesai' : ($s->status == 'assigned' ? 'Evakuasi' : 'Mencari Relawan'),
+                'status_class' => $s->status == 'completed' || $s->status == 'rescued' ? 'badge-green' : ($s->status == 'assigned' ? 'badge-blue' : 'badge-yellow'),
+            ]);
+        }
+
+        foreach ($waterGatesList as $w) {
+            $logs->push([
+                'time' => $w->last_updated ?? now(),
+                'type' => 'pintu_air',
+                'badge' => 'PINTU AIR',
+                'badge_class' => 'badge-blue',
+                'detail' => "Tinggi Muka Air " . $w->gate_name . " berstatus " . str_replace('_', ' ', $w->danger_status) . " (" . $w->water_level_cm . " cm)",
+                'pic' => 'Petugas Lapangan',
+                'status' => str_replace('_', ' ', $w->danger_status),
+                'status_class' => $w->danger_status == 'Siaga_1' ? 'badge-red' : ($w->danger_status == 'Siaga_2' ? 'badge-orange' : ($w->danger_status == 'Siaga_3' ? 'badge-yellow' : 'badge-green')),
+            ]);
+        }
+
+        foreach ($donationsList as $d) {
+            $logs->push([
+                'time' => $d->created_at,
+                'type' => 'donasi',
+                'badge' => 'DONASI',
+                'badge_class' => 'badge-orange',
+                'detail' => "Bantuan Logistik: " . ($d->shelterNeed?->item_name ?? 'Paket Bantuan') . " (" . $d->quantity_donated . " unit) untuk posko",
+                'pic' => $d->donor?->fullname ?? 'Donatur',
+                'status' => $d->status == 'delivered' ? 'Diterima' : ($d->status == 'accepted' ? 'Disetujui' : 'Pending'),
+                'status_class' => $d->status == 'delivered' ? 'badge-green' : ($d->status == 'accepted' ? 'badge-blue' : 'badge-yellow'),
+            ]);
+        }
+
+        $activityLog = $logs->sortByDesc('time')->take(20);
 
         // Recent SOS for activity log (merged)
         $recentSos        = SosRequest::with('user')
