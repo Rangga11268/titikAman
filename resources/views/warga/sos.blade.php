@@ -172,10 +172,18 @@
         background-color: #b61722;
     }
 
-    .sos-circular-btn:disabled {
+    .sos-circular-btn:disabled:not(.active) {
         background-color: var(--color-border);
         box-shadow: none;
         cursor: not-allowed;
+    }
+
+    .sos-circular-btn.active,
+    .sos-circular-btn.active:disabled {
+        background-color: #e63946;
+        color: var(--color-white);
+        box-shadow: 0 8px 24px rgba(230, 57, 70, 0.6);
+        cursor: default;
     }
 
     .sos-pulse-ring-active {
@@ -599,10 +607,15 @@
                                 <circle class="progress-ring-circle-bg" cx="70" cy="70" r="60"></circle>
                                 <circle class="progress-ring-circle" id="progressRing" cx="70" cy="70" r="60"></circle>
                             </svg>
-                            <button type="button" class="sos-circular-btn" id="sosTriggerBtn" {{ $activeSos ? 'disabled' : '' }}>
-                                <span>SOS</span>
+                            <button type="button" class="sos-circular-btn {{ $activeSos ? 'active' : '' }}" id="sosTriggerBtn" {{ $activeSos ? 'disabled' : '' }}>
+                                @if ($activeSos)
+                                    <span style="font-size: 20px; font-weight: 800; line-height: 1;">SOS</span>
+                                    <span style="font-size: 11px; font-weight: 700; margin-top: 4px; opacity: 0.9; letter-spacing: 1px; line-height: 1;">AKTIF</span>
+                                @else
+                                    <span>SOS</span>
+                                @endif
                             </button>
-                            <div class="sos-pulse-ring-active" id="pulseRing" style="{{ $activeSos ? 'display: none;' : '' }}"></div>
+                            <div class="sos-pulse-ring-active" id="pulseRing" style="{{ $activeSos ? '' : 'display: none;' }}"></div>
                         </div>
                         
                         <div class="sos-hold-instruction" id="holdInstruction">
@@ -1066,6 +1079,16 @@
                     document.getElementById('toastMessage').innerText = data.message;
                     toast.style.display = 'flex';
                     
+                    // Update button styling and contents to show active SOS state
+                    sosTriggerBtn.classList.add('active');
+                    sosTriggerBtn.innerHTML = `
+                        <span style="font-size: 20px; font-weight: 800; line-height: 1;">SOS</span>
+                        <span style="font-size: 11px; font-weight: 700; margin-top: 4px; opacity: 0.9; letter-spacing: 1px; line-height: 1;">AKTIF</span>
+                    `;
+                    
+                    // Show pulse ring indicating transmitting state
+                    document.getElementById('pulseRing').style.display = 'block';
+                    
                     // Update Timeline status
                     holdInstruction.innerHTML = `<span style="color: #00a472; font-weight: 700;">Sinyal SOS Aktif</span>`;
                     
@@ -1096,7 +1119,7 @@
                 } else {
                     alert("Gagal mengirim SOS. Silakan coba lagi.");
                     sosTriggerBtn.disabled = false;
-                    document.getElementById('pulseRing').style.display = 'block';
+                    document.getElementById('pulseRing').style.display = 'none';
                     holdInstruction.innerText = "Tekan & tahan 2 detik untuk mengaktifkan";
                 }
             })
@@ -1104,7 +1127,7 @@
                 console.error("SOS Submit Error:", err);
                 alert("Terjadi kesalahan koneksi saat mengirim SOS.");
                 sosTriggerBtn.disabled = false;
-                document.getElementById('pulseRing').style.display = 'block';
+                document.getElementById('pulseRing').style.display = 'none';
                 holdInstruction.innerText = "Tekan & tahan 2 detik untuk mengaktifkan";
             });
         }
