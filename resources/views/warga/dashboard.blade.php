@@ -724,6 +724,49 @@
             text-align: center;
         }
     }
+
+    /* Filter Dropdown CSS */
+    .filter-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+    .filter-dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 110%;
+        background: white;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        z-index: 1000;
+        min-width: 180px;
+        padding: 6px 0;
+        animation: filterFadeIn 0.2s ease-out;
+    }
+    .filter-option {
+        display: block;
+        padding: 8px 16px;
+        color: var(--navy-dark);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-align: left;
+    }
+    .filter-option:hover {
+        background-color: var(--bg-light);
+        color: var(--brand-teal);
+    }
+    .filter-option.active {
+        background-color: rgba(0, 106, 96, 0.08);
+        color: var(--brand-teal);
+        font-weight: 600;
+    }
+    @keyframes filterFadeIn {
+        from { opacity: 0; transform: translateY(-5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 </style>
 @endsection
 
@@ -834,11 +877,11 @@
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 10px;">
                                         <span class="pintu-level">{{ $gate->water_level_cm }} cm</span>
-                                        @if($gate->danger_status == 'danger_1')
+                                        @if($gate->danger_status == 'Siaga_1')
                                             <span class="badge-pill badge-red">SIAGA 1</span>
-                                        @elseif($gate->danger_status == 'danger_2')
+                                        @elseif($gate->danger_status == 'Siaga_2')
                                             <span class="badge-pill badge-orange">SIAGA 2</span>
-                                        @elseif($gate->danger_status == 'danger_3')
+                                        @elseif($gate->danger_status == 'Siaga_3')
                                             <span class="badge-pill badge-yellow">SIAGA 3</span>
                                         @else
                                             <span class="badge-pill badge-green">NORMAL</span>
@@ -974,7 +1017,18 @@
                 <div class="map-header-row">
                     <span class="map-title">Log Aktivitas Kebencanaan Real-Time</span>
                     <div class="table-actions">
-                        <button class="btn-teal-outline"><i data-lucide="filter" style="width: 14px; height: 14px;"></i> Filter Data</button>
+                        <div class="filter-wrapper">
+                            <button class="btn-teal-outline" id="filter-btn">
+                                <i data-lucide="filter" style="width: 14px; height: 14px;"></i> <span id="current-filter">Filter Data</span>
+                            </button>
+                            <div class="filter-dropdown" id="filter-menu">
+                                <a href="#" class="filter-option active" data-filter="all">Semua Aktivitas</a>
+                                <a href="#" class="filter-option" data-filter="laporan">Laporan Genangan</a>
+                                <a href="#" class="filter-option" data-filter="sos">SOS Darurat</a>
+                                <a href="#" class="filter-option" data-filter="pintu_air">Tinggi Muka Air</a>
+                                <a href="#" class="filter-option" data-filter="donasi">Donasi Logistik</a>
+                            </div>
+                        </div>
                         <button class="btn-teal-filled" onclick="window.location.href='{{ route('laporan.export') }}'"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Unduh Laporan PDF</button>
                     </div>
                 </div>
@@ -991,40 +1045,40 @@
                         </thead>
                         <tbody>
                             @forelse($activityLog as $log)
-                                <tr>
-                                    <td>{{ $log->created_at->format('H:i:s WIB') }}</td>
+                                <tr class="activity-row" data-type="{{ $log['type'] }}">
+                                    <td>{{ \Carbon\Carbon::parse($log['time'])->format('H:i') }} WIB</td>
                                     <td>
-                                        <span class="badge-pill badge-gray">LAPORAN</span>
+                                        <span class="badge-pill {{ $log['badge_class'] }}">{{ $log['badge'] }}</span>
                                     </td>
-                                    <td>{{ $log->street_name }} (Tinggi Air: {{ $log->water_height_cm }} cm)</td>
-                                    <td>{{ $log->user->fullname }}</td>
+                                    <td>{{ $log['detail'] }}</td>
+                                    <td>{{ $log['pic'] }}</td>
                                     <td>
-                                        <span class="badge-pill badge-green">Tercatat</span>
+                                        <span class="badge-pill {{ $log['status_class'] }}">{{ $log['status'] }}</span>
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
+                                <tr class="activity-row" data-type="sos">
                                     <td>11:45 WIB</td>
                                     <td><span class="badge-pill badge-red">SOS EMERGENCY</span></td>
                                     <td>Penyelamatan 4 Jiwa terjebak di atap rumah Kavling Jati</td>
                                     <td>Relawan Budi</td>
                                     <td><span class="badge-pill badge-green">Selesai</span></td>
                                 </tr>
-                                <tr>
+                                <tr class="activity-row" data-type="pintu_air">
                                     <td>11:32 WIB</td>
                                     <td><span class="badge-pill badge-blue">PINTU AIR</span></td>
                                     <td>Kenaikan TMA Pintu Air Pondok Gede Hulu ke 185 cm</td>
                                     <td>Petugas Bambang</td>
                                     <td><span class="badge-pill badge-yellow">Masuk</span></td>
                                 </tr>
-                                <tr>
+                                <tr class="activity-row" data-type="laporan">
                                     <td>11:20 WIB</td>
-                                    <td><span class="badge-pill badge-green">VERIFIKASI</span></td>
+                                    <td><span class="badge-pill badge-gray">LAPORAN</span></td>
                                     <td>Laporan Genangan Jalan Perjuangan validasi lapangan</td>
                                     <td>BPBD Bekasi</td>
                                     <td><span class="badge-pill badge-blue">Valid</span></td>
                                 </tr>
-                                <tr>
+                                <tr class="activity-row" data-type="donasi">
                                     <td>10:55 WIB</td>
                                     <td><span class="badge-pill badge-orange">DONASI</span></td>
                                     <td>Donasi 100 Box Selimut tiba di Posko Serbaguna Jatiasih</td>
@@ -1032,6 +1086,11 @@
                                     <td><span class="badge-pill badge-green">Masuk</span></td>
                                 </tr>
                             @endforelse
+                            <tr id="no-activity-row" style="display: none;">
+                                <td colspan="5" style="text-align: center; padding: 24px; color: var(--color-text-muted);">
+                                    Tidak ada aktivitas untuk filter ini.
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1130,6 +1189,67 @@
                 .bindPopup(`<strong>${s.name}</strong><br>Kapasitas: ${s.occupants}/${s.max}`);
             }
         });
+
+        // Activity log filtering
+        const filterBtn = document.getElementById('filter-btn');
+        const filterMenu = document.getElementById('filter-menu');
+        const filterOptions = document.querySelectorAll('.filter-option');
+        const activityRows = document.querySelectorAll('.activity-row');
+        const noActivityRow = document.getElementById('no-activity-row');
+        const currentFilterSpan = document.getElementById('current-filter');
+
+        if (filterBtn && filterMenu) {
+            filterBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isVisible = window.getComputedStyle(filterMenu).display === 'block';
+                filterMenu.style.display = isVisible ? 'none' : 'block';
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!filterBtn.contains(e.target) && !filterMenu.contains(e.target)) {
+                    filterMenu.style.display = 'none';
+                }
+            });
+
+            filterOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Remove active class from all options
+                    filterOptions.forEach(opt => opt.classList.remove('active'));
+                    // Add active class to clicked option
+                    this.classList.add('active');
+
+                    const selectedFilter = this.getAttribute('data-filter');
+                    if (selectedFilter === 'all') {
+                        currentFilterSpan.textContent = 'Filter Data';
+                    } else {
+                        currentFilterSpan.textContent = 'Filter: ' + this.textContent;
+                    }
+                    
+                    filterMenu.style.display = 'none';
+
+                    let visibleCount = 0;
+
+                    activityRows.forEach(row => {
+                        const rowType = row.getAttribute('data-type');
+                        if (selectedFilter === 'all' || rowType === selectedFilter) {
+                            row.style.display = '';
+                            visibleCount++;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    if (visibleCount === 0) {
+                        if (noActivityRow) noActivityRow.style.display = '';
+                    } else {
+                        if (noActivityRow) noActivityRow.style.display = 'none';
+                    }
+                });
+            });
+        }
     });
 </script>
 @endsection
