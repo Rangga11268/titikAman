@@ -35,6 +35,9 @@ Route::middleware('auth')->group(function () {
     // Shared All-Role Pages
     Route::get('/peta-evakuasi', [SharedController::class, 'petaEvakuasi'])->name('peta.evakuasi');
     Route::get('/data-pintu-air', [SharedController::class, 'dataPintuAir'])->name('pintu.air');
+    Route::get('/data-pintu-air/export', [SharedController::class, 'exportWaterGates'])->name('watergate.export');
+    Route::get('/laporan/export', [SharedController::class, 'exportLaporan'])->name('laporan.export');
+    Route::get('/donasi/export', [DonasiController::class, 'exportDonations'])->name('donasi.export');
     Route::get('/posko', [SharedController::class, 'posko'])->name('posko');
     Route::post('/posko/donasi', [SharedController::class, 'submitPosko'])->name('posko.donasi');
 

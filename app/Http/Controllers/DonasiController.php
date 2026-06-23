@@ -94,4 +94,48 @@ class DonasiController extends Controller
                 ->with('error', 'Gagal mengirim donasi: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Export all donations as CSV.
+     */
+    public function exportDonations()
+    {
+        $donations = \App\Models\Donation::with(['donor', 'shelterNeed.shelter'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $fileName = 'donations_' . time() . '.csv';
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['ID Donasi', 'Donatur', 'Posko Tujuan', 'Barang Bantuan', 'Jumlah', 'No Resi Pengiriman', 'Status', 'Tanggal'];
+
+        $callback = function() use($donations, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($donations as $donation) {
+                fputcsv($file, [
+                    $donation->donation_id,
+                    $donation->donor ? $donation->donor->fullname : 'Anonim',
+                    ($donation->shelterNeed && $donation->shelterNeed->shelter) ? $donation->shelterNeed->shelter->shelter_name : '-',
+                    $donation->shelterNeed ? $donation->shelterNeed->item_name : '-',
+                    $donation->quantity_donated,
+                    $donation->shipping_receipt_no ?? '-',
+                    $donation->status,
+                    $donation->created_at->format('Y-m-d H:i:s')
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

@@ -168,4 +168,86 @@ class SharedController extends Controller
 
         return redirect()->route('posko')->with('success', 'Donasi berhasil dicatat! Tim koordinasi akan segera menghubungi Anda.');
     }
+
+    /**
+     * Export water gate (TMA) data to CSV.
+     */
+    public function exportWaterGates()
+    {
+        $waterGates = WaterGate::orderBy('danger_status', 'desc')->get();
+        $fileName = 'tma_recap_' . time() . '.csv';
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['ID', 'Nama Pintu Air', 'Nama Sungai', 'Tinggi Muka Air (cm)', 'Status Bahaya', 'Terakhir Diperbarui'];
+
+        $callback = function() use($waterGates, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($waterGates as $gate) {
+                fputcsv($file, [
+                    $gate->gate_id,
+                    $gate->gate_name,
+                    $gate->river_name,
+                    $gate->water_level_cm,
+                    $gate->danger_status,
+                    $gate->last_updated ? $gate->last_updated->format('Y-m-d H:i:s') : '-'
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export flood reports to CSV.
+     */
+    public function exportLaporan()
+    {
+        $reports = FloodReport::with('user')
+            ->where('verification_status', 'verified')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $fileName = 'flood_reports_' . time() . '.csv';
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['ID Laporan', 'Pelapor', 'Tinggi Air (cm)', 'Nama Jalan / Lokasi', 'Status Verifikasi', 'Tanggal Dilaporkan'];
+
+        $callback = function() use($reports, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($reports as $report) {
+                fputcsv($file, [
+                    $report->report_id,
+                    $report->user ? $report->user->fullname : 'Anonim',
+                    $report->water_height_cm,
+                    $report->street_name,
+                    $report->verification_status,
+                    $report->created_at->format('Y-m-d H:i:s')
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }
