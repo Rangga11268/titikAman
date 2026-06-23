@@ -6,9 +6,9 @@ use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\DonasiController;
 use Illuminate\Support\Facades\Route;
 
-// Redirect root to login
+// Show landing page
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('welcome');
 });
 
 // Guest Routes
