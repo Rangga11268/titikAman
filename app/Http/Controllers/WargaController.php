@@ -37,9 +37,9 @@ class WargaController extends Controller
         $titikBanjir      = \App\Models\FloodReport::where('verification_status', 'verified')->count();
         $wargaTerdampak   = \App\Models\User::where('role', 'Warga')->count();
         $sosMenunggu      = \App\Models\SosRequest::where('status', 'waiting')->count();
-        $poskoAktif       = \App\Models\Shelter::whereIn('status', ['available', 'almost_full'])->count();
+        $poskoAktif       = \App\Models\Shelter::whereIn('status', ['active', 'full'])->count();
 
-        $shelters         = \App\Models\Shelter::whereIn('status', ['available', 'almost_full', 'full'])->get();
+        $shelters         = \App\Models\Shelter::whereIn('status', ['active', 'full'])->get();
         $waterGates       = \App\Models\WaterGate::orderBy('danger_status', 'desc')->get();
 
         $latestSos        = \App\Models\SosRequest::with('user')

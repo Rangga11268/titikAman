@@ -26,10 +26,10 @@ class SharedController extends Controller
         $titikBanjir      = FloodReport::where('verification_status', 'verified')->count();
         $wargaTerdampak   = \App\Models\User::where('role', 'Warga')->count();
         $sosMenunggu      = SosRequest::where('status', 'waiting')->count();
-        $poskoAktif       = Shelter::whereIn('status', ['available', 'almost_full'])->count();
+        $poskoAktif       = Shelter::whereIn('status', ['active', 'full'])->count();
 
         // Shelters for map markers
-        $shelters         = Shelter::whereIn('status', ['available', 'almost_full', 'full'])->get();
+        $shelters         = Shelter::whereIn('status', ['active', 'full'])->get();
 
         // Water gates status
         $waterGates       = WaterGate::orderBy('danger_status', 'desc')->get();
@@ -180,43 +180,21 @@ class SharedController extends Controller
         $query = Shelter::query();
 
         if ($filter === 'available') {
-            $query->where('status', 'available');
+            $query->where('status', 'active');
         } elseif ($filter === 'mck') {
-            $query->where('has_toilet_facilities', true);
+            $query->where('has_toilet_facilities', 'Yes');
         }
 
-        $shelters = $query->orderByRaw("FIELD(status, 'available', 'almost_full', 'full')")->get();
+        $shelters = $query->orderByRaw("FIELD(status, 'active', 'full', 'closed')")->get();
 
         $stats = [
-            'poskoAktif'      => Shelter::whereIn('status', ['available', 'almost_full'])->count(),
+            'poskoAktif'      => Shelter::whereIn('status', ['active', 'full'])->count(),
             'totalPengungsi'  => Shelter::sum('current_occupants'),
-            'poskoTersedia'   => Shelter::where('status', 'available')->count(),
+            'poskoTersedia'   => Shelter::where('status', 'active')->count(),
             'statusKritis'    => Shelter::where('status', 'full')->count(),
         ];
 
         return view('shared.posko', compact('shelters', 'stats', 'filter'));
-    }
-
-    /**
-     * Submit donation from posko page.
-     */
-    public function submitPosko(Request $request)
-    {
-        $request->validate([
-            'jenis_bantuan' => 'required|string|max:255',
-            'keterangan'    => 'required|string|max:1000',
-        ]);
-
-        // Store as a donation record
-        Donation::create([
-            'donor_name'    => auth()->user()->fullname,
-            'donation_type' => $request->jenis_bantuan,
-            'description'   => $request->keterangan,
-            'status'        => 'pending',
-            'user_id'       => auth()->id(),
-        ]);
-
-        return redirect()->route('posko')->with('success', 'Donasi berhasil dicatat! Tim koordinasi akan segera menghubungi Anda.');
     }
 
     /**

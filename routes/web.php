@@ -39,7 +39,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/export', [SharedController::class, 'exportLaporan'])->name('laporan.export');
     Route::get('/donasi/export', [DonasiController::class, 'exportDonations'])->name('donasi.export');
     Route::get('/posko', [SharedController::class, 'posko'])->name('posko');
-    Route::post('/posko/donasi', [SharedController::class, 'submitPosko'])->name('posko.donasi');
+    
+    // Donation Hub Routes (Shared to All Roles)
+    Route::get('/donasi', [DonasiController::class, 'index'])->name('donasi.hub');
+    Route::post('/donasi', [DonasiController::class, 'submitDonation'])->name('donasi.submit');
 
     // Warga Portal Routes
     Route::middleware('role:Warga')->group(function () {
@@ -64,10 +67,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/pengelola/shelter/update', [PengelolaController::class, 'updateShelter'])->name('pengelola.shelter.update');
         Route::post('/pengelola/need/add', [PengelolaController::class, 'addNeed'])->name('pengelola.need.add');
         Route::post('/pengelola/donation/verify/{id}', [PengelolaController::class, 'updateDonationStatus'])->name('pengelola.donation.verify');
-        
-        // Donation Hub Routes (Exclusive to Pengelola)
-        Route::get('/donasi', [DonasiController::class, 'index'])->name('donasi.hub');
-        Route::post('/donasi', [DonasiController::class, 'submitDonation'])->name('donasi.submit');
     });
 
     // Admin BPBD Portal Routes
