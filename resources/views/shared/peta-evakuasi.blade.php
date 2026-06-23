@@ -738,11 +738,13 @@
         // Add Shelter Markers (Teal circles)
         @php
             $shelterMapData = $shelters->map(function($shelter) {
+                $pct = $shelter->max_capacity > 0 ? ($shelter->current_occupants / $shelter->max_capacity) : 0;
+                $status = $shelter->status === 'active' ? ($pct >= 0.85 ? 'almost_full' : 'available') : $shelter->status;
                 return [
                     'name' => $shelter->shelter_name,
                     'lat' => floatval($shelter->latitude),
                     'lng' => floatval($shelter->longitude),
-                    'status' => $shelter->status,
+                    'status' => $status,
                     'occupants' => $shelter->current_occupants,
                     'max' => $shelter->max_capacity
                 ];

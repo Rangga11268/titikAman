@@ -908,42 +908,22 @@
             </div>
 
             <!-- Kirim Donasi Section -->
-            <div class="donasi-section">
-                <div class="donasi-header">
-                    <div class="donasi-icon-bg">
-                        <i data-lucide="truck" style="width: 22px; height: 22px;"></i>
-                    </div>
-                    <div>
-                        <h3 class="donasi-title">Kirim Bantuan Logistik ke Posko</h3>
-                        <span class="page-subtitle">Formulir komitmen penyaluran donasi logistik warga</span>
-                    </div>
+            <div class="donasi-section" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; gap: 16px;">
+                <div class="donasi-icon-bg" style="width: 48px; height: 48px; border-radius: 50%; background-color: rgba(0, 106, 96, 0.1); color: var(--brand-teal); display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <i data-lucide="heart" style="width: 24px; height: 24px;"></i>
                 </div>
-
-                <form action="{{ route('posko.donasi') }}" method="POST" style="display: flex; flex-direction: column; gap: 16px;">
-                    @csrf
-                    <div class="donasi-form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="jenis_bantuan">JENIS BANTUAN *</label>
-                            <input type="text" name="jenis_bantuan" id="jenis_bantuan" class="form-input" placeholder="Contoh: Logistik / Makanan / Obat-obatan" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="keterangan">JUMLAH / KETERANGAN DETAIL *</label>
-                            <input type="text" name="keterangan" id="keterangan" class="form-input" placeholder="Contoh: 50 Box Air Mineral, 30 Selimut hangat" required>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <i data-lucide="navigation-2" class="text-blue" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
-                        <span class="info-row-text">
-                            <strong>Penjemputan Aktif:</strong> Armada logistik relawan siap membantu penjemputan barang bantuan untuk area Jakarta - Bekasi Raya.
-                        </span>
-                    </div>
-
-                    <button type="submit" class="btn-submit-full">
-                        <span>Konfirmasi Pengiriman Bantuan</span>
-                        <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
-                    </button>
-                </form>
+                <div style="max-width: 580px;">
+                    <h3 class="donasi-title" style="margin-bottom: 8px; font-size: 18px; font-weight: 700; text-align: center;">Ingin Menyalurkan Bantuan Logistik?</h3>
+                    <p class="page-subtitle" style="font-size: 13px; line-height: 1.6; margin: 0; color: var(--color-text-muted); text-align: center;">
+                        Untuk memastikan penyaluran bantuan tepat sasaran dan sesuai kebutuhan mendesak di setiap posko, silakan kunjungi <strong>Hub Logistik & Donasi</strong> kami. Anda dapat melihat daftar kebutuhan riil di tiap posko dan mencatatkan donasi Anda secara resmi.
+                    </p>
+                </div>
+                <div style="margin-top: 8px; width: 100%; max-width: 320px;">
+                    <a href="{{ route('donasi.hub') }}" class="btn-submit-full" style="text-decoration: none;">
+                        <span>Kunjungi Hub Logistik & Donasi</span>
+                        <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -1016,11 +996,13 @@
         // Precomputed shelter coordinates
         @php
             $shelterMapData = $shelters->map(function($shelter) {
+                $pct = $shelter->max_capacity > 0 ? ($shelter->current_occupants / $shelter->max_capacity) : 0;
+                $status = $shelter->status === 'active' ? ($pct >= 0.85 ? 'almost_full' : 'available') : $shelter->status;
                 return [
                     'name' => $shelter->shelter_name,
                     'lat' => floatval($shelter->latitude),
                     'lng' => floatval($shelter->longitude),
-                    'status' => $shelter->status,
+                    'status' => $status,
                     'occupants' => $shelter->current_occupants,
                     'max' => $shelter->max_capacity
                 ];
