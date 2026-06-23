@@ -1161,16 +1161,16 @@
                 <i data-lucide="layout-dashboard"></i>
                 <span>Dashboard Utama</span>
             </a>
-            <a href="{{ route('dashboard') }}" class="nav-item">
+            <a href="{{ route('peta.evakuasi') }}" class="nav-item">
                 <i data-lucide="map"></i>
                 <span>Peta Evakuasi</span>
             </a>
-            <a href="{{ route('dashboard') }}" class="nav-item">
-                <i data-lucide="droplets"></i>
+            <a href="{{ route('pintu.air') }}" class="nav-item">
+                <i data-lucide="droplet"></i>
                 <span>Data Pintu Air</span>
             </a>
-            <a href="{{ route('dashboard') }}" class="nav-item">
-                <i data-lucide="tent"></i>
+            <a href="{{ route('posko') }}" class="nav-item">
+                <i data-lucide="home"></i>
                 <span>Posko Pengungsian</span>
             </a>
 
@@ -1185,6 +1185,14 @@
                 <i data-lucide="settings"></i>
                 <span>Pengaturan</span>
             </a>
+
+            <a href="#" class="nav-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="margin-top: auto; color: #ff8b8b;">
+                <i data-lucide="log-out" style="color: #ff8b8b;"></i>
+                <span style="font-weight: 700;">Keluar</span>
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
         </nav>
 
         <div class="sidebar-footer">
