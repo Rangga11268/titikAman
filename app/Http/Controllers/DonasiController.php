@@ -86,11 +86,11 @@ class DonasiController extends Controller
             $this->donationService->submitDonation($data, $request->file('proof_photo'));
 
             return redirect()
-                ->route('donasi.hub')
+                ->back(fallback: route('donasi.hub'))
                 ->with('success', 'Donasi Anda berhasil dikirim! Pengelola posko akan segera memverifikasi barang bantuan Anda.');
         } catch (Exception $e) {
             return redirect()
-                ->route('donasi.hub')
+                ->back(fallback: route('donasi.hub'))
                 ->with('error', 'Gagal mengirim donasi: ' . $e->getMessage());
         }
     }

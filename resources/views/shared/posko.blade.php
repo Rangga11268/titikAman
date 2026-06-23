@@ -777,10 +777,24 @@
 
         <!-- Body -->
         <div class="dashboard-body">
-            <!-- Alert success -->
+            <!-- Alert success & error -->
             @if(session('success'))
                 <div class="alert-success">
                     {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="alert-error" style="background-color: rgba(186, 26, 26, 0.1); border: 1px solid rgba(186, 26, 26, 0.2); color: var(--accent-red); padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 16px;">
+                    {{ session('error') }}
+                </div>
+            @endif
+            @if($errors->any())
+                <div class="alert-error" style="background-color: rgba(186, 26, 26, 0.1); border: 1px solid rgba(186, 26, 26, 0.2); color: var(--accent-red); padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 16px;">
+                    <ul style="margin: 0; padding-left: 16px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 
@@ -908,22 +922,65 @@
             </div>
 
             <!-- Kirim Donasi Section -->
-            <div class="donasi-section" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; gap: 16px;">
-                <div class="donasi-icon-bg" style="width: 48px; height: 48px; border-radius: 50%; background-color: rgba(0, 106, 96, 0.1); color: var(--brand-teal); display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-                    <i data-lucide="heart" style="width: 24px; height: 24px;"></i>
+            <div class="donasi-section">
+                <div class="donasi-header">
+                    <div class="donasi-icon-bg" style="background-color: rgba(0, 106, 96, 0.1); color: var(--brand-teal); width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="truck" style="width: 22px; height: 22px;"></i>
+                    </div>
+                    <div>
+                        <h3 class="donasi-title">Kirim Bantuan Logistik ke Posko</h3>
+                        <span class="page-subtitle">Formulir komitmen penyaluran donasi logistik warga</span>
+                    </div>
                 </div>
-                <div style="max-width: 580px;">
-                    <h3 class="donasi-title" style="margin-bottom: 8px; font-size: 18px; font-weight: 700; text-align: center;">Ingin Menyalurkan Bantuan Logistik?</h3>
-                    <p class="page-subtitle" style="font-size: 13px; line-height: 1.6; margin: 0; color: var(--color-text-muted); text-align: center;">
-                        Untuk memastikan penyaluran bantuan tepat sasaran dan sesuai kebutuhan mendesak di setiap posko, silakan kunjungi <strong>Hub Logistik & Donasi</strong> kami. Anda dapat melihat daftar kebutuhan riil di tiap posko dan mencatatkan donasi Anda secara resmi.
-                    </p>
-                </div>
-                <div style="margin-top: 8px; width: 100%; max-width: 320px;">
-                    <a href="{{ route('donasi.hub') }}" class="btn-submit-full" style="text-decoration: none;">
-                        <span>Kunjungi Hub Logistik & Donasi</span>
-                        <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
-                    </a>
-                </div>
+
+                <form action="{{ route('donasi.submit') }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px;">
+                    @csrf
+                    <div class="donasi-form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group" style="grid-column: span 2; display: flex; flex-direction: column; gap: 6px;">
+                            <label class="form-label" for="need_id" style="font-size: 12px; font-weight: 700; color: var(--navy-dark);">PILIH POSKO & BARANG KEBUTUHAN *</label>
+                            <select name="need_id" id="need_id" class="form-input" required style="width: 100%; padding: 10px 14px; border: 1px solid var(--card-border); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; background-color: white;">
+                                <option value="">-- Pilih Posko & Barang Kebutuhan --</option>
+                                @foreach($shelters as $s)
+                                    @if($s->shelterNeeds->isNotEmpty())
+                                        <optgroup label="{{ $s->shelter_name }}">
+                                            @foreach($s->shelterNeeds as $need)
+                                                @if($need->quantity_fulfilled < $need->quantity_need)
+                                                    <option value="{{ $need->need_id }}">
+                                                        {{ $need->item_name }} (Sisa Kebutuhan: {{ $need->quantity_need - $need->quantity_fulfilled }} Unit/Box)
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </optgroup>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                            <label class="form-label" for="quantity_donated" style="font-size: 12px; font-weight: 700; color: var(--navy-dark);">JUMLAH YANG DIDONASIKAN *</label>
+                            <input type="number" name="quantity_donated" id="quantity_donated" class="form-input" min="1" placeholder="Contoh: 50" required style="width: 100%; padding: 10px 14px; border: 1px solid var(--card-border); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; box-sizing: border-box;">
+                        </div>
+                        <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                            <label class="form-label" for="shipping_receipt_no" style="font-size: 12px; font-weight: 700; color: var(--navy-dark);">NOMOR RESI PENGIRIMAN (OPTIONAL)</label>
+                            <input type="text" name="shipping_receipt_no" id="shipping_receipt_no" class="form-input" placeholder="Contoh: TA-DONASI-123" style="width: 100%; padding: 10px 14px; border: 1px solid var(--card-border); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; box-sizing: border-box;">
+                        </div>
+                        <div class="form-group" style="grid-column: span 2; display: flex; flex-direction: column; gap: 6px;">
+                            <label class="form-label" for="proof_photo" style="font-size: 12px; font-weight: 700; color: var(--navy-dark);">FOTO BUKTI PENGIRIMAN / BARANG *</label>
+                            <input type="file" name="proof_photo" id="proof_photo" class="form-input" accept="image/*" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--card-border); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; box-sizing: border-box; background-color: white;">
+                        </div>
+                    </div>
+
+                    <div class="info-row" style="background-color: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.15); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; color: var(--navy-dark); margin-top: 8px;">
+                        <i data-lucide="navigation-2" class="text-blue" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+                        <span class="info-row-text" style="font-size: 12px; line-height: 1.5;">
+                            <strong>Penting:</strong> Harap pastikan jumlah dan foto bukti barang sesuai untuk memudahkan verifikasi oleh pengelola posko.
+                        </span>
+                    </div>
+
+                    <button type="submit" class="btn-submit-full" style="width: 100%; background-color: var(--brand-teal); color: white; border: none; height: 46px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; margin-top: 8px;">
+                        <span>Konfirmasi Pengiriman Bantuan</span>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+                    </button>
+                </form>
             </div>
         </div>
 

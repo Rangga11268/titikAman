@@ -185,7 +185,7 @@ class SharedController extends Controller
             $query->where('has_toilet_facilities', 'Yes');
         }
 
-        $shelters = $query->orderByRaw("FIELD(status, 'active', 'full', 'closed')")->get();
+        $shelters = $query->with('shelterNeeds')->orderByRaw("FIELD(status, 'active', 'full', 'closed')")->get();
 
         $stats = [
             'poskoAktif'      => Shelter::whereIn('status', ['active', 'full'])->count(),

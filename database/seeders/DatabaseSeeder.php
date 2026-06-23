@@ -66,7 +66,7 @@ class DatabaseSeeder extends Seeder
         );
 
         // 2. Create Active Shelters
-        Shelter::updateOrCreate(
+        $s1 = Shelter::updateOrCreate(
             ['shelter_name' => 'Masjid Agung Al-Barkah Bekasi'],
             [
                 'address' => 'Jl. Veteran No.46, Kel. Margajaya, Kec. Bekasi Selatan',
@@ -79,7 +79,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        Shelter::updateOrCreate(
+        $s2 = Shelter::updateOrCreate(
             ['shelter_name' => 'Stadion Patriot Candrabhaga'],
             [
                 'address' => 'Jl. Ahmad Yani No.2, Kel. Kayuringin Jaya, Kec. Bekasi Selatan',
@@ -92,7 +92,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        Shelter::updateOrCreate(
+        $s3 = Shelter::updateOrCreate(
             ['shelter_name' => 'Kantor Kelurahan Margahayu'],
             [
                 'address' => 'Jl. Kartini No.7, Kel. Margahayu, Kec. Bekasi Timur',
@@ -103,6 +103,28 @@ class DatabaseSeeder extends Seeder
                 'latitude' => -6.24410000,
                 'longitude' => 107.01180000,
             ]
+        );
+
+        // Seed Shelter Needs
+        \App\Models\ShelterNeed::updateOrCreate(
+            ['shelter_id' => $s1->shelter_id, 'item_name' => 'Makanan Siap Saji'],
+            ['quantity_need' => 1000, 'quantity_fulfilled' => 400, 'urgency' => 'high']
+        );
+        \App\Models\ShelterNeed::updateOrCreate(
+            ['shelter_id' => $s1->shelter_id, 'item_name' => 'Susu Formula & Balita'],
+            ['quantity_need' => 200, 'quantity_fulfilled' => 50, 'urgency' => 'medium']
+        );
+        \App\Models\ShelterNeed::updateOrCreate(
+            ['shelter_id' => $s2->shelter_id, 'item_name' => 'Air Mineral (Dus)'],
+            ['quantity_need' => 500, 'quantity_fulfilled' => 150, 'urgency' => 'high']
+        );
+        \App\Models\ShelterNeed::updateOrCreate(
+            ['shelter_id' => $s2->shelter_id, 'item_name' => 'Selimut & Kasur Lipat'],
+            ['quantity_need' => 300, 'quantity_fulfilled' => 100, 'urgency' => 'high']
+        );
+        \App\Models\ShelterNeed::updateOrCreate(
+            ['shelter_id' => $s3->shelter_id, 'item_name' => 'Obat-obatan Dasar'],
+            ['quantity_need' => 1000, 'quantity_fulfilled' => 800, 'urgency' => 'medium']
         );
 
         // 3. Create Water Gates
