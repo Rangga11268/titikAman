@@ -268,7 +268,7 @@ if (!function_exists('parseNeedItem')) {
                             <button style="background: none; border: 1px solid var(--color-border-muted); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                 <i data-lucide="filter" style="width: 14px; height: 14px; color: #44474e;"></i>
                             </button>
-                            <button style="background: none; border: 1px solid var(--color-border-muted); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                            <button onclick="window.location.href='{{ route('donasi.export') }}'" style="background: none; border: 1px solid var(--color-border-muted); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Unduh CSV Donasi">
                                 <i data-lucide="download" style="width: 14px; height: 14px; color: #44474e;"></i>
                             </button>
                         </div>

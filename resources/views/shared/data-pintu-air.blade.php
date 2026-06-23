@@ -660,7 +660,7 @@
                 </div>
                 <div class="btn-row">
                     <button class="btn-outline">Histori 7 Hari</button>
-                    <button class="btn-teal"><i data-lucide="download" style="width: 16px; height: 16px;"></i> Rekapitulasi Data</button>
+                    <button class="btn-teal" onclick="window.location.href='{{ route('watergate.export') }}'"><i data-lucide="download" style="width: 16px; height: 16px;"></i> Rekapitulasi Data</button>
                 </div>
             </div>
 
@@ -747,7 +747,7 @@
                 <div class="table-card">
                     <div class="table-header">
                         <span class="table-title">Riwayat TMA Hari Ini — Sungai Cileungsi</span>
-                        <button class="btn-outline" style="padding: 6px 12px; font-size: 12px;"><i data-lucide="download" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i> Unduh Data CSV</button>
+                        <button class="btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="window.location.href='{{ route('watergate.export') }}'"><i data-lucide="download" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i> Unduh Data CSV</button>
                     </div>
                     <div class="table-container">
                         <table class="table-data">

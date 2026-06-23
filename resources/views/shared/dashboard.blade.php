@@ -975,7 +975,7 @@
                     <span class="map-title">Log Aktivitas Kebencanaan Real-Time</span>
                     <div class="table-actions">
                         <button class="btn-teal-outline"><i data-lucide="filter" style="width: 14px; height: 14px;"></i> Filter Data</button>
-                        <button class="btn-teal-filled"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Unduh Laporan PDF</button>
+                        <button class="btn-teal-filled" onclick="window.location.href='{{ route('laporan.export') }}'"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Unduh Laporan PDF</button>
                     </div>
                 </div>
                 <div class="table-responsive">
