@@ -175,17 +175,19 @@ if (!function_exists('parseNeedItem')) {
                                             $fillClass = 'fill-siaga-2';
                                         }
 
-                                        $emoji = '🍱';
+                                        $icon = 'package';
                                         $catLower = strtolower($parsed['category']);
-                                        if (str_contains($catLower, 'makan')) { $emoji = '🍱'; }
-                                        elseif (str_contains($catLower, 'susu') || str_contains($catLower, 'bayi')) { $emoji = '🍼'; }
-                                        elseif (str_contains($catLower, 'selimut') || str_contains($catLower, 'perlengkapan')) { $emoji = '🛌'; }
-                                        elseif (str_contains($catLower, 'obat') || str_contains($catLower, 'sehat') || str_contains($catLower, 'medis')) { $emoji = '💊'; }
-                                        elseif (str_contains($catLower, 'air') || str_contains($catLower, 'minum')) { $emoji = '💧'; }
+                                        if (str_contains($catLower, 'makan')) { $icon = 'utensils'; }
+                                        elseif (str_contains($catLower, 'susu') || str_contains($catLower, 'bayi')) { $icon = 'baby'; }
+                                        elseif (str_contains($catLower, 'selimut') || str_contains($catLower, 'perlengkapan') || str_contains($catLower, 'sandang')) { $icon = 'shirt'; }
+                                        elseif (str_contains($catLower, 'obat') || str_contains($catLower, 'sehat') || str_contains($catLower, 'medis') || str_contains($catLower, 'kesehatan')) { $icon = 'pill'; }
+                                        elseif (str_contains($catLower, 'air') || str_contains($catLower, 'minum')) { $icon = 'droplet'; }
                                     @endphp
                                     <div class="urgent-mini-card">
                                         <div class="urgent-card-top">
-                                            <div class="urgent-card-icon-box">{{ $emoji }}</div>
+                                            <div class="urgent-card-icon-box">
+                                                <i data-lucide="{{ $icon }}" style="width: 18px; height: 18px; color: var(--color-brand-teal);"></i>
+                                            </div>
                                             <span class="badge-siaga {{ $siagaClass }}">{{ $siagaLabel }}</span>
                                         </div>
                                         <h3 class="urgent-card-title">{{ $parsed['name'] }}</h3>
@@ -208,7 +210,9 @@ if (!function_exists('parseNeedItem')) {
                             <!-- Static/Mock fallbacks exactly matching Figma design if DB is empty -->
                             <div class="urgent-mini-card">
                                 <div class="urgent-card-top">
-                                    <div class="urgent-card-icon-box">🍱</div>
+                                    <div class="urgent-card-icon-box">
+                                        <i data-lucide="utensils" style="width: 18px; height: 18px; color: var(--color-brand-teal);"></i>
+                                    </div>
                                     <span class="badge-siaga siaga-1">SIAGA 1</span>
                                 </div>
                                 <h3 class="urgent-card-title">Makanan</h3>
@@ -226,7 +230,9 @@ if (!function_exists('parseNeedItem')) {
 
                             <div class="urgent-mini-card">
                                 <div class="urgent-card-top">
-                                    <div class="urgent-card-icon-box">🍼</div>
+                                    <div class="urgent-card-icon-box">
+                                        <i data-lucide="baby" style="width: 18px; height: 18px; color: var(--color-brand-teal);"></i>
+                                    </div>
                                     <span class="badge-siaga siaga-2">SIAGA 2</span>
                                 </div>
                                 <h3 class="urgent-card-title">Susu Formula</h3>
@@ -244,7 +250,9 @@ if (!function_exists('parseNeedItem')) {
 
                             <div class="urgent-mini-card">
                                 <div class="urgent-card-top">
-                                    <div class="urgent-card-icon-box">🛌</div>
+                                    <div class="urgent-card-icon-box">
+                                        <i data-lucide="shirt" style="width: 18px; height: 18px; color: var(--color-brand-teal);"></i>
+                                    </div>
                                     <span class="badge-siaga critical">CRITICAL</span>
                                 </div>
                                 <h3 class="urgent-card-title">Selimut Hangat</h3>
