@@ -14,7 +14,7 @@ class AdminService
     public function verifyReport(int $id): FloodReport
     {
         $report = FloodReport::findOrFail($id);
-        $report->verification_status = 'verified';
+        $report->verification_status = "verified";
         $report->save();
 
         return $report;
@@ -26,7 +26,7 @@ class AdminService
     public function rejectReport(int $id): FloodReport
     {
         $report = FloodReport::findOrFail($id);
-        $report->verification_status = 'rejected';
+        $report->verification_status = "rejected";
         $report->save();
 
         return $report;
@@ -38,7 +38,7 @@ class AdminService
     public function updateTma(int $id, float $waterLevelCm): WaterGate
     {
         $gate = WaterGate::findOrFail($id);
-        
+
         $oldStatus = $gate->danger_status;
 
         // Auto calculate danger status based on threshold:
@@ -47,13 +47,13 @@ class AdminService
         // 80 - 150 cm → 'Siaga_3'
         // < 80 cm → 'Normal'
         if ($waterLevelCm > 250) {
-            $newStatus = 'Siaga_1';
+            $newStatus = "Siaga_1";
         } elseif ($waterLevelCm >= 150) {
-            $newStatus = 'Siaga_2';
+            $newStatus = "Siaga_2";
         } elseif ($waterLevelCm >= 80) {
-            $newStatus = 'Siaga_3';
+            $newStatus = "Siaga_3";
         } else {
-            $newStatus = 'Normal';
+            $newStatus = "Normal";
         }
 
         $gate->water_level_cm = $waterLevelCm;
@@ -63,10 +63,10 @@ class AdminService
 
         // Check if severity increased to Siaga_2 or Siaga_1
         $severity = [
-            'Normal' => 0,
-            'Siaga_3' => 1,
-            'Siaga_2' => 2,
-            'Siaga_1' => 3
+            "Normal" => 0,
+            "Siaga_3" => 1,
+            "Siaga_2" => 2,
+            "Siaga_1" => 3,
         ];
 
         $oldSeverity = $severity[$oldStatus] ?? 0;
@@ -77,5 +77,40 @@ class AdminService
         }
 
         return $gate;
+    }
+
+    /**
+     * Get list of users with pending verification status
+     */
+    public function getPendingUsers()
+    {
+        return \App\Models\User::where("status", "pending")
+            ->whereIn("role", ["Relawan", "Pengelola_Posko"])
+            ->orderBy("created_at", "asc")
+            ->get();
+    }
+
+    /**
+     * Approve user account
+     */
+    public function approveUser(int $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $user->status = "approved";
+        $user->save();
+
+        return $user;
+    }
+
+    /**
+     * Reject user account
+     */
+    public function rejectUser(int $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $user->status = "rejected";
+        $user->save();
+
+        return $user;
     }
 }

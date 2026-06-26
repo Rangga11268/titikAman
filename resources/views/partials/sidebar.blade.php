@@ -34,9 +34,9 @@
             <i data-lucide="home"></i>
             <span>Posko Pengungsian</span>
         </a>
-        
+
         <div class="nav-divider"></div>
-        
+
         @if(auth()->user()->role == 'Warga')
             <a href="{{ route('warga.sos') }}" class="nav-item {{ request()->routeIs('warga.sos') ? 'active' : '' }}">
                 <i data-lucide="alert-octagon" style="color: var(--accent-red);"></i>
@@ -75,8 +75,12 @@
                 <i data-lucide="sliders"></i>
                 <span>Kelola TMA Air</span>
             </a>
+            <a href="{{ route('admin.user-verification') }}" class="nav-item {{ request()->routeIs('admin.user-verification') ? 'active' : '' }}">
+                <i data-lucide="users"></i>
+                <span>Verifikasi Pengguna</span>
+            </a>
         @endif
-        
+
 
 
         <a href="#" class="nav-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="margin-top: auto;">

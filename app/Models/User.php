@@ -27,6 +27,15 @@ class User extends Authenticatable
         'role',
         'kecamatan',
         'kelurahan',
+        'nik',
+        'keahlian',
+        'organisasi',
+        'nip',
+        'jabatan',
+        'unit_kerja',
+        'document_path',
+        'shelter_id',
+        'status',
     ];
 
     /**

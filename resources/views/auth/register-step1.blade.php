@@ -173,21 +173,19 @@
         document.querySelectorAll('.role-card').forEach(card => {
             card.classList.remove('selected');
         });
-        
+
         // Select clicked card
         const radio = document.getElementById('role_' + role);
         radio.checked = true;
-        
+
         // Add styling to parent card
         radio.closest('.role-card').classList.add('selected');
     }
 
     document.getElementById('roleForm').addEventListener('submit', function (e) {
+        e.preventDefault();
         const selectedRole = document.querySelector('input[name="role_select"]:checked').value;
-        if (selectedRole !== 'warga') {
-            e.preventDefault();
-            alert('Pendaftaran untuk peran ' + selectedRole.toUpperCase() + ' saat ini belum terbuka untuk publik melalui form mandiri. Harap hubungi Admin BPBD Kota Bekasi.');
-        }
+        window.location.href = '/register/' + selectedRole;
     });
 </script>
 @endsection

@@ -17,6 +17,11 @@ class Shelter extends Model
         'status',
         'latitude',
         'longitude',
+        'facilities',
+    ];
+
+    protected $casts = [
+        'facilities' => 'array',
     ];
 
     public function shelterNeeds()
