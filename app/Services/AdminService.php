@@ -39,22 +39,10 @@ class AdminService
     {
         $gate = WaterGate::findOrFail($id);
 
-        $oldStatus = $gate->danger_status;
-
-        // Auto calculate danger status based on threshold:
-        // > 250 cm → 'Siaga_1'
-        // 150 - 250 cm → 'Siaga_2'
-        // 80 - 150 cm → 'Siaga_3'
-        // < 80 cm → 'Normal'
-        if ($waterLevelCm > 250) {
-            $newStatus = "Siaga_1";
-        } elseif ($waterLevelCm >= 150) {
-            $newStatus = "Siaga_2";
-        } elseif ($waterLevelCm >= 80) {
-            $newStatus = "Siaga_3";
-        } else {
-            $newStatus = "Normal";
-        }
+        $oldStatus = WaterGate::calculateDangerStatus(
+            (float) $gate->water_level_cm,
+        );
+        $newStatus = WaterGate::calculateDangerStatus($waterLevelCm);
 
         $gate->water_level_cm = $waterLevelCm;
         $gate->danger_status = $newStatus;

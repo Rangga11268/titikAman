@@ -249,6 +249,17 @@
         border-left: 4px solid var(--brand-teal);
     }
 
+    .sungai-card.chart-active {
+        border-color: var(--brand-teal);
+        box-shadow: 0 0 0 2px rgba(0, 106, 96, 0.15);
+    }
+
+    #btnHistori7Hari.active {
+        background-color: var(--navy-dark);
+        color: white;
+        border-color: var(--navy-dark);
+    }
+
     .sungai-card.siaga1-active {
         border-left: 4px solid var(--accent-red);
     }
@@ -357,6 +368,12 @@
         border: 1px solid var(--card-border);
         background-color: white;
         cursor: pointer;
+        transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .chart-btn:hover {
+        border-color: var(--navy-dark);
+        color: var(--navy-dark);
     }
 
     .chart-btn.active {
@@ -667,7 +684,7 @@
                     <span class="page-subtitle">Pemantauan sungai-sungai utama di wilayah Bekasi & sekitarnya</span>
                 </div>
                 <div class="btn-row">
-                    <button class="btn-outline">Histori 7 Hari</button>
+                    <button type="button" class="btn-outline" id="btnHistori7Hari">Histori 7 Hari</button>
                     <button class="btn-teal" onclick="window.location.href='{{ route('watergate.export') }}'"><i data-lucide="download" style="width: 16px; height: 16px;"></i> Rekapitulasi Data</button>
                 </div>
             </div>
@@ -702,7 +719,7 @@
                             $badgeLabel = 'NORMAL';
                         }
                     @endphp
-                    <div class="sungai-card {{ $statusClass }}">
+                    <div class="sungai-card {{ $statusClass }}" data-gate-id="{{ $gate->gate_id }}" role="button" tabindex="0" title="Klik untuk lihat grafik pintu air ini">
                         <div class="card-top-row">
                             <span class="badge-pill {{ $statusBadge }}">{{ $badgeLabel }}</span>
                             <i data-lucide="refresh-cw" style="width: 14px; height: 14px; color: var(--color-text-muted); cursor: pointer;"></i>
@@ -739,17 +756,17 @@
             </div>
 
             <!-- Chart -->
-            <div class="chart-card">
+            <div class="chart-card" id="tmaChartSection">
                 <div class="chart-header">
                     <div class="page-title-section">
                         <span class="sungai-title" style="font-size: 15px;">Grafik TMA 24 Jam Terakhir</span>
-                        <span class="sungai-desc">Visualisasi tinggi muka air sungai utama</span>
+                        <span class="sungai-desc" id="chartSubtitle">Visualisasi tinggi muka air sungai utama</span>
                     </div>
-                    <div class="chart-toggle-row">
+                    <div class="chart-toggle-row" id="chartToggleRow">
                         @foreach($waterGates->take(4) as $cGate)
-                            <button class="chart-btn {{ $loop->first ? 'active' : '' }}">{{ $cGate->gate_name }}</button>
+                            <button type="button" class="chart-btn chart-gate-btn {{ $loop->first ? 'active' : '' }}" data-gate-id="{{ $cGate->gate_id }}">{{ $cGate->gate_name }}</button>
                         @endforeach
-                        <button class="chart-btn">Hari Ini (24 Jam)</button>
+                        <button type="button" class="chart-btn chart-range-btn active" data-range="24h">Hari Ini (24 Jam)</button>
                     </div>
                 </div>
                 <div class="canvas-container">
@@ -928,20 +945,100 @@
     document.addEventListener("DOMContentLoaded", function() {
         const ctx = document.getElementById('tmaChart').getContext('2d');
 
-        const chartLabels   = @json($chartLabels);
-        const chartDatasets = @json($chartDatasets);
+        const chartData24h = {
+            labels: @json($chartLabels24h),
+            datasets: @json($chartDatasets24h),
+        };
+        const chartData7d = {
+            labels: @json($chartLabels7d),
+            datasets: @json($chartDatasets7d),
+        };
 
-        new Chart(ctx, {
+        let currentRange = '24h';
+        let activeGateId = chartData24h.datasets[0]?.gateId ?? null;
+
+        const chartTitleEl = document.querySelector('#tmaChartSection .sungai-title');
+        const chartSubtitleEl = document.getElementById('chartSubtitle');
+        const gateButtons = document.querySelectorAll('.chart-gate-btn');
+        const rangeButtons = document.querySelectorAll('.chart-range-btn');
+        const historiBtn = document.getElementById('btnHistori7Hari');
+        const sungaiCards = document.querySelectorAll('.sungai-card[data-gate-id]');
+
+        function cloneDatasets(sourceDatasets, visibleGateId) {
+            return sourceDatasets.map(function(ds) {
+                const copy = Object.assign({}, ds);
+                copy.hidden = visibleGateId !== null && ds.gateId !== visibleGateId;
+                return copy;
+            });
+        }
+
+        function getActiveDatasets() {
+            const source = currentRange === '7d' ? chartData7d : chartData24h;
+            return cloneDatasets(source.datasets, activeGateId);
+        }
+
+        function updateActiveButtons() {
+            gateButtons.forEach(function(btn) {
+                btn.classList.toggle('active', parseInt(btn.dataset.gateId, 10) === activeGateId);
+            });
+
+            rangeButtons.forEach(function(btn) {
+                btn.classList.toggle('active', btn.dataset.range === currentRange);
+            });
+
+            historiBtn.classList.toggle('active', currentRange === '7d');
+
+            sungaiCards.forEach(function(card) {
+                card.classList.toggle('chart-active', parseInt(card.dataset.gateId, 10) === activeGateId);
+            });
+        }
+
+        function updateChartTitle() {
+            const activeGate = chartData24h.datasets.find(function(ds) {
+                return ds.gateId === activeGateId;
+            });
+
+            if (currentRange === '7d') {
+                chartTitleEl.textContent = 'Grafik TMA 7 Hari Terakhir';
+                chartSubtitleEl.textContent = activeGate
+                    ? 'Tren mingguan — ' + activeGate.label
+                    : 'Tren mingguan tinggi muka air sungai utama';
+            } else {
+                chartTitleEl.textContent = 'Grafik TMA 24 Jam Terakhir';
+                chartSubtitleEl.textContent = activeGate
+                    ? 'Visualisasi — ' + activeGate.label
+                    : 'Visualisasi tinggi muka air sungai utama';
+            }
+        }
+
+        function applyChartView() {
+            const source = currentRange === '7d' ? chartData7d : chartData24h;
+            tmaChart.data.labels = source.labels;
+            tmaChart.data.datasets = getActiveDatasets();
+            tmaChart.update();
+            updateChartTitle();
+            updateActiveButtons();
+        }
+
+        const tmaChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: chartLabels,
-                datasets: chartDatasets
+                labels: chartData24h.labels,
+                datasets: getActiveDatasets(),
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top' },
+                    legend: {
+                        position: 'top',
+                        onClick: function(e, legendItem, legend) {
+                            const index = legendItem.datasetIndex;
+                            const meta = legend.chart.getDatasetMeta(index);
+                            meta.hidden = meta.hidden === null ? !legend.chart.data.datasets[index].hidden : null;
+                            legend.chart.update();
+                        },
+                    },
                     tooltip: {
                         callbacks: {
                             label: function(ctx) {
@@ -964,6 +1061,47 @@
                 }
             }
         });
+
+        gateButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                activeGateId = parseInt(btn.dataset.gateId, 10);
+                applyChartView();
+            });
+        });
+
+        rangeButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                currentRange = btn.dataset.range;
+                applyChartView();
+            });
+        });
+
+        historiBtn.addEventListener('click', function() {
+            currentRange = '7d';
+            document.getElementById('tmaChartSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            applyChartView();
+        });
+
+        function selectGateFromCard(gateId) {
+            activeGateId = gateId;
+            document.getElementById('tmaChartSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            applyChartView();
+        }
+
+        sungaiCards.forEach(function(card) {
+            card.addEventListener('click', function() {
+                selectGateFromCard(parseInt(card.dataset.gateId, 10));
+            });
+            card.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    selectGateFromCard(parseInt(card.dataset.gateId, 10));
+                }
+            });
+        });
+
+        updateChartTitle();
+        updateActiveButtons();
     });
 </script>
 @endsection

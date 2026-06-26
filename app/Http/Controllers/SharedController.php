@@ -153,6 +153,8 @@ class SharedController extends Controller
      */
     public function dataPintuAir()
     {
+        WaterGate::syncAllDangerStatuses();
+
         $waterGates = WaterGate::orderBy('danger_status', 'desc')->get();
 
         // Summary stats
@@ -165,35 +167,14 @@ class SharedController extends Controller
         // Highest level gate (for the featured chart + table header)
         $featuredGate = $waterGates->sortByDesc('water_level_cm')->first();
 
-        // Chart data — each gate becomes a dataset with a simple 12-point simulated reading
-        // using real current level as the peak value (since no readings table exists yet).
-        // Time labels are the last 12 two-hour slots from midnight.
-        $chartLabels  = ['00:00','02:00','04:00','06:00','08:00','10:00','12:00','14:00','16:00','18:00','20:00','22:00'];
+        $chartLabels24h  = ['00:00','02:00','04:00','06:00','08:00','10:00','12:00','14:00','16:00','18:00','20:00','22:00'];
+        $chartLabels7d   = collect(range(6, 0))
+            ->map(fn ($daysAgo) => now()->subDays($daysAgo)->format('d M'))
+            ->values()
+            ->all();
 
-        $chartDatasets = [];
-        $colors = ['#ba1a1a','#f59e0b','#006a60','#3b82f6','#8b5cf6','#ec4899'];
-        $i = 0;
-        foreach ($waterGates->take(4) as $gate) {
-            $peak     = $gate->water_level_cm;
-            $base     = max(20, round($peak * 0.35));
-            // Build a rising curve towards the peak at step 9 (18:00) then slight drop
-            $curve = [];
-            for ($h = 0; $h < 12; $h++) {
-                $factor = $h <= 9 ? ($h / 9) : (1 - ($h - 9) / 6 * 0.3);
-                $curve[] = max($base, round($base + ($peak - $base) * $factor));
-            }
-            $color = $colors[$i % count($colors)];
-            $chartDatasets[] = [
-                'label'           => $gate->gate_name,
-                'data'            => $curve,
-                'borderColor'     => $color,
-                'backgroundColor' => $i === 0 ? str_replace(')', ', 0.06)', str_replace('rgb', 'rgba', $color)) : 'transparent',
-                'borderWidth'     => $i === 0 ? 3 : 2,
-                'tension'         => 0.35,
-                'fill'            => $i === 0,
-            ];
-            $i++;
-        }
+        $chartDatasets24h = $this->buildTmaChartDatasets($waterGates->take(4), 12);
+        $chartDatasets7d  = $this->buildTmaChartDatasets($waterGates->take(4), 7);
 
         // Automatic alert log — built from real DB records
         $alertLog = collect();
@@ -257,8 +238,10 @@ class SharedController extends Controller
 
         return view('shared.data-pintu-air', compact(
             'waterGates',
-            'chartLabels',
-            'chartDatasets',
+            'chartLabels24h',
+            'chartDatasets24h',
+            'chartLabels7d',
+            'chartDatasets7d',
             'featuredGate',
             'totalGates',
             'siaga1Count',
@@ -267,6 +250,48 @@ class SharedController extends Controller
             'normalCount',
             'alertLog'
         ));
+    }
+
+    /**
+     * Bangun dataset grafik TMA simulasi dari level saat ini (tanpa tabel histori).
+     */
+    protected function buildTmaChartDatasets($waterGates, int $pointCount): array
+    {
+        $colors = ['#ba1a1a', '#f59e0b', '#006a60', '#3b82f6', '#8b5cf6', '#ec4899'];
+        $datasets = [];
+        $i = 0;
+
+        foreach ($waterGates as $gate) {
+            $peak = (float) $gate->water_level_cm;
+            $base = max(20, round($peak * 0.35));
+            $curve = [];
+
+            for ($step = 0; $step < $pointCount; $step++) {
+                if ($pointCount === 12) {
+                    $factor = $step <= 9 ? ($step / 9) : (1 - ($step - 9) / 6 * 0.3);
+                } else {
+                    $factor = $pointCount > 1 ? ($step / ($pointCount - 1)) : 1;
+                }
+
+                $curve[] = max($base, round($base + ($peak - $base) * $factor));
+            }
+
+            $color = $colors[$i % count($colors)];
+            $datasets[] = [
+                'gateId'          => $gate->gate_id,
+                'label'           => $gate->gate_name,
+                'data'            => $curve,
+                'borderColor'     => $color,
+                'backgroundColor' => $i === 0 ? $color . '10' : 'transparent',
+                'borderWidth'     => 2,
+                'tension'         => 0.35,
+                'fill'            => false,
+                'hidden'          => false,
+            ];
+            $i++;
+        }
+
+        return $datasets;
     }
 
 

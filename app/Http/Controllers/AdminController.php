@@ -95,6 +95,8 @@ class AdminController extends Controller
      */
     public function tma()
     {
+        WaterGate::syncAllDangerStatuses();
+
         $waterGates = WaterGate::orderBy("danger_status", "desc")->get();
 
         return view("admin.tma", compact("waterGates"));

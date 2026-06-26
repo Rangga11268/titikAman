@@ -138,22 +138,24 @@ class DatabaseSeeder extends Seeder
         );
 
         // 3. Create Water Gates
+        $pondokLevel = 350.00;
         WaterGate::updateOrCreate(
             ['gate_name' => 'Pintu Air Pondok Gede Permai'],
             [
                 'river_name' => 'Sungai Cileungsi',
-                'water_level_cm' => 350.00,
-                'danger_status' => 'Siaga_2',
+                'water_level_cm' => $pondokLevel,
+                'danger_status' => WaterGate::calculateDangerStatus($pondokLevel),
                 'last_updated' => now(),
             ]
         );
 
+        $bekasiLevel = 210.00;
         WaterGate::updateOrCreate(
             ['gate_name' => 'Pintu Air Bekasi Pasar Baru'],
             [
                 'river_name' => 'Sungai Bekasi',
-                'water_level_cm' => 210.00,
-                'danger_status' => 'Normal',
+                'water_level_cm' => $bekasiLevel,
+                'danger_status' => WaterGate::calculateDangerStatus($bekasiLevel),
                 'last_updated' => now(),
             ]
         );
