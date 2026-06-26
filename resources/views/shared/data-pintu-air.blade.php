@@ -3,645 +3,14 @@
 @section('title', 'Data Tinggi Muka Air (TMA) - TitikAman')
 
 @section('styles')
-<style>
-    :root {
-        --navy-sidebar: #1d3557;
-        --navy-dark: #031f41;
-        --brand-teal: #006a60;
-        --brand-teal-hover: #004d46;
-        --accent-red: #ba1a1a;
-        --accent-orange: #f59e0b;
-        --accent-yellow: #ca8a04;
-        --bg-light: #f8f9fa;
-        --card-border: rgba(196, 198, 207, 0.4);
-    }
-
-    body {
-        background-color: var(--bg-light);
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-    }
-
-    .dashboard-container {
-        display: flex;
-        height: 100vh;
-        overflow: hidden;
-    }
-
-
-
-    /* Main Content Wrapper */
-    .dashboard-main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        overflow-y: auto;
-        position: relative;
-    }
-
-    /* Top Bar Header */
-    .dashboard-topbar {
-        padding: 16px 24px;
-        background-color: white;
-        border-bottom: 1px solid var(--card-border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-shrink: 0;
-    }
-
-    .topbar-left {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .breadcrumb {
-        font-size: 11px;
-        color: var(--color-text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 600;
-    }
-
-    .topbar-left h1 {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--navy-dark);
-        margin: 0;
-    }
-
-    .topbar-right {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .notification-bell {
-        color: var(--color-text-muted);
-        position: relative;
-        cursor: pointer;
-    }
-
-    .notification-dot {
-        position: absolute;
-        top: -2px;
-        right: -2px;
-        width: 8px;
-        height: 8px;
-        background-color: var(--accent-red);
-        border-radius: 50%;
-    }
-
-    .user-profile-widget {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .user-widget-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background-color: rgba(0, 106, 96, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--brand-teal);
-        font-weight: 700;
-        font-size: 14px;
-        border: 2px solid var(--brand-teal);
-    }
-
-    .user-widget-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .user-widget-name {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--navy-dark);
-    }
-
-    .user-widget-role {
-        font-size: 11px;
-        color: var(--color-text-muted);
-    }
-
-    /* Body Container */
-    .dashboard-body {
-        padding: 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-        max-width: 1400px;
-        margin: 0 auto;
-        width: 100%;
-    }
-
-    .live-indicator {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--brand-teal);
-        background-color: rgba(0, 106, 96, 0.05);
-        padding: 8px 16px;
-        border-radius: 6px;
-        align-self: flex-start;
-    }
-
-    .title-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .page-title-section {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .page-title {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 24px;
-        font-weight: 800;
-        color: var(--navy-dark);
-        margin: 0;
-    }
-
-    .page-subtitle {
-        font-size: 14px;
-        color: var(--color-text-muted);
-    }
-
-    .btn-row {
-        display: flex;
-        gap: 12px;
-    }
-
-    .btn-outline {
-        border: 1px solid var(--brand-teal);
-        color: var(--brand-teal);
-        background-color: transparent;
-        padding: 10px 18px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .btn-outline:hover {
-        background-color: rgba(0, 106, 96, 0.05);
-    }
-
-    .btn-teal {
-        background-color: var(--brand-teal);
-        color: white;
-        border: none;
-        padding: 10px 18px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.2s;
-    }
-
-    .btn-teal:hover {
-        background-color: var(--brand-teal-hover);
-    }
-
-    /* Sungai Cards Row */
-    .sungai-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 16px;
-    }
-
-    .sungai-card {
-        background-color: white;
-        border-radius: 14px;
-        border: 1px solid var(--card-border);
-        padding: 20px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .sungai-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.08);
-    }
-
-    .sungai-card.selected {
-        border-left: 4px solid var(--brand-teal);
-    }
-
-    .sungai-card.chart-active {
-        border-color: var(--brand-teal);
-        box-shadow: 0 0 0 2px rgba(0, 106, 96, 0.15);
-    }
-
-    #btnHistori7Hari.active {
-        background-color: var(--navy-dark);
-        color: white;
-        border-color: var(--navy-dark);
-    }
-
-    .sungai-card.siaga1-active {
-        border-left: 4px solid var(--accent-red);
-    }
-
-    .card-top-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .badge-pill {
-        padding: 4px 8px;
-        border-radius: 999px;
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-    }
-
-    .badge-red { background-color: rgba(186, 26, 26, 0.15); color: var(--accent-red); }
-    .badge-orange { background-color: rgba(245, 158, 11, 0.15); color: var(--accent-orange); }
-    .badge-yellow { background-color: rgba(202, 138, 4, 0.15); color: var(--accent-yellow); }
-    .badge-green { background-color: rgba(0, 106, 96, 0.15); color: var(--brand-teal); }
-    .badge-blue { background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-
-    .sungai-title {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--navy-dark);
-    }
-
-    .sungai-desc {
-        font-size: 11px;
-        color: var(--color-text-muted);
-    }
-
-    .level-large {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 32px;
-        font-weight: 800;
-        margin: 4px 0;
-    }
-
-    .level-large.text-red { color: var(--accent-red); }
-    .level-large.text-orange { color: var(--accent-orange); }
-    .level-large.text-yellow { color: var(--accent-yellow); }
-    .level-large.text-green { color: var(--brand-teal); }
-
-    .trend-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 12px;
-        color: var(--color-text-muted);
-    }
-
-    .trend-badge {
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        font-weight: 700;
-        font-size: 11px;
-    }
-
-    .alert-box-mini {
-        background-color: rgba(186, 26, 26, 0.08);
-        border: 1px solid rgba(186, 26, 26, 0.15);
-        border-radius: 8px;
-        padding: 10px;
-        color: var(--accent-red);
-        font-size: 11px;
-        font-weight: 600;
-        line-height: 1.4;
-        display: flex;
-        gap: 6px;
-    }
-
-    /* Chart Section */
-    .chart-card {
-        background-color: white;
-        border-radius: 16px;
-        border: 1px solid var(--card-border);
-        padding: 24px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .chart-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .chart-toggle-row {
-        display: flex;
-        gap: 8px;
-    }
-
-    .chart-btn {
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 600;
-        border: 1px solid var(--card-border);
-        background-color: white;
-        cursor: pointer;
-        transition: background-color 0.15s, color 0.15s, border-color 0.15s;
-    }
-
-    .chart-btn:hover {
-        border-color: var(--navy-dark);
-        color: var(--navy-dark);
-    }
-
-    .chart-btn.active {
-        background-color: var(--navy-dark);
-        color: white;
-        border-color: var(--navy-dark);
-    }
-
-    .canvas-container {
-        position: relative;
-        height: 320px;
-        width: 100%;
-    }
-
-    /* Bottom 2 Columns */
-    .bottom-grid {
-        display: grid;
-        grid-template-columns: 1.8fr 1.2fr;
-        gap: 20px;
-    }
-
-    @media (max-width: 1024px) {
-        .bottom-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .table-card {
-        background-color: white;
-        border-radius: 16px;
-        border: 1px solid var(--card-border);
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .table-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--card-border);
-        padding-bottom: 12px;
-    }
-
-    .table-title {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--navy-dark);
-    }
-
-    .table-container {
-        width: 100%;
-        overflow-x: auto;
-    }
-
-    .table-data {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px;
-        text-align: left;
-    }
-
-    .table-data th {
-        background-color: var(--bg-light);
-        padding: 10px 12px;
-        font-weight: 600;
-        color: var(--navy-dark);
-        border-bottom: 1px solid var(--card-border);
-    }
-
-    .table-data td {
-        padding: 12px;
-        border-bottom: 1px solid rgba(196, 198, 207, 0.2);
-    }
-
-    /* Batas Ketinggian Card */
-    .side-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .side-card {
-        background-color: white;
-        border-radius: 16px;
-        border: 1px solid var(--card-border);
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .side-card-title {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--navy-dark);
-        border-bottom: 1px solid var(--card-border);
-        padding-bottom: 10px;
-    }
-
-    .batas-row {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .batas-label-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .bar-track {
-        height: 6px;
-        background-color: #e5e7eb;
-        border-radius: 3px;
-        overflow: hidden;
-    }
-
-    .bar-fill {
-        height: 100%;
-        border-radius: 3px;
-    }
-
-    .bar-fill.red { background-color: var(--accent-red); }
-    .bar-fill.orange { background-color: var(--accent-orange); }
-    .bar-fill.yellow { background-color: var(--accent-yellow); }
-    .bar-fill.green { background-color: var(--brand-teal); }
-
-    /* Notifikasi Otomatis */
-    .notif-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .notif-item {
-        display: flex;
-        gap: 12px;
-        padding: 10px;
-        border-radius: 8px;
-        background-color: var(--bg-light);
-        border-left: 3px solid #3b82f6;
-    }
-
-    .notif-item.red { border-left-color: var(--accent-red); }
-    .notif-item.orange { border-left-color: var(--accent-orange); }
-
-    .notif-icon {
-        flex-shrink: 0;
-        margin-top: 2px;
-    }
-
-    .notif-details {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-    }
-
-    .notif-title {
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--navy-dark);
-    }
-
-    .notif-text {
-        font-size: 11px;
-        color: #4b5563;
-        line-height: 1.4;
-    }
-
-    .notif-time {
-        font-size: 10px;
-        color: var(--color-text-muted);
-        align-self: flex-end;
-    }
-
-    /* Footer */
-    .dashboard-footer {
-        background-color: #031f41;
-        color: white;
-        padding: 48px 24px 24px;
-        margin-top: 24px;
-    }
-
-    .footer-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
-        gap: 32px;
-        max-width: 1400px;
-        margin: 0 auto;
-        width: 100%;
-    }
-
-    @media (max-width: 768px) {
-        .footer-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .footer-branding {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .footer-desc {
-        font-size: 13px;
-        color: #879ec6;
-        line-height: 1.6;
-        max-width: 320px;
-    }
-
-    .footer-col-title {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 14px;
-        font-weight: 700;
-        color: white;
-        margin-bottom: 16px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .footer-links {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        list-style: none;
-        padding: 0;
-    }
-
-    .footer-link {
-        color: #879ec6;
-        text-decoration: none;
-        font-size: 13px;
-        transition: color 0.2s;
-    }
-
-    .footer-link:hover {
-        color: white;
-    }
-
-    .footer-bottom {
-        max-width: 1400px;
-        margin: 40px auto 0;
-        padding-top: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 12px;
-        color: #879ec6;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/shared-tma.css') }}">
 @endsection
 
 @section('content')
 <div class="dashboard-container">
-    <!-- Sidebar -->
     @include('partials.sidebar')
 
-    <!-- Main Content -->
     <div class="dashboard-main">
-        <!-- Topbar -->
         <div class="dashboard-topbar">
             <div class="topbar-left">
                 <span class="breadcrumb">Monitoring TMA / Bekasi & Sekitarnya</span>
@@ -670,9 +39,7 @@
             </div>
         </div>
 
-        <!-- Body -->
         <div class="dashboard-body">
-            <!-- Indicator & Header -->
             <div class="live-indicator">
                 <span style="color: var(--brand-teal); font-size: 14px;">●</span>
                 <span>Live — Diperbarui setiap 15 menit oleh petugas BPBD Kota Bekasi</span>
@@ -689,7 +56,6 @@
                 </div>
             </div>
 
-            <!-- Sungai Cards -->
             <div class="sungai-cards">
                 @forelse($waterGates as $gate)
                     @php 
@@ -719,7 +85,7 @@
                             $badgeLabel = 'NORMAL';
                         }
                     @endphp
-                    <div class="sungai-card {{ $statusClass }}" data-gate-id="{{ $gate->gate_id }}" role="button" tabindex="0" title="Klik untuk lihat grafik pintu air ini">
+                    <div class="sungai-card {{ $statusClass }}" data-gate-id="{{ $gate->gate_id }}" role="button" tabindex="0">
                         <div class="card-top-row">
                             <span class="badge-pill {{ $statusBadge }}">{{ $badgeLabel }}</span>
                             <i data-lucide="refresh-cw" style="width: 14px; height: 14px; color: var(--color-text-muted); cursor: pointer;"></i>
@@ -755,7 +121,6 @@
                 @endforelse
             </div>
 
-            <!-- Chart -->
             <div class="chart-card" id="tmaChartSection">
                 <div class="chart-header">
                     <div class="page-title-section">
@@ -774,9 +139,7 @@
                 </div>
             </div>
 
-            <!-- Bottom 2-Column Layout -->
             <div class="bottom-grid">
-                <!-- Left: Table -->
                 <div class="table-card">
                     <div class="table-header">
                         <span class="table-title">Status Terkini — Semua Pintu Air
@@ -784,7 +147,7 @@
                                 <span style="font-size:12px;font-weight:500;color:var(--color-text-muted);"> ({{ $totalGates }} pintu air terpantau)</span>
                             @endif
                         </span>
-                        <button class="btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="window.location.href='{{ route('watergate.export') }}'"><i data-lucide="download" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i> Unduh Data CSV</button>
+                        <button class="btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="window.location.href='{{ route('watergate.export') }}'">Unduh Data CSV</button>
                     </div>
                     <div class="table-container">
                         <table class="table-data">
@@ -822,46 +185,37 @@
                     </div>
                 </div>
 
-                <!-- Right: Stack side widgets -->
                 <div class="side-stack">
                     <div class="side-card">
                         <span class="side-card-title">Batas Ketinggian Status Siaga</span>
-                        <div class="logistik-rows" style="display: flex; flex-direction: column; gap: 14px;">
+                        <div style="display: flex; flex-direction: column; gap: 14px;">
                             <div class="batas-row">
                                 <div class="batas-label-row text-red">
                                     <span>SIAGA 1 (BAHAYA)</span>
                                     <span>> 250 cm</span>
                                 </div>
-                                <div class="bar-track">
-                                    <div class="bar-fill red" style="width: 100%;"></div>
-                                </div>
+                                <div class="bar-track"><div class="bar-fill red" style="width: 100%;"></div></div>
                             </div>
                             <div class="batas-row">
                                 <div class="batas-label-row text-orange">
                                     <span>SIAGA 2 (WASPADA)</span>
                                     <span>150 - 250 cm</span>
                                 </div>
-                                <div class="bar-track">
-                                    <div class="bar-fill orange" style="width: 60%;"></div>
-                                </div>
+                                <div class="bar-track"><div class="bar-fill orange" style="width: 60%;"></div></div>
                             </div>
                             <div class="batas-row">
                                 <div class="batas-label-row text-yellow">
                                     <span>SIAGA 3 (SIAGA)</span>
                                     <span>80 - 150 cm</span>
                                 </div>
-                                <div class="bar-track">
-                                    <div class="bar-fill yellow" style="width: 40%;"></div>
-                                </div>
+                                <div class="bar-track"><div class="bar-fill yellow" style="width: 40%;"></div></div>
                             </div>
                             <div class="batas-row">
                                 <div class="batas-label-row text-teal">
                                     <span>NORMAL</span>
                                     <span>< 80 cm</span>
                                 </div>
-                                <div class="bar-track">
-                                    <div class="bar-fill green" style="width: 20%;"></div>
-                                </div>
+                                <div class="bar-track"><div class="bar-fill green" style="width: 20%;"></div></div>
                             </div>
                         </div>
                     </div>
@@ -872,7 +226,7 @@
                             @forelse($alertLog as $alert)
                                 <div class="notif-item {{ $alert['type'] }}">
                                     <div class="notif-icon">
-                                        <i data-lucide="{{ $alert['icon'] }}" class="{{ $alert['type'] == 'red' ? 'text-red' : ($alert['type'] == 'orange' ? 'text-orange' : '') }}" style="width: 16px; height: 16px; {{ $alert['type'] == '' ? 'color: #3b82f6;' : '' }}"></i>
+                                        <i data-lucide="{{ $alert['icon'] }}" style="width: 16px; height: 16px; {{ $alert['type'] == 'red' ? 'color: var(--accent-red);' : ($alert['type'] == 'orange' ? 'color: var(--accent-orange);' : 'color: #3b82f6;') }}"></i>
                                     </div>
                                     <div class="notif-details">
                                         <span class="notif-title">{{ $alert['title'] }}</span>
@@ -889,49 +243,23 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <footer class="dashboard-footer">
             <div class="footer-grid">
                 <div class="footer-branding">
-                    <div class="brand-logo-bg">
-                        <img class="brand-logo-img" src="{{ asset('assets/logo-titikaman.png') }}" alt="Logo" onerror="this.src='https://placehold.co/44x44/f3f3f3/006a60?text=TA'">
-                    </div>
                     <span class="brand-title">TitikAman</span>
-                    <p class="footer-desc">
-                        Sistem Informasi Manajemen Kebencanaan Kota Bekasi. Kolaborasi BPBD, Relawan, dan Warga untuk Bekasi Tangguh Bencana.
-                    </p>
+                    <p class="footer-desc">Sistem Informasi Manajemen Kebencanaan Kota Bekasi.</p>
                 </div>
                 <div>
                     <h3 class="footer-col-title">AKSES CEPAT</h3>
                     <ul class="footer-links">
                         <li><a href="{{ route('dashboard') }}" class="footer-link">Dashboard Utama</a></li>
                         <li><a href="{{ route('peta.evakuasi') }}" class="footer-link">Peta Evakuasi</a></li>
-                        <li><a href="{{ route('pintu.air') }}" class="footer-link">Data Tinggi Air</a></li>
                         <li><a href="{{ route('posko') }}" class="footer-link">Posko Aktif</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="footer-col-title">KERJA SAMA</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">BPBD Kota Bekasi</a></li>
-                        <li><a href="#" class="footer-link">SAR Jawa Barat</a></li>
-                        <li><a href="#" class="footer-link">BMKG</a></li>
-                        <li><a href="#" class="footer-link">Pemerintah Kota</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="footer-col-title">BANTUAN</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Kontak Darurat</a></li>
-                        <li><a href="#" class="footer-link">Panduan Warga</a></li>
-                        <li><a href="#" class="footer-link">Syarat & Ketentuan</a></li>
-                        <li><a href="#" class="footer-link">Kebijakan Privasi</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <span>© 2026 TitikAman Kota Bekasi. Hak Cipta Dilindungi Undang-Undang.</span>
-                <span>Kerjasama BPBD Bekasi & Pengembang Relawan.</span>
+                <span>© 2026 TitikAman Kota Bekasi.</span>
             </div>
         </footer>
     </div>
@@ -939,7 +267,6 @@
 @endsection
 
 @section('scripts')
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -981,13 +308,10 @@
             gateButtons.forEach(function(btn) {
                 btn.classList.toggle('active', parseInt(btn.dataset.gateId, 10) === activeGateId);
             });
-
             rangeButtons.forEach(function(btn) {
                 btn.classList.toggle('active', btn.dataset.range === currentRange);
             });
-
             historiBtn.classList.toggle('active', currentRange === '7d');
-
             sungaiCards.forEach(function(card) {
                 card.classList.toggle('chart-active', parseInt(card.dataset.gateId, 10) === activeGateId);
             });
@@ -997,17 +321,12 @@
             const activeGate = chartData24h.datasets.find(function(ds) {
                 return ds.gateId === activeGateId;
             });
-
             if (currentRange === '7d') {
                 chartTitleEl.textContent = 'Grafik TMA 7 Hari Terakhir';
-                chartSubtitleEl.textContent = activeGate
-                    ? 'Tren mingguan — ' + activeGate.label
-                    : 'Tren mingguan tinggi muka air sungai utama';
+                chartSubtitleEl.textContent = activeGate ? 'Tren mingguan — ' + activeGate.label : 'Tren mingguan tinggi muka air sungai utama';
             } else {
                 chartTitleEl.textContent = 'Grafik TMA 24 Jam Terakhir';
-                chartSubtitleEl.textContent = activeGate
-                    ? 'Visualisasi — ' + activeGate.label
-                    : 'Visualisasi tinggi muka air sungai utama';
+                chartSubtitleEl.textContent = activeGate ? 'Visualisasi — ' + activeGate.label : 'Visualisasi tinggi muka air sungai utama';
             }
         }
 
@@ -1022,30 +341,13 @@
 
         const tmaChart = new Chart(ctx, {
             type: 'line',
-            data: {
-                labels: chartData24h.labels,
-                datasets: getActiveDatasets(),
-            },
+            data: { labels: chartData24h.labels, datasets: getActiveDatasets() },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                        onClick: function(e, legendItem, legend) {
-                            const index = legendItem.datasetIndex;
-                            const meta = legend.chart.getDatasetMeta(index);
-                            meta.hidden = meta.hidden === null ? !legend.chart.data.datasets[index].hidden : null;
-                            legend.chart.update();
-                        },
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(ctx) {
-                                return ctx.dataset.label + ': ' + ctx.parsed.y + ' cm';
-                            }
-                        }
-                    }
+                    legend: { position: 'top' },
+                    tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y + ' cm'; } } }
                 },
                 scales: {
                     y: {
@@ -1053,9 +355,7 @@
                         suggestedMax: 320,
                         title: { display: true, text: 'Ketinggian (cm)' },
                         grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: {
-                            callback: function(val) { return val + ' cm'; }
-                        }
+                        ticks: { callback: function(val) { return val + ' cm'; } }
                     },
                     x: { grid: { display: false } }
                 }
@@ -1082,21 +382,11 @@
             applyChartView();
         });
 
-        function selectGateFromCard(gateId) {
-            activeGateId = gateId;
-            document.getElementById('tmaChartSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            applyChartView();
-        }
-
         sungaiCards.forEach(function(card) {
             card.addEventListener('click', function() {
-                selectGateFromCard(parseInt(card.dataset.gateId, 10));
-            });
-            card.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    selectGateFromCard(parseInt(card.dataset.gateId, 10));
-                }
+                activeGateId = parseInt(card.dataset.gateId, 10);
+                document.getElementById('tmaChartSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                applyChartView();
             });
         });
 
