@@ -6,61 +6,6 @@
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <link rel="stylesheet" href="{{ asset('css/admin-verification.css') }}">
-<style>
-    /* User Profile Widget Topbar Styles */
-    .dashboard-topbar {
-        padding: 16px 24px;
-        background-color: white;
-        border-bottom: 1px solid rgba(196, 198, 207, 0.4);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-shrink: 0;
-    }
-
-    .topbar-right {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .user-profile-widget {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .user-widget-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background-color: #006a60;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 14px;
-    }
-
-    .user-widget-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .user-widget-name {
-        font-size: 14px;
-        font-weight: 600;
-        color: #031f41;
-        line-height: 1.2;
-    }
-
-    .user-widget-role {
-        font-size: 11px;
-        color: #6c757d;
-        margin-top: 2px;
-    }
-</style>
 @endsection
 
 @section('content')
@@ -90,7 +35,7 @@
         </div>
 
         @if(session('success'))
-            <div style="background-color: #d1e7dd; color: #0f5132; padding: 12px 24px; border-bottom: 1px solid #badbcc; font-size: 14px; font-weight: 600;">
+            <div class="success-alert">
                 {{ session('success') }}
             </div>
         @endif
@@ -123,8 +68,8 @@
                             <p class="item-subtitle">{{ $user->email }}</p>
                         </a>
                     @empty
-                        <div style="text-align: center; padding: 24px; color: #8c8d99; font-size: 13px;">
-                            Tidak ada pengajuan akun tertunda.
+                        <div class="empty-state">
+                            <div class="empty-state-text">Tidak ada pengajuan akun tertunda.</div>
                         </div>
                     @endforelse
                 </div>
@@ -135,11 +80,11 @@
                 @if($selectedUser)
                     <div class="detail-card">
                         <div>
-                            <span class="item-role-tag {{ $selectedUser->role == 'Relawan' ? 'tag-relawan' : 'tag-pengelola' }}" style="font-size: 12px; padding: 4px 10px; border-radius: 6px;">
+                            <span class="item-role-tag {{ $selectedUser->role == 'Relawan' ? 'tag-relawan' : 'tag-pengelola' }}">
                                 {{ $selectedUser->role == 'Relawan' ? 'Relawan / SAR' : 'Pengelola Posko' }}
                             </span>
-                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; color: var(--navy-dark); margin: 12px 0 4px 0;">{{ $selectedUser->fullname }}</h2>
-                            <p style="font-size: 14px; color: #5d5e66; margin: 0;">Mendaftar sejak {{ $selectedUser->created_at->format('d M Y, H:i') }}</p>
+                            <h2 class="detail-user-name">{{ $selectedUser->fullname }}</h2>
+                            <p class="detail-user-date">Mendaftar sejak {{ $selectedUser->created_at->format('d M Y, H:i') }}</p>
                         </div>
 
                         <!-- Section 1: Profil Pengguna -->
@@ -167,7 +112,7 @@
                                     <i data-lucide="award"></i>
                                     <span>Informasi Kualifikasi Relawan</span>
                                 </h3>
-                                <div class="detail-grid" style="margin-bottom: 16px;">
+                                <div class="detail-grid">
                                     <div class="detail-group">
                                         <span class="detail-label">Nomor Induk Kependudukan (NIK)</span>
                                         <span class="detail-value">{{ $selectedUser->nik }}</span>
@@ -177,20 +122,20 @@
                                         <span class="detail-value">{{ $selectedUser->organisasi ?? 'Mandiri / Tanpa Organisasi' }}</span>
                                     </div>
                                 </div>
-                                <div class="detail-group" style="margin-bottom: 16px;">
+                                <div class="detail-group">
                                     <span class="detail-label">Spesialisasi Keahlian</span>
-                                    <span class="detail-value" style="color: var(--brand-teal);">{{ $selectedUser->keahlian }}</span>
+                                    <span class="detail-value detail-highlight">{{ $selectedUser->keahlian }}</span>
                                 </div>
                                 <div class="detail-group">
                                     <span class="detail-label">Dokumen Identitas (KTP / Sertifikat)</span>
-                                    <div style="margin-top: 8px;">
+                                    <div class="detail-document">
                                         @if($selectedUser->document_path)
                                             <a href="{{ asset('storage/' . $selectedUser->document_path) }}" target="_blank" class="btn-view-document">
                                                 <i data-lucide="file-text"></i>
                                                 <span>Lihat Dokumen Verifikasi</span>
                                             </a>
                                         @else
-                                            <span style="color: #ba1a1a; font-size: 13px; font-weight: 600;">Dokumen tidak tersedia</span>
+                                            <span class="detail-error">Dokumen tidak tersedia</span>
                                         @endif
                                     </div>
                                 </div>
@@ -206,7 +151,7 @@
                                         <i data-lucide="home"></i>
                                         <span>Detail Posko Yang Didaftarkan</span>
                                     </h3>
-                                    <div class="detail-grid" style="margin-bottom: 16px;">
+                                    <div class="detail-grid">
                                         <div class="detail-group">
                                             <span class="detail-label">Nama Posko</span>
                                             <span class="detail-value">{{ $shelter->shelter_name }}</span>
@@ -216,19 +161,19 @@
                                             <span class="detail-value">{{ $shelter->max_capacity }} Jiwa</span>
                                         </div>
                                     </div>
-                                    <div class="detail-group" style="margin-bottom: 16px;">
+                                    <div class="detail-group">
                                         <span class="detail-label">Alamat Lengkap</span>
                                         <span class="detail-value">{{ $shelter->address }}</span>
                                     </div>
-                                    <div class="detail-group" style="margin-bottom: 16px;">
+                                    <div class="detail-group">
                                         <span class="detail-label">Fasilitas Tersedia</span>
-                                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+                                        <div class="facilities-list">
                                             @if(is_array($shelter->facilities))
                                                 @foreach($shelter->facilities as $fac)
-                                                    <span style="font-size: 12px; background-color: rgba(0,106,96,0.06); color: var(--brand-teal); padding: 4px 8px; border-radius: 4px; font-weight: 600;">{{ $fac }}</span>
+                                                    <span class="facility-tag">{{ $fac }}</span>
                                                 @endforeach
                                             @else
-                                                <span style="color: #6c757d; font-size: 13px;">Tidak mencantumkan fasilitas</span>
+                                                <span class="detail-muted">Tidak mencantumkan fasilitas</span>
                                             @endif
                                         </div>
                                     </div>
@@ -254,16 +199,17 @@
                                 @csrf
                                 <button type="submit" class="btn-action btn-approve">
                                     <i data-lucide="user-check"></i>
-                                    <span>Setujui Akun</span>
+                                    <span>Setujui Pendaftaran</span>
                                 </button>
                             </form>
                         </div>
                     </div>
                 @else
                     <div class="empty-state">
-                        <i data-lucide="users"></i>
-                        <h2>Pilih Pengaju dari Antrean</h2>
-                        <p>Silakan klik salah satu akun di antrean sebelah kiri untuk melihat informasi lengkap pengajuan verifikasi mereka.</p>
+                        <div class="empty-state-icon">
+                            <i data-lucide="user-check" style="width: 64px; height: 64px;"></i>
+                        </div>
+                        <p class="empty-state-text">Pilih salah satu pengajuan dari antrean untuk melihat detail dan melakukan verifikasi.</p>
                     </div>
                 @endif
             </div>
@@ -276,55 +222,44 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    function filterQueue(role) {
-        // Update tab styling
-        const buttons = document.querySelectorAll('.tab-btn');
-        buttons.forEach(btn => btn.classList.remove('active'));
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Lucide icons
+        lucide.createIcons();
 
-        // Find clicked button
-        event.target.classList.add('active');
+        // --- Queue Filtering ---
+        window.filterQueue = function(role) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
 
-        // Show/hide queue items
-        const items = document.querySelectorAll('#queueList .queue-item');
-        items.forEach(item => {
-            if (role === 'all') {
-                item.style.display = 'block';
-            } else if (role === 'relawan' && item.getAttribute('data-role') === 'relawan') {
-                item.style.display = 'block';
-            } else if (role === 'pengelola' && item.getAttribute('data-role') === 'pengelola_posko') {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
+            const items = document.querySelectorAll('.queue-item');
+            items.forEach(item => {
+                if (role === 'all' || item.getAttribute('data-role') === role) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        };
 
-    @if($selectedUser && $selectedUser->role == 'Pengelola_Posko')
-        document.addEventListener('DOMContentLoaded', function () {
+        // --- Detail Map for Shelter ---
+        @if($selectedUser && $selectedUser->role == 'Pengelola_Posko' && $selectedUser->shelter_id)
             @php
                 $shelter = \App\Models\Shelter::find($selectedUser->shelter_id);
             @endphp
-            @if($shelter)
-                const map = L.map('detail-map').setView([{{ $shelter->latitude }}, {{ $shelter->longitude }}], 14);
-
+            @if($shelter && $shelter->latitude && $shelter->longitude)
+                const detailMap = L.map('detail-map').setView([{{ $shelter->latitude }}, {{ $shelter->longitude }}], 15);
+                
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                    attribution: '© OpenStreetMap contributors © CARTO',
-                    subdomains: 'abcd',
+                    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
                     maxZoom: 20
-                }).addTo(map);
+                }).addTo(detailMap);
 
-                const customIcon = L.divIcon({
-                    html: `<div style="background-color: var(--brand-teal); width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                           </div>`,
-                    className: 'custom-map-marker',
-                    iconSize: [24, 24],
-                    iconAnchor: [12, 12]
-                });
-
-                L.marker([{{ $shelter->latitude }}, {{ $shelter->longitude }}], {icon: customIcon}).addTo(map);
+                L.marker([{{ $shelter->latitude }}, {{ $shelter->longitude }}]).addTo(detailMap)
+                    .bindPopup('{{ $shelter->shelter_name }}')
+                    .openPopup();
             @endif
-        });
-    @endif
+        @endif
+    });
 </script>
 @endsection
