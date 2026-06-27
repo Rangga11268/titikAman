@@ -1039,6 +1039,10 @@ body {
     gap: 24px;
 }
 
+.donasi-grid-columns > div {
+    min-width: 0;
+}
+
 @media (max-width: 1024px) {
     .donasi-grid-columns {
         grid-template-columns: 1fr;

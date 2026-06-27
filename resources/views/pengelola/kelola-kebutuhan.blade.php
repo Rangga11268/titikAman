@@ -67,7 +67,7 @@ if (!function_exists('parseNeedItem')) {
     <div class="pengelola-wrapper" style="padding-top: 0; display: flex; flex-direction: column; flex: 1; overflow-y: auto;">
         <!-- Toast Alerts -->
         @if (session('success'))
-            <div class="dashboard-toast" id="successToast" style="position: static; margin-bottom: 20px; width: 100%; max-width: 100%;">
+            <div class="dashboard-toast" id="successToast" style="position: static; transform: none; margin-bottom: 20px; width: 100%; max-width: 100%;">
                 <i data-lucide="check-circle" class="text-teal" style="width: 20px; height: 20px;"></i>
                 <span>{{ session('success') }}</span>
                 <button onclick="document.getElementById('successToast').style.display='none'" class="toast-close">
