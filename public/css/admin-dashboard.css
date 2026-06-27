@@ -451,3 +451,31 @@ body {
 .font-bold {
     font-weight: 700;
 }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .moderation-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .queue-column {
+        height: 350px; /* Give queue a fixed scrollable height on mobile */
+        border-right: none;
+        border-bottom: 2px solid var(--card-border);
+    }
+
+    .detail-column {
+        height: auto;
+        border-right: none;
+        border-bottom: 2px solid var(--card-border);
+    }
+
+    .action-column {
+        height: auto;
+        padding-bottom: 24px;
+    }
+}

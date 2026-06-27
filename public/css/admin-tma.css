@@ -274,3 +274,20 @@ body {
     color: #adb5bd;
     text-align: right;
 }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 768px) {
+    .tma-grid {
+        grid-template-columns: 1fr;
+    }
+    .tma-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .tma-main {
+        padding: 16px;
+    }
+}

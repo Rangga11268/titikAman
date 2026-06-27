@@ -222,13 +222,6 @@
             });
         };
 
-        const sidebar = document.querySelector('.dashboard-sidebar');
-        if (sidebarToggle && sidebar) {
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
-        }
-
         // --- Detail Map for Shelter ---
         @if($selectedUser && $selectedUser->role == 'Pengelola_Posko' && $selectedUser->shelter_id)
             @php
