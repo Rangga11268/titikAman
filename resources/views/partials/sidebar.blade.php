@@ -39,8 +39,8 @@
 
         @if(auth()->user()->role == 'Warga')
             <a href="{{ route('warga.sos') }}" class="nav-item {{ request()->routeIs('warga.sos') ? 'active' : '' }}">
-                <i data-lucide="alert-octagon" style="color: var(--accent-red);"></i>
-                <span style="color: var(--accent-red); font-weight: 700;">SOS Darurat</span>
+                <i data-lucide="alert-octagon" class="text-red"></i>
+                <span class="text-red" style="font-weight: 700;">SOS Darurat</span>
             </a>
             <a href="{{ route('warga.lapor') }}" class="nav-item {{ request()->routeIs('warga.lapor') ? 'active' : '' }}">
                 <i data-lucide="file-text"></i>

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Data Tinggi Muka Air (TMA) - TitikAman')
 
@@ -6,41 +6,16 @@
 <link rel="stylesheet" href="{{ asset('css/shared-tma.css') }}">
 @endsection
 
-@section('content')
-<div class="dashboard-container">
-    @include('partials.sidebar')
+@section('topbar-left')
+    <div style="display: flex; flex-direction: column;">
+        <span class="breadcrumb" style="font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Monitoring TMA / Bekasi & Sekitarnya</span>
+        <h1 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; color: var(--navy-dark); margin: 0;">Data Tinggi Muka Air (TMA) Real-Time</h1>
+    </div>
+@endsection
 
-    <div class="dashboard-main">
-        <div class="dashboard-topbar">
-            <div class="topbar-left">
-                <span class="breadcrumb">Monitoring TMA / Bekasi & Sekitarnya</span>
-                <h1>Data Tinggi Muka Air (TMA) Real-Time</h1>
-            </div>
-            <div class="topbar-right">
-                <div class="notification-bell">
-                    <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
-                    <div class="notification-dot"></div>
-                </div>
-                @php
-                    $authUser = auth()->user();
-                    $authInitials = 'TA';
-                    if ($authUser) {
-                        $parts = explode(' ', $authUser->fullname);
-                        $authInitials = strtoupper(substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''));
-                    }
-                @endphp
-                <div class="user-profile-widget">
-                    <div class="user-widget-avatar">{{ $authInitials }}</div>
-                    <div class="user-widget-info">
-                        <span class="user-widget-name">{{ $authUser?->fullname ?? 'Pengguna' }}</span>
-                        <span class="user-widget-role">{{ str_replace('_', ' ', $authUser?->role ?? '') }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="dashboard-body">
-            <div class="live-indicator">
+@section('dashboard-content')
+    <div class="dashboard-body">
+        <div class="live-indicator">
                 <span style="color: var(--brand-teal); font-size: 14px;">●</span>
                 <span>Live — Diperbarui setiap 15 menit oleh petugas BPBD Kota Bekasi</span>
             </div>
@@ -263,13 +238,14 @@
             </div>
         </footer>
     </div>
-</div>
 @endsection
 
-@section('scripts')
+@section('dashboard-scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        lucide.createIcons();
+
         const ctx = document.getElementById('tmaChart').getContext('2d');
 
         const chartData24h = {

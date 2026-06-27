@@ -93,8 +93,8 @@
                     <img src="{{ asset('assets/landing/hero-map.png') }}" alt="Peta Pemantauan Banjir" class="lp-mockup-image">
                     <div class="lp-mockup-overlay"></div>
                     <div class="lp-status-pill">
-                        <div class="lp-status-dot"></div>
-                        <span class="lp-status-text">Update Terakhir: 2 Menit yang lalu - Seluruh Pintu Air Normal</span>
+                        <div class="lp-status-dot" style="background-color: {{ $statusColor === 'red' ? '#e63946' : '#2ecc71' }};"></div>
+                        <span class="lp-status-text">Update Terakhir: {{ ucfirst($lastUpdated) }} - {{ $statusText }}</span>
                     </div>
                 </div>
             </div>

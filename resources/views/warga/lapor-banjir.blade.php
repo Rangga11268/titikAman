@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Lapor Genangan Banjir - TitikAman')
 
@@ -8,19 +8,15 @@
 <link rel="stylesheet" href="{{ asset('css/warga-lapor-banjir.css') }}">
 @endsection
 
-@section('content')
-<div class="dashboard-container">
-    @include('partials.sidebar')
+@section('topbar-left')
+    <h1 class="lapor-header-title">Form Laporan Banjir</h1>
+@endsection
 
-    <!-- Toggle Sidebar (Mobile) -->
-    <button class="mobile-sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
-        <i data-lucide="menu" id="toggleIcon"></i>
-    </button>
-
+@section('dashboard-content')
     <!-- Main Content Area -->
-    <div class="lapor-content-wrapper">
+    <div class="lapor-content-wrapper" style="padding-top: 0;">
         <!-- Top Navigation Header -->
-        <div class="lapor-header">
+        <div class="lapor-header" style="display: none;">
             <h1 class="lapor-header-title">Form Laporan Banjir</h1>
             <div class="lapor-header-status">
                 <div class="status-badge-green">
@@ -425,31 +421,14 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
 @endsection
 
-@section('scripts')
+@section('dashboard-scripts')
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // --- 1. SIDEBAR TOGGLE FOR MOBILE ---
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const dashboardSidebar = document.querySelector('.dashboard-sidebar');
-        const toggleIcon = document.getElementById('toggleIcon');
-
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function () {
-                dashboardSidebar.classList.toggle('active');
-                if (dashboardSidebar.classList.contains('active')) {
-                    toggleIcon.setAttribute('data-lucide', 'x');
-                } else {
-                    toggleIcon.setAttribute('data-lucide', 'menu');
-                }
-                lucide.createIcons();
-            });
-        }
-
         // --- 2. LOKASI DROPDOWN DYNAMIC MAPPING ---
         const kelurahanDb = {
             'Pondok Gede': ['Jatiwaringin', 'Jatibening', 'Jatibening Baru', 'Jaticempaka', 'Jatimakmur'],

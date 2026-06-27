@@ -4,11 +4,30 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RelawanController;
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\DonasiController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SmsWebhookController;
 use Illuminate\Support\Facades\Route;
+
+use App\Models\WaterGate;
 
 // Show landing page
 Route::get('/', function () {
-    return view('welcome');
+    $latestGate = WaterGate::orderBy('last_updated', 'desc')->first();
+    $alertGates = WaterGate::where('danger_status', '!=', 'Normal')->get();
+    
+    $lastUpdated = $latestGate ? $latestGate->last_updated->diffForHumans() : 'Belum ada data';
+    $alertCount = $alertGates->count();
+    
+    if ($alertCount > 0) {
+        $highestAlert = $alertGates->sortBy('danger_status')->first()->danger_status; // Siaga_1 is before Siaga_2 alphabetically
+        $statusText = "PERHATIAN: $alertCount Pintu Air Berstatus " . str_replace('_', ' ', $highestAlert);
+        $statusColor = 'red';
+    } else {
+        $statusText = "Seluruh Pintu Air Normal";
+        $statusColor = 'green';
+    }
+
+    return view('welcome', compact('lastUpdated', 'statusText', 'statusColor'));
 });
 
 // Guest Routes
@@ -96,3 +115,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/user/{id}/reject', [\App\Http\Controllers\AdminController::class, 'rejectUser'])->name('admin.user.reject');
     });
 });
+
+// Offline SMS SOS Webhook
+Route::post('/webhook/sms', [SmsWebhookController::class, 'handleIncomingSms']);

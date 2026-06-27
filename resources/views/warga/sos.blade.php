@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'SOS Darurat - TitikAman')
 
@@ -8,19 +8,14 @@
 <link rel="stylesheet" href="{{ asset('css/warga-sos.css') }}">
 @endsection
 
-@section('content')
-<div class="dashboard-container">
-    <!-- Sidebar -->
-    @include('partials.sidebar')
+@section('topbar-left')
+    <h1 class="sos-header-title">Darurat SOS</h1>
+@endsection
 
-    <!-- Toggle Sidebar (Mobile) -->
-    <button class="mobile-sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
-        <i data-lucide="menu" id="toggleIcon"></i>
-    </button>
-
+@section('dashboard-content')
     <!-- Content Wrapper -->
-    <div class="sos-content-wrapper">
-        <div class="sos-header">
+    <div class="sos-content-wrapper" style="padding-top: 0;">
+        <div class="sos-header" style="display: none;">
             <h1 class="sos-header-title">Darurat SOS</h1>
             <div class="sos-header-status">
                 <div class="status-badge-red" style="background-color: #fff2f2; border: 1px solid #ffdad7; padding: 6px 12px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
@@ -281,29 +276,11 @@
 </div>
 @endsection
 
-@section('scripts')
+@section('dashboard-scripts')
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. Mobile Sidebar Toggle ---
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const dashboardSidebar = document.querySelector('.dashboard-sidebar');
-        const toggleIcon = document.getElementById('toggleIcon');
-
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function () {
-                dashboardSidebar.classList.toggle('active');
-                if (dashboardSidebar.classList.contains('active')) {
-                    toggleIcon.setAttribute('data-lucide', 'x');
-                } else {
-                    toggleIcon.setAttribute('data-lucide', 'menu');
-                }
-                lucide.createIcons();
-            });
-        }
-
-        // --- 2. Leaflet GPS Mini Map ---
+    document.addEventListener('DOMContentLoaded', function() {        // --- 2. Leaflet GPS Mini Map ---
         const defaultLat = -6.2383;
         const defaultLng = 106.9922;
         let currentLat = defaultLat;
@@ -312,6 +289,7 @@
         const map = L.map('mini-map-sos', {
             zoomControl: false,
             dragging: false,
+            tap: false,
             doubleClickZoom: false,
             scrollWheelZoom: false
         }).setView([defaultLat, defaultLng], 15);

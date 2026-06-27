@@ -1,8 +1,6 @@
 .lapor-content-wrapper {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow-y: auto;
 }
 
 .lapor-header {
@@ -60,6 +58,16 @@
 @media (max-width: 1024px) {
     .lapor-main-layout {
         grid-template-columns: 1fr;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-container {
+        padding: 16px;
+    }
+    .form-header {
+        margin-bottom: 16px;
     }
 }
 

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Manajemen TMA Pintu Air - TitikAman')
 
@@ -6,31 +6,13 @@
 <link rel="stylesheet" href="{{ asset('css/admin-tma.css') }}">
 @endsection
 
-@section('content')
-<div class="dashboard-container">
-    <!-- Sidebar -->
-    @include('partials.sidebar')
+@section('topbar-left')
+    <h1>Kelola Tinggi Muka Air (TMA)</h1>
+@endsection
 
+@section('dashboard-content')
     <!-- Main Content -->
-    <div class="tma-main">
-        <!-- Topbar -->
-        <div class="dashboard-topbar">
-            <div class="topbar-left">
-                <h1>Kelola Tinggi Muka Air (TMA)</h1>
-            </div>
-            <div class="topbar-right">
-                <div class="user-profile-widget">
-                    <div class="user-widget-avatar">
-                        {{ strtoupper(substr(auth()->user()->fullname, 0, 2)) }}
-                    </div>
-                    <div class="user-widget-info">
-                        <span class="user-widget-name">{{ auth()->user()->fullname }}</span>
-                        <span class="user-widget-role">Admin BPBD</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <div class="tma-main" style="padding-top: 0; display: flex; flex-direction: column; flex: 1; overflow-y: auto;">
         @if(session('success'))
             <div style="background-color: #d1e7dd; color: #0f5132; padding: 12px 24px; font-weight: 500; font-size: 14px;">
                 {{ session('success') }}
@@ -87,5 +69,12 @@
             </div>
         </div>
     </div>
-</div>
+@endsection
+
+@section('dashboard-scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Status color logicn
+    });
+</script>
 @endsection

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Relawan - TitikAman')
 
@@ -8,23 +8,16 @@
 <link rel="stylesheet" href="{{ asset('css/relawan-dashboard.css') }}">
 @endsection
 
-@section('content')
-<div class="dashboard-container">
+@section('topbar-left')
+    <h1 class="topbar-title">Mission Control Relawan</h1>
+@endsection
 
-    {{-- ===================== SIDEBAR ===================== --}}
-    @include('partials.sidebar')
-
-    <button class="mobile-sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
-        <i data-lucide="menu" id="toggleIcon"></i>
-    </button>
-
+@section('dashboard-content')
     {{-- ===================== MAIN CANVAS ===================== --}}
-    <div class="relawan-main-canvas">
-
-        {{-- Top App Bar --}}
-        <div class="relawan-topbar">
+    <div class="relawan-main-canvas" style="padding-top: 0;">
+        <div class="relawan-topbar" style="display: none;">
             <div class="topbar-left">
-                <h1 class="topbar-title">Dashboard Relawan</h1>
+                <h1 class="topbar-title">Mission Control Relawan</h1>
                 <div class="topbar-sos-badge">
                     <i data-lucide="bell-ring"></i>
                     <span>{{ $sosAntriCount }} SOS Aktif</span>
@@ -374,10 +367,9 @@
 
         </div>{{-- end .relawan-content-area --}}
     </div>{{-- end .relawan-main-canvas --}}
-</div>{{-- end .dashboard-container --}}
 @endsection
 
-@section('scripts')
+@section('dashboard-scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 @php
     // Prepare map data as simple PHP variables to avoid Blade @json() parse errors
@@ -401,17 +393,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ---- Mobile Sidebar Toggle ----
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebar = document.querySelector('.dashboard-sidebar');
-    const toggleIcon = document.getElementById('toggleIcon');
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function () {
-            sidebar.classList.toggle('active');
-            toggleIcon.setAttribute('data-lucide', sidebar.classList.contains('active') ? 'x' : 'menu');
-            lucide.createIcons();
-        });
-    }
+    // ---- Map Initialization ----
 
     // ---- Leaflet Map ----
     const DEFAULT_LAT = -6.2383;

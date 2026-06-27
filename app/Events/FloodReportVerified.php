@@ -2,29 +2,26 @@
 
 namespace App\Events;
 
-use App\Models\WaterGate;
+use App\Models\FloodReport;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
-class TmaThresholdExceeded implements ShouldBroadcast
+class FloodReportVerified implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $waterGate;
-    public $oldStatus;
-    public $newStatus;
+    public $report;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(WaterGate $waterGate, string $oldStatus, string $newStatus)
+    public function __construct(FloodReport $report)
     {
-        $this->waterGate = $waterGate;
-        $this->oldStatus = $oldStatus;
-        $this->newStatus = $newStatus;
+        $this->report = $report;
     }
 
     /**
@@ -34,8 +31,13 @@ class TmaThresholdExceeded implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
+        $kecamatanSlug = 'global';
+        if ($this->report->kecamatan) {
+            $kecamatanSlug = Str::slug($this->report->kecamatan);
+        }
+
         return [
-            new Channel('disaster.global'),
+            new Channel('disaster.' . $kecamatanSlug),
         ];
     }
 
@@ -46,6 +48,6 @@ class TmaThresholdExceeded implements ShouldBroadcast
      */
     public function broadcastAs(): string
     {
-        return 'TmaThresholdExceeded';
+        return 'FloodReportVerified';
     }
 }

@@ -641,3 +641,34 @@ body {
     color: #1a73e8;
     line-height: 1.5;
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS
+   ========================================================================== */
+@media (max-width: 768px) {
+    .auth-layout {
+        flex-direction: column;
+    }
+    .left-panel {
+        width: 100%;
+        padding: 32px 24px;
+        min-height: auto;
+    }
+    .right-panel {
+        width: 100%;
+        padding: 32px 24px;
+        min-height: 100vh;
+    }
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+    .keahlian-grid {
+        grid-template-columns: 1fr;
+    }
+    .facility-grid {
+        grid-template-columns: 1fr;
+    }
+}

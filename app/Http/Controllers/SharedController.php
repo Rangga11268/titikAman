@@ -109,6 +109,12 @@ class SharedController extends Controller
             ->take(3)
             ->get();
 
+        // Flood Reports for Map
+        $verifiedReports = FloodReport::where('verification_status', 'verified')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get();
+
         return view('shared.dashboard', compact(
             'titikBanjir',
             'wargaTerdampak',
@@ -118,7 +124,8 @@ class SharedController extends Controller
             'waterGates',
             'latestSos',
             'activityLog',
-            'recentSos'
+            'recentSos',
+            'verifiedReports'
         ));
     }
 

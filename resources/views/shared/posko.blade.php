@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Posko Pengungsian - TitikAman')
 
@@ -13,43 +13,30 @@
     overflow: hidden;
     border: 1px solid rgba(196, 198, 207, 0.4);
 }
+@media (max-width: 640px) {
+    .search-input {
+        width: 100%;
+        max-width: 200px;
+    }
+}
 </style>
 @endsection
 
-@section('content')
-<div class="dashboard-container">
-    <!-- Sidebar -->
-    @include('partials.sidebar')
+@section('topbar-left')
+    <div class="search-wrapper">
+        <i data-lucide="search" class="search-icon" style="width: 14px; height: 14px;"></i>
+        <input type="text" class="search-input" placeholder="Cari nama posko...">
+    </div>
+@endsection
 
+@section('topbar-right')
+    <button class="btn-emergency-header">🚨 Emergency Alert</button>
+@endsection
+
+@section('dashboard-content')
     <!-- Main Content -->
-    <div class="dashboard-main">
-        <!-- Topbar -->
-        <div class="dashboard-topbar">
-            <div class="topbar-left">
-                <div class="search-wrapper">
-                    <i data-lucide="search" class="search-icon" style="width: 14px; height: 14px;"></i>
-                    <input type="text" class="search-input" placeholder="Cari nama posko...">
-                </div>
-            </div>
-            <div class="topbar-right">
-                <button class="btn-emergency-header">🚨 Emergency Alert</button>
-                <div class="notification-bell">
-                    <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
-                    <div class="notification-dot"></div>
-                </div>
-                <div class="user-profile-widget">
-                    <div class="user-widget-avatar">AL</div>
-                    <div class="user-widget-info">
-                        <span class="user-widget-name">{{ auth()->user()->fullname }}</span>
-                        <span class="user-widget-role">Admin LogiGuard</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Body -->
-        <div class="dashboard-body">
-            <!-- Alert success & error -->
+    <div class="dashboard-body">
+        <!-- Alert success & error -->
             @if(session('success'))
                 <div class="alert-success">
                     {{ session('success') }}
@@ -165,7 +152,7 @@
 
                                 <div class="shelter-buttons">
                                     @if($shelter->status != 'full')
-                                        <button class="btn-card outline">Lihat Rute</button>
+                                        <button class="btn-card outline" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination={{ $shelter->latitude }},{{ $shelter->longitude }}', '_blank')">Lihat Rute</button>
                                         <button class="btn-card filled" onclick="focusShelterMap({{ $shelter->latitude }}, {{ $shelter->longitude }}, '{{ $shelter->shelter_name }}')">Fokus Peta</button>
                                     @else
                                         <button class="btn-card disabled" disabled>Posko Terisi Penuh</button>
@@ -302,18 +289,23 @@
             </div>
         </footer>
     </div>
-</div>
 @endsection
 
-@section('scripts')
+@section('dashboard-scripts')
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
     let miniMap;
 
     document.addEventListener("DOMContentLoaded", function() {
+
+        lucide.createIcons();
+
         // Initialize Map
         miniMap = L.map('shelter-mini-map').setView([-6.241586, 106.992416], 12); // Bekasi center
+        
+        // Fix map not rendering tiles properly when initialized in hidden or resizing containers on mobile
+        setTimeout(() => { if(miniMap) miniMap.invalidateSize(); }, 500);
         
         // CartoDB Voyager tiles (light theme suited for maps)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {

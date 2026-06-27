@@ -54,7 +54,7 @@ html, body {
 }
 
 .brand-logo {
-    background-color: #031f41;
+    background-color: #fff;
     color: white;
     padding: 6px;
     border-radius: 8px;
@@ -523,4 +523,51 @@ html, body {
 .instructions-section li {
     margin-bottom: 8px;
     line-height: 1.5;
+}
+
+/* ==========================================================================
+   Responsive / Mobile Styles
+   ========================================================================== */
+@media (max-width: 768px) {
+    .floating-topbar {
+        padding: 0 16px;
+    }
+
+    .brand-text, .search-container, .status-badge {
+        display: none !important;
+    }
+
+    .floating-left-panel.panel-top {
+        width: calc(100% - 32px);
+        left: 16px;
+        top: auto;
+        bottom: 16px;
+        max-height: 25vh;
+        z-index: 1000;
+    }
+
+    .floating-left-panel.panel-bottom {
+        display: none !important;
+    }
+
+    .floating-right-actions {
+        top: 80px;
+        right: 16px;
+        transform: none;
+        flex-direction: row;
+        width: auto;
+    }
+
+    .control-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .panel-header {
+        padding: 10px 12px;
+    }
+
+    .panel-title {
+        font-size: 13px;
+    }
 }

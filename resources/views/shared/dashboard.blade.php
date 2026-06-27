@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Utama - TitikAman')
 
@@ -6,95 +6,20 @@
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <link rel="stylesheet" href="{{ asset('css/shared-dashboard.css') }}">
-<style>
-/* Filter Dropdown CSS inline karena spesifik untuk interaksi JS */
-.filter-wrapper {
-    position: relative;
-    display: inline-block;
-}
-.filter-dropdown {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 110%;
-    background: white;
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 1000;
-    min-width: 180px;
-    padding: 6px 0;
-    animation: filterFadeIn 0.2s ease-out;
-}
-.filter-option {
-    display: block;
-    padding: 8px 16px;
-    color: var(--navy-dark);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.2s;
-    text-align: left;
-}
-.filter-option:hover {
-    background-color: var(--bg-light);
-    color: var(--brand-teal);
-}
-.filter-option.active {
-    background-color: rgba(0, 106, 96, 0.08);
-    color: var(--brand-teal);
-    font-weight: 600;
-}
-@keyframes filterFadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-</style>
 @endsection
 
-@section('content')
-<div class="dashboard-container">
-    <!-- Sidebar -->
-    @include('partials.sidebar')
+@section('topbar-left')
+    <div style="display: flex; flex-direction: column;">
+        <span class="breadcrumb" style="font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Ringkasan Data & Aktivitas</span>
+        <h1 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; color: var(--navy-dark); margin: 0;">Pusat Informasi Kebencanaan</h1>
+    </div>
+@endsection
 
-    <!-- Main Content -->
-    <div class="dashboard-main">
+@section('dashboard-content')
         <!-- Warning Banner -->
         <div class="warning-banner">
             <i data-lucide="alert-triangle"></i>
             <span>PERINGATAN: Air kiriman dari Bogor terdeteksi — TMA Sungai Cileungsi naik ke 205cm (SIAGA 1)</span>
-        </div>
-
-        <!-- Topbar -->
-        <div class="dashboard-topbar">
-            <div class="topbar-left">
-                <h1>Dashboard Utama</h1>
-            </div>
-            <div class="topbar-right">
-                <div class="notification-bell">
-                    <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
-                    <div class="notification-dot"></div>
-                </div>
-                <div class="user-profile-widget">
-                    <div class="user-widget-avatar">
-                        {{ strtoupper(substr(auth()->user()->fullname, 0, 2)) }}
-                    </div>
-                    <div class="user-widget-info">
-                        <span class="user-widget-name">{{ auth()->user()->fullname }}</span>
-                        <span class="user-widget-role">
-                            @if(auth()->user()->role == 'Warga')
-                                Warga Terdampak
-                            @elseif(auth()->user()->role == 'Relawan')
-                                Relawan Penyelamat
-                            @elseif(auth()->user()->role == 'Pengelola_Posko')
-                                Pengelola Posko
-                            @else
-                                Admin BPBD
-                            @endif
-                        </span>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Body -->
@@ -378,61 +303,16 @@
                 </div>
             </div>
         </div>
-
-        <!-- Footer -->
-        <footer class="dashboard-footer">
-            <div class="footer-grid">
-                <div class="footer-branding">
-                    <div class="brand-logo-bg">
-                        <img class="brand-logo-img" src="{{ asset('assets/logo-titikaman.png') }}" alt="Logo" onerror="this.src='https://placehold.co/44x44/f3f3f3/006a60?text=TA'">
-                    </div>
-                    <span class="brand-title">TitikAman</span>
-                    <p class="footer-desc">
-                        Sistem Informasi Manajemen Kebencanaan Kota Bekasi. Kolaborasi BPBD, Relawan, dan Warga untuk Bekasi Tangguh Bencana.
-                    </p>
-                </div>
-                <div>
-                    <h3 class="footer-col-title">AKSES CEPAT</h3>
-                    <ul class="footer-links">
-                        <li><a href="{{ route('dashboard') }}" class="footer-link">Dashboard Utama</a></li>
-                        <li><a href="{{ route('peta.evakuasi') }}" class="footer-link">Peta Evakuasi</a></li>
-                        <li><a href="{{ route('pintu.air') }}" class="footer-link">Data Tinggi Air</a></li>
-                        <li><a href="{{ route('posko') }}" class="footer-link">Posko Aktif</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="footer-col-title">KERJA SAMA</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">BPBD Kota Bekasi</a></li>
-                        <li><a href="#" class="footer-link">SAR Jawa Barat</a></li>
-                        <li><a href="#" class="footer-link">BMKG</a></li>
-                        <li><a href="#" class="footer-link">Pemerintah Kota</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="footer-col-title">BANTUAN</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Kontak Darurat</a></li>
-                        <li><a href="#" class="footer-link">Panduan Warga</a></li>
-                        <li><a href="#" class="footer-link">Syarat & Ketentuan</a></li>
-                        <li><a href="#" class="footer-link">Kebijakan Privasi</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <span>© 2026 TitikAman Kota Bekasi. Hak Cipta Dilindungi Undang-Undang.</span>
-                <span>Kerjasama BPBD Bekasi & Pengembang Relawan.</span>
-            </div>
-        </footer>
-    </div>
-</div>
 @endsection
 
-@section('scripts')
+@section('dashboard-scripts')
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        lucide.createIcons();
+
         // Initialize Map
         const map = L.map('dashboard-map').setView([-6.241586, 106.992416], 12); // Bekasi center
         
@@ -471,6 +351,32 @@
                     fillOpacity: 0.8
                 }).addTo(map)
                 .bindPopup(`<strong>${s.name}</strong><br>Kapasitas: ${s.occupants}/${s.max}`);
+            }
+        });
+
+        // Add Reports / Danger Zones Markers
+        @php
+            $reportMapData = isset($verifiedReports) ? $verifiedReports->map(function($report) {
+                return [
+                    'lat' => floatval($report->latitude),
+                    'lng' => floatval($report->longitude),
+                    'description' => $report->street_name,
+                    'height' => $report->water_height_cm
+                ];
+            })->toArray() : [];
+        @endphp
+        const reports = @json($reportMapData);
+
+        reports.forEach(function(r) {
+            if (r.lat && r.lng) {
+                L.circleMarker([r.lat, r.lng], {
+                    radius: 6,
+                    fillColor: '#ba1a1a',
+                    color: '#fff',
+                    weight: 1.5,
+                    fillOpacity: 0.9
+                }).addTo(map)
+                .bindPopup(`<strong>Zona Genangan / Banjir</strong><br>${r.description}<br>Tinggi Air: ${r.height} cm`);
             }
         });
 

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Hub Logistik & Donasi - TitikAman')
 
@@ -57,45 +57,23 @@ if (!function_exists('parseNeedItem')) {
 }
 @endphp
 
-<div class="dashboard-container">
-    <!-- Sidebar -->
-    @include('partials.sidebar')
+@section('topbar-left')
+    <div class="search-mockup-wrapper" style="width: 300px; display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--color-border-muted); border-radius: 8px; padding: 6px 12px;">
+        <i data-lucide="search" class="search-mockup-icon" style="width: 18px; height: 18px; color: var(--color-text-muted);"></i>
+        <input type="text" class="search-mockup-input" placeholder="Cari logistik atau donatur..." disabled style="border: none; outline: none; background: transparent; width: 100%; font-size: 13px;">
+    </div>
+@endsection
 
-    <!-- Toggle Sidebar (Mobile) -->
-    <button class="mobile-sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
-        <i data-lucide="menu" id="toggleIcon"></i>
+@section('topbar-right')
+    <button class="btn-emergency-alert" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #ffebee; color: #d32f2f; border: 1px solid #ffcdd2; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">
+        <i data-lucide="alert-triangle" style="width: 14px; height: 14px;"></i>
+        <span>Emergency Alert</span>
     </button>
+@endsection
 
+@section('dashboard-content')
     <!-- Main Content Area -->
-    <div class="donasi-wrapper">
-        <!-- Top Navbar Cari Mockup -->
-        <div class="top-nav-bar">
-            <div class="search-mockup-wrapper">
-                <i data-lucide="search" class="search-mockup-icon" style="width: 18px; height: 18px;"></i>
-                <input type="text" class="search-mockup-input" placeholder="Cari logistik atau donatur..." disabled>
-            </div>
-            <div class="nav-actions-right">
-                <button class="btn-emergency-alert">
-                    <i data-lucide="alert-triangle" style="width: 14px; height: 14px;"></i>
-                    <span>Emergency Alert</span>
-                </button>
-                <div class="notification-bell" title="Notifikasi" style="position: relative; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background-color: #f1f3f5; color: #44474e; margin-right: 8px;">
-                    <i data-lucide="bell" style="width: 20px; height: 20px; margin: 0;"></i>
-                    <div class="notification-dot" style="position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background-color: var(--color-accent-red); border-radius: 50%;"></div>
-                </div>
-@php
-                    $authUser = auth()->user();
-                    $authInitials = 'TA';
-                    if ($authUser) {
-                        $p = explode(' ', $authUser->fullname);
-                        $authInitials = strtoupper(substr($p[0], 0, 1) . (isset($p[1]) ? substr($p[1], 0, 1) : ''));
-                    }
-                @endphp
-                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-brand-teal); color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--color-border-muted); cursor: pointer;" title="{{ $authUser?->fullname }}">
-                    {{ $authInitials }}
-                </div>
-            </div>
-        </div>
+    <div class="donasi-wrapper" style="padding-top: 0; display: flex; flex-direction: column; flex: 1; overflow-y: auto;">
 
         <div class="donasi-header-block">
             <h1>Hub Logistik & Donasi</h1>
@@ -541,26 +519,11 @@ if (!function_exists('parseNeedItem')) {
                 @endif
             </div>
         </div>
-    </div>
-</div>
 @endsection
 
-@section('scripts')
+@section('dashboard-scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // ─── Sidebar toggle (mobile) ───────────────────────────────────────
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const dashboardSidebar = document.querySelector('.dashboard-sidebar');
-        const toggleIcon = document.getElementById('toggleIcon');
-
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function () {
-                dashboardSidebar.classList.toggle('active');
-                toggleIcon.setAttribute('data-lucide', dashboardSidebar.classList.contains('active') ? 'x' : 'menu');
-                lucide.createIcons();
-            });
-        }
-
+    document.addEventListener('DOMContentLoaded', function() {
         // ─── Donation Status Filter ────────────────────────────────────────
         const filterToggleBtn  = document.getElementById('filterToggleBtn');
         const filterDropdownMenu = document.getElementById('filterDropdownMenu');

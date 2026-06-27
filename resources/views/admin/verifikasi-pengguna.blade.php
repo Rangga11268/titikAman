@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Verifikasi Pengguna BPBD - TitikAman')
 
@@ -8,32 +8,13 @@
 <link rel="stylesheet" href="{{ asset('css/admin-verification.css') }}">
 @endsection
 
-@section('content')
-<div class="dashboard-container">
-    <!-- Sidebar -->
-    @include('partials.sidebar')
+@section('topbar-left')
+    <h1>Verifikasi Pengguna</h1>
+@endsection
 
+@section('dashboard-content')
     <!-- Moderation Main -->
-    <div class="moderation-main">
-        <!-- Topbar -->
-        <div class="dashboard-topbar">
-            <div class="topbar-left">
-                <h1>Verifikasi Pengguna</h1>
-            </div>
-
-            <div class="topbar-right">
-                <div class="user-profile-widget">
-                    <div class="user-widget-avatar">
-                        {{ strtoupper(substr(auth()->user()->fullname, 0, 2)) }}
-                    </div>
-                    <div class="user-widget-info">
-                        <span class="user-widget-name">{{ auth()->user()->fullname }}</span>
-                        <span class="user-widget-role">Admin BPBD</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <div class="moderation-main" style="padding-top: 0; display: flex; flex-direction: column; flex: 1; overflow-y: auto;">
         @if(session('success'))
             <div class="success-alert">
                 {{ session('success') }}
@@ -215,14 +196,13 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
 
-@section('scripts')
+@section('dashboard-scripts')
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function() {
         // Initialize Lucide icons
         lucide.createIcons();
 
@@ -241,6 +221,13 @@
                 }
             });
         };
+
+        const sidebar = document.querySelector('.dashboard-sidebar');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
 
         // --- Detail Map for Shelter ---
         @if($selectedUser && $selectedUser->role == 'Pengelola_Posko' && $selectedUser->shelter_id)

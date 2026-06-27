@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\FloodReport;
 use App\Models\WaterGate;
 use App\Events\TmaThresholdExceeded;
+use App\Events\FloodReportVerified;
 
 class AdminService
 {
@@ -16,6 +17,8 @@ class AdminService
         $report = FloodReport::findOrFail($id);
         $report->verification_status = "verified";
         $report->save();
+
+        event(new FloodReportVerified($report));
 
         return $report;
     }

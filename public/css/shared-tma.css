@@ -43,11 +43,7 @@ body {
     flex-shrink: 0;
 }
 
-.topbar-left {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
+/* topbar-left is handled by layout */
 
 .breadcrumb {
     font-size: 11px;
@@ -574,6 +570,28 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
+}
+
+.brand-logo-bg {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background-color: #f3f3f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-logo-img {
+    width: 24px;
+    height: auto;
+}
+
+.brand-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: white;
 }
 
 .footer-desc {

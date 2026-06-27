@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Portal Moderasi BPBD - TitikAman')
 
@@ -8,35 +8,13 @@
 <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
 @endsection
 
-@section('content')
-<div class="dashboard-container">
-    <!-- Sidebar -->
-    @include('partials.sidebar')
+@section('topbar-left')
+    <h1>Moderasi Laporan Warga</h1>
+@endsection
 
+@section('dashboard-content')
     <!-- Moderation Main -->
-    <div class="moderation-main">
-        <!-- Topbar -->
-        <div class="dashboard-topbar">
-            <div class="topbar-left">
-                <h1>Moderasi Laporan Warga</h1>
-            </div>
-            <div class="topbar-right" style="display: flex; align-items: center; gap: 16px;">
-                <div class="notification-bell" title="Notifikasi" style="position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background-color: #f1f3f5; color: var(--color-neutral-dark);">
-                    <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
-                    <div class="notification-dot" style="position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background-color: var(--color-accent-red); border-radius: 50%;"></div>
-                </div>
-                <div class="user-profile-widget">
-                    <div class="user-widget-avatar">
-                        {{ strtoupper(substr(auth()->user()->fullname, 0, 2)) }}
-                    </div>
-                    <div class="user-widget-info">
-                        <span class="user-widget-name">{{ auth()->user()->fullname }}</span>
-                        <span class="user-widget-role">Admin BPBD</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <div class="moderation-main" style="padding-top: 0; display: flex; flex-direction: column; flex: 1; overflow-y: auto;">
         @if(session('success'))
             <div style="background-color: #d1e7dd; color: #0f5132; padding: 12px 24px; font-weight: 500; font-size: 14px;">
                 {{ session('success') }}
@@ -202,11 +180,9 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
 
-@section('scripts')
-<!-- Leaflet JS -->
+@section('dashboard-scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -236,6 +212,5 @@
                 radius: 200
             }).addTo(map).bindPopup("<strong>Laporan Sedang Diproses</strong>").openPopup();
         @endif
-    });
 </script>
 @endsection

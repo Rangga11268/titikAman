@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Kelola Kebutuhan Posko - TitikAman')
 
@@ -54,21 +54,16 @@ if (!function_exists('parseNeedItem')) {
         'name' => $name,
         'unit' => strtoupper($unit)
     ];
-    }
 }
 @endphp
 
-<div class="dashboard-container">
-    <!-- Sidebar -->
-    @include('partials.sidebar')
+@section('topbar-left')
+    <h1>Kelola Kebutuhan Posko</h1>
+@endsection
 
-    <!-- Toggle Sidebar (Mobile) -->
-    <button class="mobile-sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
-        <i data-lucide="menu" id="toggleIcon"></i>
-    </button>
-
+@section('dashboard-content')
     <!-- Main Content Area -->
-    <div class="pengelola-wrapper">
+    <div class="pengelola-wrapper" style="padding-top: 0; display: flex; flex-direction: column; flex: 1; overflow-y: auto;">
         <!-- Toast Alerts -->
         @if (session('success'))
             <div class="dashboard-toast" id="successToast" style="position: static; margin-bottom: 20px; width: 100%; max-width: 100%;">
@@ -518,25 +513,9 @@ if (!function_exists('parseNeedItem')) {
 </div>
 @endsection
 
-@section('scripts')
+@section('dashboard-scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // --- 1. SIDEBAR TOGGLE FOR MOBILE ---
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const dashboardSidebar = document.querySelector('.dashboard-sidebar');
-        const toggleIcon = document.getElementById('toggleIcon');
-
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function () {
-                dashboardSidebar.classList.toggle('active');
-                if (dashboardSidebar.classList.contains('active')) {
-                    toggleIcon.setAttribute('data-lucide', 'x');
-                } else {
-                    toggleIcon.setAttribute('data-lucide', 'menu');
-                }
-                lucide.createIcons();
-            });
-        }
     });
 
     // --- 2. UPDATE INFO POSKO MODAL ---
