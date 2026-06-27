@@ -55,6 +55,7 @@ if (!function_exists('parseNeedItem')) {
         'unit' => strtoupper($unit)
     ];
 }
+}
 @endphp
 
 @section('topbar-left')
@@ -86,9 +87,7 @@ if (!function_exists('parseNeedItem')) {
         @endif
 
         @if(!isset($shelter))
-            <!-- ==========================================
-                 VIEW A: CHOOSE SHELTER TO MANAGE
-                 ========================================== -->
+
             <div class="pengelola-header-top">
                 <div class="pengelola-title-block">
                     <h1>Pilih Posko Pengungsian</h1>
