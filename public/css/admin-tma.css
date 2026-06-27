@@ -287,7 +287,10 @@ body {
         align-items: flex-start;
         gap: 16px;
     }
-    .tma-main {
+    .tma-content {
+        padding: 16px;
+    }
+    .tma-card {
         padding: 16px;
     }
 }
