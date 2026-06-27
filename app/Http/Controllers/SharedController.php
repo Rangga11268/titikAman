@@ -115,12 +115,40 @@ class SharedController extends Controller
             ->whereNotNull('longitude')
             ->get();
 
-        // Logistics Stats for Dashboard Widget
-        $logistikStats = \App\Models\ShelterNeed::selectRaw('category, SUM(quantity_need) as total_need, SUM(quantity_fulfilled) as total_fulfilled')
-            ->groupBy('category')
-            ->orderByDesc('total_need')
-            ->take(3)
-            ->get();
+        // Logistics Stats for Dashboard Widget (Aggregate by parsing item_name)
+        $allNeeds = \App\Models\ShelterNeed::all();
+        $statsArray = [];
+        foreach ($allNeeds as $need) {
+            $itemLower = strtolower($need->item_name);
+            $category = 'Lain-lain';
+            if (str_contains($itemLower, 'makan') || str_contains($itemLower, 'beras') || str_contains($itemLower, 'porsi') || str_contains($itemLower, 'indomie') || str_contains($itemLower, 'roti')) {
+                $category = 'Makanan Siap Saji';
+            } elseif (str_contains($itemLower, 'obat') || str_contains($itemLower, 'medis') || str_contains($itemLower, 'masker') || str_contains($itemLower, 'p3k')) {
+                $category = 'Obat-obatan Dasar';
+            } elseif (str_contains($itemLower, 'selimut') || str_contains($itemLower, 'pakaian') || str_contains($itemLower, 'baju') || str_contains($itemLower, 'tikar') || str_contains($itemLower, 'kasur')) {
+                $category = 'Selimut & Kasur Lipat';
+            } elseif (str_contains($itemLower, 'susu') || str_contains($itemLower, 'bayi') || str_contains($itemLower, 'pampers') || str_contains($itemLower, 'popok')) {
+                $category = 'Susu Formula & Balita';
+            } elseif (str_contains($itemLower, 'pembalut') || str_contains($itemLower, 'toilet') || str_contains($itemLower, 'sabun') || str_contains($itemLower, 'shampoo')) {
+                $category = 'Kebutuhan Wanita';
+            } elseif (str_contains($itemLower, 'air') || str_contains($itemLower, 'mineral') || str_contains($itemLower, 'minum')) {
+                $category = 'Air Bersih';
+            }
+
+            if (!isset($statsArray[$category])) {
+                $statsArray[$category] = ['category' => $category, 'total_need' => 0, 'total_fulfilled' => 0];
+            }
+            $statsArray[$category]['total_need'] += $need->quantity_need;
+            $statsArray[$category]['total_fulfilled'] += $need->quantity_fulfilled;
+        }
+
+        usort($statsArray, function($a, $b) {
+            return $b['total_need'] <=> $a['total_need'];
+        });
+
+        $logistikStats = collect(array_slice($statsArray, 0, 4))->map(function($item) {
+            return (object) $item;
+        });
 
         return view('shared.dashboard', compact(
             'titikBanjir',
