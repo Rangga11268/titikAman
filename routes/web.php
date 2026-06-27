@@ -81,6 +81,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/warga/lapor', [WargaController::class, 'submitLapor'])->name('warga.lapor.submit');
         Route::get('/warga/sos', [WargaController::class, 'showSos'])->name('warga.sos');
         Route::post('/warga/sos', [WargaController::class, 'submitSos'])->name('warga.sos.submit');
+        Route::put('/warga/sos/update-location', [WargaController::class, 'updateSosLocation'])->name('warga.sos.update-location');
     });
 
     // Relawan Portal Routes

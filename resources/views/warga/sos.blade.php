@@ -328,6 +328,26 @@
                         // Update text
                         document.getElementById('sos-accuracy-text').innerText = `Akurasi GPS: ±${accuracy} meter`;
 
+                        @if ($activeSos)
+                        // Automatically update SOS location on the server
+                        fetch("{{ route('warga.sos.update-location') }}", {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                "Accept": "application/json"
+                            },
+                            body: JSON.stringify({
+                                latitude: currentLat,
+                                longitude: currentLng
+                            })
+                        }).then(res => res.json()).then(data => {
+                            if(data.status === 'success') {
+                                console.log('Lokasi SOS berhasil diperbarui ke server SAR.');
+                            }
+                        }).catch(err => console.error('Gagal update lokasi', err));
+                        @endif
+
                         // Reverse Geocode using OSM Nominatim API
                         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLng}`)
                             .then(res => res.json())

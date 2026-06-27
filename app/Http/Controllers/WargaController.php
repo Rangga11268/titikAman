@@ -179,4 +179,31 @@ class WargaController extends Controller
             'message' => 'Sinyal darurat SOS berhasil dikirim! Tim penyelamat (SAR) telah menerima koordinat Anda dan sedang berkoordinasi.'
         ]);
     }
+
+    /**
+     * Update the location of an active SOS signal via AJAX.
+     */
+    public function updateSosLocation(\Illuminate\Http\Request $request): JsonResponse
+    {
+        $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        $activeSos = $this->sosService->getActiveRequestByUserId(auth()->id());
+        
+        if (!$activeSos) {
+            return response()->json(['status' => 'error', 'message' => 'Tidak ada sinyal SOS aktif ditemukan.'], 404);
+        }
+
+        $activeSos->update([
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Lokasi GPS terbaru berhasil diperbarui ke sistem SAR.'
+        ]);
+    }
 }
