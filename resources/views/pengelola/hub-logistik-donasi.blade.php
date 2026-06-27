@@ -58,10 +58,7 @@ if (!function_exists('parseNeedItem')) {
 @endphp
 
 @section('topbar-left')
-    <div class="search-mockup-wrapper" style="width: 300px; display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--color-border-muted); border-radius: 8px; padding: 6px 12px;">
-        <i data-lucide="search" class="search-mockup-icon" style="width: 18px; height: 18px; color: var(--color-text-muted);"></i>
-        <input type="text" class="search-mockup-input" placeholder="Cari logistik atau donatur..." disabled style="border: none; outline: none; background: transparent; width: 100%; font-size: 13px;">
-    </div>
+    <h1>Hub Logistik & Donasi</h1>
 @endsection
 
 @section('topbar-right')
