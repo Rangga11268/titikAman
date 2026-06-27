@@ -115,6 +115,13 @@ class SharedController extends Controller
             ->whereNotNull('longitude')
             ->get();
 
+        // Logistics Stats for Dashboard Widget
+        $logistikStats = \App\Models\ShelterNeed::selectRaw('category, SUM(quantity_need) as total_need, SUM(quantity_fulfilled) as total_fulfilled')
+            ->groupBy('category')
+            ->orderByDesc('total_need')
+            ->take(3)
+            ->get();
+
         return view('shared.dashboard', compact(
             'titikBanjir',
             'wargaTerdampak',
@@ -125,7 +132,8 @@ class SharedController extends Controller
             'latestSos',
             'activityLog',
             'recentSos',
-            'verifiedReports'
+            'verifiedReports',
+            'logistikStats'
         ));
     }
 

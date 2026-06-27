@@ -164,57 +164,29 @@
                         <span class="text-gray" style="font-size: 12px; font-weight: 500;">Gudang Utama: Bekasi Timur</span>
                     </div>
                     <div class="logistik-rows">
-                        <div class="logistik-row">
-                            <div class="logistik-label-row">
-                                <span class="logistik-name">Makanan Siap Saji</span>
-                                <span class="logistik-qty">469 / 2000 Porsi</span>
-                            </div>
-                            <div class="progress-bar-wrapper">
-                                <div class="progress-track">
-                                    <div class="progress-fill red" style="width: 23%;"></div>
+                        @forelse($logistikStats as $stat)
+                            @php
+                                $percent = $stat->total_need > 0 ? min(100, round(($stat->total_fulfilled / $stat->total_need) * 100)) : 0;
+                                $colorClass = $percent < 30 ? 'red' : ($percent < 70 ? 'orange' : 'green');
+                                $redirectUrl = auth()->user()->role == 'Pengelola_Posko' ? route('pengelola.dashboard') : route('donasi.hub');
+                            @endphp
+                            <div class="logistik-row">
+                                <div class="logistik-label-row">
+                                    <span class="logistik-name">{{ $stat->category }}</span>
+                                    <span class="logistik-qty">{{ number_format($stat->total_fulfilled) }} / {{ number_format($stat->total_need) }} Unit</span>
                                 </div>
-                                <button class="btn-add-mini"><i data-lucide="plus" style="width: 10px; height: 10px;"></i> Tambah</button>
-                            </div>
-                        </div>
-
-                        <div class="logistik-row">
-                            <div class="logistik-label-row">
-                                <span class="logistik-name">Susu Formula & Balita</span>
-                                <span class="logistik-qty">819 / 1000 Unit</span>
-                            </div>
-                            <div class="progress-bar-wrapper">
-                                <div class="progress-track">
-                                    <div class="progress-fill orange" style="width: 82%;"></div>
+                                <div class="progress-bar-wrapper">
+                                    <div class="progress-track">
+                                        <div class="progress-fill {{ $colorClass }}" style="width: {{ $percent }}%;"></div>
+                                    </div>
+                                    <button class="btn-add-mini" onclick="window.location.href='{{ $redirectUrl }}'"><i data-lucide="plus" style="width: 10px; height: 10px;"></i> Tambah</button>
                                 </div>
-                                <button class="btn-add-mini"><i data-lucide="plus" style="width: 10px; height: 10px;"></i> Tambah</button>
                             </div>
-                        </div>
-
-                        <div class="logistik-row">
-                            <div class="logistik-label-row">
-                                <span class="logistik-name">Obat-obatan Dasar</span>
-                                <span class="logistik-qty">14,000 / 16,000 Pcs</span>
+                        @empty
+                            <div style="padding: 24px; text-align: center; color: var(--color-text-muted); font-size: 13px;">
+                                Belum ada data kebutuhan logistik.
                             </div>
-                            <div class="progress-bar-wrapper">
-                                <div class="progress-track">
-                                    <div class="progress-fill green" style="width: 87%;"></div>
-                                </div>
-                                <button class="btn-add-mini"><i data-lucide="plus" style="width: 10px; height: 10px;"></i> Tambah</button>
-                            </div>
-                        </div>
-
-                        <div class="logistik-row">
-                            <div class="logistik-label-row">
-                                <span class="logistik-name">Selimut & Kasur Lipat</span>
-                                <span class="logistik-qty">316 / 1000 Stel</span>
-                            </div>
-                            <div class="progress-bar-wrapper">
-                                <div class="progress-track">
-                                    <div class="progress-fill red" style="width: 32%;"></div>
-                                </div>
-                                <button class="btn-add-mini"><i data-lucide="plus" style="width: 10px; height: 10px;"></i> Tambah</button>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
