@@ -58,7 +58,11 @@ if (!function_exists('parseNeedItem')) {
 @endphp
 
 @section('topbar-left')
-    <h1>Hub Logistik & Donasi</h1>
+    @if(auth()->check() && auth()->user()->role === 'Pengelola_Posko' && $shelters->count() === 1)
+        <h1>Hub Logistik & Donasi - {{ $shelters->first()->shelter_name }}</h1>
+    @else
+        <h1>Hub Logistik & Donasi</h1>
+    @endif
 @endsection
 
 @section('topbar-right')
@@ -73,8 +77,13 @@ if (!function_exists('parseNeedItem')) {
     <div class="donasi-wrapper" style="padding-top: 0; display: flex; flex-direction: column; flex: 1; overflow-y: auto;">
 
         <div class="donasi-header-block">
-            <h1>Hub Logistik & Donasi</h1>
-            <p>Monitoring kebutuhan posko dan alur distribusi bantuan secara real-time.</p>
+            @if(auth()->check() && auth()->user()->role === 'Pengelola_Posko' && $shelters->count() === 1)
+                <h1>Hub Logistik & Donasi - {{ $shelters->first()->shelter_name }}</h1>
+                <p>Monitoring kebutuhan dan alur distribusi bantuan untuk posko Anda secara real-time.</p>
+            @else
+                <h1>Hub Logistik & Donasi</h1>
+                <p>Monitoring kebutuhan posko dan alur distribusi bantuan secara real-time.</p>
+            @endif
         </div>
 
         <!-- Stats Row -->

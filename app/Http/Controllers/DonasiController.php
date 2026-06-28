@@ -26,14 +26,33 @@ class DonasiController extends Controller
      */
     public function index()
     {
-        // Fetch all active/full shelters with their unfulfilled needs
-        $shelters = Shelter::with(['shelterNeeds' => function ($query) {
+        $shelterId = null;
+        if (auth()->check() && auth()->user()->role === 'Pengelola_Posko') {
+            $shelterId = auth()->user()->shelter_id;
+        }
+
+        // Build base queries
+        $sheltersQuery = Shelter::with(['shelterNeeds' => function ($query) {
             $query->whereColumn('quantity_fulfilled', '<', 'quantity_need')
                   ->orderBy('urgency', 'desc');
-        }])->whereIn('status', ['active', 'full'])->get();
+        }])->whereIn('status', ['active', 'full']);
+
+        $needsQuery = \App\Models\ShelterNeed::query();
+        $donationsQuery = \App\Models\Donation::query();
+        
+        if ($shelterId) {
+            $sheltersQuery->where('shelter_id', $shelterId);
+            $needsQuery->where('shelter_id', $shelterId);
+            $donationsQuery->whereHas('shelterNeed', function($q) use ($shelterId) {
+                $q->where('shelter_id', $shelterId);
+            });
+        }
+
+        // Fetch shelters
+        $shelters = $sheltersQuery->get();
 
         // Calculate dynamic stats
-        $totalNeededObj = \App\Models\ShelterNeed::selectRaw('SUM(quantity_need) as total_need, SUM(quantity_fulfilled) as total_fulfilled')->first();
+        $totalNeededObj = (clone $needsQuery)->selectRaw('SUM(quantity_need) as total_need, SUM(quantity_fulfilled) as total_fulfilled')->first();
         
         $totalNeededVal = (int) ($totalNeededObj->total_need ?? 0);
         $fulfilledVal   = (int) ($totalNeededObj->total_fulfilled ?? 0);
@@ -47,27 +66,25 @@ class DonasiController extends Controller
         // Fulfillment percentage for the mini progress bar
         $fulfillmentPercent = $totalNeededVal > 0 ? round(($fulfilledVal / $totalNeededVal) * 100) : 0;
 
-        // Active donors — unique donors with at least one accepted/delivered donation
-        $activeDonors = \App\Models\Donation::whereIn('status', ['accepted', 'delivered'])
+        // Active donors – unique donors with at least one accepted/delivered donation
+        $activeDonors = (clone $donationsQuery)->whereIn('status', ['accepted', 'delivered'])
             ->distinct('donor_id')
             ->count('donor_id');
 
         // Most active / first active shelter for the Right Column card
-        $topShelter = Shelter::whereIn('status', ['active', 'full'])
-            ->orderByDesc('current_occupants')
-            ->first();
+        $topShelter = (clone $sheltersQuery)->orderByDesc('current_occupants')->first();
 
         // Recent donations with status filter support (all by default, filter via JS)
-        $recentDonations = \App\Models\Donation::with(['donor', 'shelterNeed.shelter'])
+        $recentDonations = (clone $donationsQuery)->with(['donor', 'shelterNeed.shelter'])
             ->latest()
             ->take(10)
             ->get();
 
         // Donation status counts for filter badges
         $donationStats = [
-            'pending'   => \App\Models\Donation::where('status', 'pending')->count(),
-            'accepted'  => \App\Models\Donation::whereIn('status', ['accepted', 'delivered'])->count(),
-            'rejected'  => \App\Models\Donation::where('status', 'rejected')->count(),
+            'pending'   => (clone $donationsQuery)->where('status', 'pending')->count(),
+            'accepted'  => (clone $donationsQuery)->whereIn('status', ['accepted', 'delivered'])->count(),
+            'rejected'  => (clone $donationsQuery)->where('status', 'rejected')->count(),
         ];
 
         return view('pengelola.hub-logistik-donasi', compact(
