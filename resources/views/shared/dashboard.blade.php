@@ -59,7 +59,9 @@
                 <div class="news-feed-panel map-card">
                     <div class="map-header-row" style="margin-bottom: 16px;">
                         <span class="map-title">Berita Terkini & Laporan Lapangan</span>
-                        <a href="{{ route('laporan.warga') }}" class="btn-green-link">Lihat Semua Laporan</a>
+                        @if(auth()->user()->role === 'Warga')
+                            <a href="{{ route('warga.lapor') }}" class="btn-green-link">Buat Laporan Baru</a>
+                        @endif
                     </div>
                     <div class="news-list">
                         @forelse($verifiedReports as $report)
