@@ -104,7 +104,7 @@
                         <i data-lucide="user-check" class="stat-card-icon" style="color:#d97706;"></i>
                     </div>
                     <div class="stat-card-value">{{ $misiAktifku }}</div>
-                    <div class="stat-card-sub">{{ $activeMission ? $activeMission->sosRequest->user->kelurahan ?? 'Sedang berjalan' : 'Tidak ada misi aktif' }}</div>
+                    <div class="stat-card-sub">{{ $misiAktifku > 0 ? $misiAktifku . ' misi sedang berjalan' : 'Tidak ada misi aktif' }}</div>
                 </div>
                 <div class="stat-card success">
                     <div class="stat-card-header">
@@ -172,13 +172,9 @@
                                         </span>
                                     @endif
                                 </div>
-                                 @if(!$activeMission)
-                                     <button type="button" class="btn-accept-mission" onclick="document.getElementById('assign_sos_id').value = '{{ $sos->sos_id }}'; openModal('assignModal');" style="background-color: #006a60; color: white; border: none; border-radius: 8px; font-weight: 700; width: 100%; padding: 10px; cursor: pointer; text-transform: uppercase;">
+                                @if(!$activeMissions->isNotEmpty() || true)
+                                    <button type="button" class="btn-accept-mission" onclick="try { document.getElementById('assign_sos_id').value = '{{ $sos->sos_id }}'; document.getElementById('assignModal').style.display = 'flex'; } catch(e) { alert('Error: ' + e.message); }" style="background-color: #006a60; color: white; border: none; border-radius: 8px; font-weight: 700; width: 100%; padding: 10px; cursor: pointer; text-transform: uppercase;">
                                          TUGASKAN KE TIM
-                                     </button>
-                                @else
-                                    <button type="button" class="btn-tinjau" onclick="focusOnSos({{ $sos->latitude }}, {{ $sos->longitude }})">
-                                        TINJAU DETAIL
                                     </button>
                                 @endif
                             </div>
@@ -229,11 +225,12 @@
                 {{-- Column 3: Misi Aktif + Statistik --}}
                 <div class="right-panel-col">
 
-                    @if ($activeMission)
-                        {{-- Active Mission Card --}}
-                        <div class="active-mission-card">
+                    @if ($activeMissions->isNotEmpty())
+                        {{-- Active Mission Cards --}}
+                        @foreach($activeMissions as $activeMission)
+                        <div class="active-mission-card" style="margin-bottom: 16px;">
                             <div class="active-mission-header">
-                                <div class="active-mission-title">MISI AKTIF SAAT INI</div>
+                                <div class="active-mission-title">MISI AKTIF ({{ $activeMission->volunteer->fullname ?? 'Relawan' }})</div>
                                 <span class="status-badge-diproses">DIPROSES</span>
                             </div>
                             <div>
@@ -272,6 +269,7 @@
                                 </form>
                             </div>
                         </div>
+                        @endforeach
                     @else
                         <div class="idle-mission-card">
                             <i data-lucide="shield-check"></i>
@@ -407,7 +405,11 @@
                                         <td class="td-regular">{{ $anggota->keahlian ?? '-' }}</td>
                                         <td class="td-regular">{{ $anggota->organisasi ?? '-' }}</td>
                                         <td>
-                                            <span class="badge-terkonsepsi" style="background: #d1f4e0; color: #006a60;">AKTIF</span>
+                                            @if(in_array($anggota->user_id, $activeVolunteerIds))
+                                                <span class="badge-terkonsepsi" style="background: #fef08a; color: #b45309;">DALAM MISI</span>
+                                            @else
+                                                <span class="badge-terkonsepsi" style="background: #d1f4e0; color: #006a60;">TERSEDIA</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -534,7 +536,9 @@
                         @foreach($anggotaTim as $teamName => $members)
                             <optgroup label="{{ $teamName }}">
                                 @foreach($members as $member)
-                                    <option value="{{ $member->user_id }}">{{ $member->fullname }} ({{ $member->phone }})</option>
+                                    <option value="{{ $member->user_id }}" {{ in_array($member->user_id, $activeVolunteerIds) ? 'disabled' : '' }} style="{{ in_array($member->user_id, $activeVolunteerIds) ? 'color: #9ca3af; font-style: italic;' : 'font-weight: 500;' }}">
+                                        {{ $member->fullname }} - {{ $member->phone }} {{ in_array($member->user_id, $activeVolunteerIds) ? '(Sedang Dalam Misi)' : '(Tersedia)' }}
+                                    </option>
                                 @endforeach
                             </optgroup>
                         @endforeach
@@ -555,12 +559,16 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 @php
     // Prepare map data as simple PHP variables to avoid Blade @json() parse errors
-    $activeMissionMapData = $activeMission ? [
-        'lat'    => (float) $activeMission->sosRequest->latitude,
-        'lng'    => (float) $activeMission->sosRequest->longitude,
-        'name'   => $activeMission->sosRequest->user->fullname,
-        'people' => (int) $activeMission->sosRequest->people_trapped,
-    ] : null;
+    $activeMissionsMapData = [];
+    foreach($activeMissions as $m) {
+        $activeMissionsMapData[] = [
+            'lat'    => (float) $m->sosRequest->latitude,
+            'lng'    => (float) $m->sosRequest->longitude,
+            'name'   => $m->sosRequest->user->fullname,
+            'people' => (int) $m->sosRequest->people_trapped,
+            'volunteer' => $m->volunteer->fullname ?? 'Relawan',
+        ];
+    }
 
     $sosQueueMapData = $waitingSos->map(function ($s) {
         return [
@@ -610,20 +618,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Plot active mission victim
-    const activeMissionData = @json($activeMissionMapData ?? null);
+    const activeMissionsData = @json($activeMissionsMapData);
 
-    if (activeMissionData) {
+    if (activeMissionsData && activeMissionsData.length > 0) {
         const victimIcon = L.divIcon({
             html: `<div class="victim-pulse"></div>`,
-            className: '',
-            iconSize: [16, 16],
             iconAnchor: [8, 8]
         });
-        L.marker([activeMissionData.lat, activeMissionData.lng], { icon: victimIcon })
-            .addTo(map)
-            .bindPopup(`<b>KORBAN AKTIF:</b> ${activeMissionData.name}<br>${activeMissionData.people} jiwa terjebak`)
-            .openPopup();
-        map.setView([activeMissionData.lat, activeMissionData.lng], 14);
+        activeMissionsData.forEach(function(m) {
+            L.marker([m.lat, m.lng], { icon: victimIcon })
+                .addTo(map)
+                .bindPopup(`<b>KORBAN AKTIF:</b> ${m.name}<br>${m.people} jiwa terjebak<br><b>Tim:</b> ${m.volunteer}`)
+                .openPopup();
+        });
+        if (activeMissionsData.length === 1) {
+            map.setView([activeMissionsData[0].lat, activeMissionsData[0].lng], 14);
+        }
     }
 
     // Plot SOS queue markers

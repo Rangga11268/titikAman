@@ -43,6 +43,18 @@ class RescueMissionRepository
     }
 
     /**
+     * Get all active rescue missions (for Admin Relawan).
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllActiveMissions()
+    {
+        return RescueMission::with(['sosRequest', 'sosRequest.user', 'volunteer'])
+            ->whereNull('resolved_at')
+            ->get();
+    }
+
+    /**
      * Count completed missions for a given volunteer (today).
      *
      * @param int $volunteerId
@@ -57,6 +69,18 @@ class RescueMissionRepository
     }
 
     /**
+     * Count ALL completed missions (today).
+     *
+     * @return int
+     */
+    public function getAllCompletedMissionsCount(): int
+    {
+        return RescueMission::whereNotNull('resolved_at')
+            ->whereDate('resolved_at', today())
+            ->count();
+    }
+
+    /**
      * Get completed missions for a given volunteer (today), for history table.
      *
      * @param int $volunteerId
@@ -64,8 +88,22 @@ class RescueMissionRepository
      */
     public function getCompletedMissionsByVolunteerId(int $volunteerId)
     {
-        return RescueMission::with(['sosRequest', 'sosRequest.user'])
+        return RescueMission::with(['sosRequest', 'sosRequest.user', 'volunteer'])
             ->where('volunteer_id', $volunteerId)
+            ->whereNotNull('resolved_at')
+            ->whereDate('resolved_at', today())
+            ->orderByDesc('resolved_at')
+            ->get();
+    }
+
+    /**
+     * Get ALL completed missions (today), for history table.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllCompletedMissions()
+    {
+        return RescueMission::with(['sosRequest', 'sosRequest.user', 'volunteer'])
             ->whereNotNull('resolved_at')
             ->whereDate('resolved_at', today())
             ->orderByDesc('resolved_at')

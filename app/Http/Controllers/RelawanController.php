@@ -32,8 +32,8 @@ class RelawanController extends Controller
     {
         $volunteerId = auth()->id();
         
-        // Fetch active mission for this volunteer
-        $activeMission = $this->rescueMissionRepository->getActiveMissionByVolunteerId($volunteerId);
+        // Fetch all active missions for the dispatcher
+        $activeMissions = $this->rescueMissionRepository->getAllActiveMissions();
         
         // Fetch waiting SOS requests (if no active mission, or for the map markers)
         $waitingSos = $this->sosRepository->getWaitingRequests();
@@ -41,12 +41,12 @@ class RelawanController extends Controller
         // Statistics for stat cards
         $sosAntriCount     = $waitingSos->count();
         $highPrioritySos   = $waitingSos->where('priority_level', 'high')->count();
-        $misiAktifku       = $activeMission ? 1 : 0;
-        $misiSelesaiCount  = $this->rescueMissionRepository->getCompletedMissionCountByVolunteerId($volunteerId);
+        $misiAktifku       = $activeMissions->count();
+        $misiSelesaiCount  = $this->rescueMissionRepository->getAllCompletedMissionsCount();
         $totalSosHariIni   = \App\Models\SosRequest::whereDate('created_at', today())->count();
 
         // Completed missions today for history table
-        $completedMissions = $this->rescueMissionRepository->getCompletedMissionsByVolunteerId($volunteerId);
+        $completedMissions = $this->rescueMissionRepository->getAllCompletedMissions();
 
         // Average response time (minutes) — computed in PHP, not in Blade
         $avgResponseMinutes = 0;
@@ -69,17 +69,22 @@ class RelawanController extends Controller
                 return $user->kecamatan ? 'Tim ' . $user->kecamatan : 'Tim Reguler';
             });
 
+        // Get array of active volunteer IDs (busy teams)
+        $activeVolunteerIds = $activeMissions->pluck('volunteer_id')->toArray();
+
         return view('relawan.dashboard', compact(
-            'activeMission',
+            'activeMissions',
             'waitingSos',
             'sosAntriCount',
             'highPrioritySos',
             'misiAktifku',
             'misiSelesaiCount',
-            'completedMissions',
             'avgResponseMinutes',
+            'totalSosHariIni',
+            'completedMissions',
             'pendaftarTim',
-            'anggotaTim'
+            'anggotaTim',
+            'activeVolunteerIds'
         ));
     }
 
