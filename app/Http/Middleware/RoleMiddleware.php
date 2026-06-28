@@ -16,13 +16,13 @@ class RoleMiddleware
      * @param  string  $role
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
         if (!auth()->check()) {
             return redirect()->route('login');
         }
 
-        if ($request->user()->role !== $role) {
+        if (!in_array($request->user()->role, $roles)) {
             abort(403, 'Tindakan tidak diizinkan.');
         }
 

@@ -79,6 +79,10 @@
                 <i data-lucide="users"></i>
                 <span>Verifikasi Pengguna</span>
             </a>
+            <a href="{{ route('pengelola.dashboard') }}" class="nav-item {{ request()->routeIs('pengelola.dashboard') ? 'active' : '' }}">
+                <i data-lucide="tent"></i>
+                <span>Kelola Posko</span>
+            </a>
         @endif
 
 

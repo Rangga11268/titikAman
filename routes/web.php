@@ -95,7 +95,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Pengelola Posko Portal Routes
-    Route::middleware('role:Pengelola_Posko')->group(function () {
+    Route::middleware('role:Pengelola_Posko,Admin_BPBD')->group(function () {
         Route::get('/pengelola/dashboard', [PengelolaController::class, 'dashboard'])->name('pengelola.dashboard');
         Route::post('/pengelola/select-shelter', [PengelolaController::class, 'selectShelter'])->name('pengelola.select-shelter');
         Route::post('/pengelola/shelter/update', [PengelolaController::class, 'updateShelter'])->name('pengelola.shelter.update');

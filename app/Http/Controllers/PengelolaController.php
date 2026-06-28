@@ -30,21 +30,43 @@ class PengelolaController extends Controller
     }
 
     /**
+     * Get the currently managed shelter ID based on role.
+     */
+    private function getManagedShelterId()
+    {
+        if (auth()->user()->role === 'Admin_BPBD') {
+            return session('managed_shelter_id');
+        }
+        return auth()->user()->shelter_id;
+    }
+
+    /**
      * Show the shelter manager dashboard.
      */
     public function dashboard(Request $request)
     {
-        $shelterId = session('managed_shelter_id');
+        if ($request->query('clear_shelter') == 1 && auth()->user()->role === 'Admin_BPBD') {
+            session()->forget('managed_shelter_id');
+            return redirect()->route('pengelola.dashboard');
+        }
+
+        $shelterId = $this->getManagedShelterId();
+        
         if (!$shelterId) {
-            // Get all shelters to let manager choose
-            $shelters = Shelter::all();
-            return view('pengelola.kelola-kebutuhan', compact('shelters'));
+            if (auth()->user()->role === 'Admin_BPBD') {
+                // Get all shelters to let Admin choose
+                $shelters = Shelter::all();
+                return view('pengelola.kelola-kebutuhan', compact('shelters'));
+            }
+            return redirect()->route('dashboard')->with('error', 'Anda tidak terhubung dengan posko manapun.');
         }
 
         $shelter = Shelter::find($shelterId);
         if (!$shelter) {
-            session()->forget('managed_shelter_id');
-            return redirect()->route('pengelola.dashboard')->with('error', 'Posko tidak ditemukan. Silakan pilih kembali.');
+            if (auth()->user()->role === 'Admin_BPBD') {
+                session()->forget('managed_shelter_id');
+            }
+            return redirect()->route('dashboard')->with('error', 'Posko tidak ditemukan.');
         }
 
         $needs = $this->shelterNeedRepository->getNeedsByShelterId($shelterId);
@@ -53,12 +75,16 @@ class PengelolaController extends Controller
     }
 
     /**
-     * Set the managed shelter in session.
+     * Set the managed shelter in session (Admin only).
      */
     public function selectShelter(Request $request)
     {
+        if (auth()->user()->role !== 'Admin_BPBD') {
+            abort(403, 'Hanya Admin yang dapat mengubah posko.');
+        }
+
         $request->validate([
-            'shelter_id' => 'required|integer|exists:shelters,shelter_id',
+            'shelter_id' => 'required|exists:shelters,shelter_id',
         ]);
 
         session(['managed_shelter_id' => $request->shelter_id]);
@@ -73,7 +99,7 @@ class PengelolaController extends Controller
      */
     public function updateShelter(Request $request)
     {
-        $shelterId = session('managed_shelter_id');
+        $shelterId = $this->getManagedShelterId();
         if (!$shelterId) {
             return redirect()->route('pengelola.dashboard')->with('error', 'Silakan pilih posko terlebih dahulu.');
         }
@@ -103,7 +129,7 @@ class PengelolaController extends Controller
      */
     public function addNeed(Request $request)
     {
-        $shelterId = session('managed_shelter_id');
+        $shelterId = $this->getManagedShelterId();
         if (!$shelterId) {
             return redirect()->route('pengelola.dashboard')->with('error', 'Silakan pilih posko terlebih dahulu.');
         }
@@ -136,6 +162,11 @@ class PengelolaController extends Controller
      */
     public function updateDonationStatus(Request $request, int $donationId)
     {
+        $shelterId = $this->getManagedShelterId();
+        if (!$shelterId) {
+            return redirect()->route('pengelola.dashboard')->with('error', 'Silakan pilih posko terlebih dahulu.');
+        }
+
         $request->validate([
             'status' => 'required|in:accepted,delivered',
         ]);

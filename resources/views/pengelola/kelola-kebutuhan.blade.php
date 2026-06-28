@@ -155,6 +155,12 @@ if (!function_exists('parseNeedItem')) {
                     <p>{{ $shelter->shelter_name }} — Dikelola oleh: <strong>{{ auth()->user()->fullname }}</strong></p>
                 </div>
                 <div class="header-right-widgets">
+                    @if(auth()->user()->role === 'Admin_BPBD')
+                        <a href="{{ route('pengelola.dashboard', ['clear_shelter' => 1]) }}" class="btn-green-link" style="display: flex; align-items: center; gap: 4px; border: 1px solid #10b981; background: white; padding: 6px 12px; border-radius: 6px; color: #047857; text-decoration: none; font-size: 13px; font-weight: 600;">
+                            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
+                            <span>Ganti Posko</span>
+                        </a>
+                    @endif
                     @php
                         $pendingCount = $donations->where('status', 'pending')->count();
                     @endphp
