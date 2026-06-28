@@ -57,13 +57,7 @@ if (!function_exists('parseNeedItem')) {
 }
 @endphp
 
-@section('topbar-left')
-    @if(auth()->check() && auth()->user()->role === 'Pengelola_Posko' && $shelters->count() === 1)
-        <h1>Hub Logistik & Donasi - {{ $shelters->first()->shelter_name }}</h1>
-    @else
-        <h1>Hub Logistik & Donasi</h1>
-    @endif
-@endsection
+
 
 @section('topbar-right')
     <button class="btn-emergency-alert" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #ffebee; color: #d32f2f; border: 1px solid #ffcdd2; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">

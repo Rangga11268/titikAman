@@ -28,7 +28,7 @@
                     </div>
                     <div class="user-widget-info">
                         <span class="user-widget-name">{{ auth()->check() ? auth()->user()->fullname : 'Guest' }}</span>
-                        <span class="user-widget-role">{{ auth()->check() ? auth()->user()->role : 'Umum' }}</span>
+                        <span class="user-widget-role">{{ auth()->check() ? str_replace('_', ' ', auth()->user()->role) : 'Umum' }}</span>
                     </div>
                 </div>
             </div>
