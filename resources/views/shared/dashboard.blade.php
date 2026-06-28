@@ -53,24 +53,48 @@
                 </div>
             </div>
 
-            <!-- Map & Pintu Air Row -->
-            <div class="map-section-row">
-                <!-- Left: Map -->
-                <div class="map-card">
-                    <div class="map-header-row">
-                        <span class="map-title">Peta Genangan & Posko Pengungsian</span>
-                        <div class="map-toggles">
-                            <button class="toggle-btn siaga1">SIAGA 1</button>
-                            <button class="toggle-btn siaga2">SIAGA 2</button>
-                            <button class="toggle-btn siaga3">SIAGA 3</button>
-                        </div>
+            <!-- Berita & Status Row -->
+            <div class="news-dashboard-row">
+                <!-- Left: Berita Banjir (News Feed) -->
+                <div class="news-feed-panel map-card">
+                    <div class="map-header-row" style="margin-bottom: 16px;">
+                        <span class="map-title">Berita Terkini & Laporan Lapangan</span>
+                        <a href="{{ route('laporan.warga') }}" class="btn-green-link">Lihat Semua Laporan</a>
                     </div>
-                    <div id="dashboard-map"></div>
+                    <div class="news-list">
+                        @forelse($verifiedReports as $report)
+                            <div class="news-item">
+                                <div class="news-thumbnail">
+                                    @if($report->photo_path)
+                                        <img src="{{ asset('storage/' . $report->photo_path) }}" alt="Foto Laporan">
+                                    @else
+                                        <div class="news-thumbnail-placeholder">
+                                            <i data-lucide="image" style="color: #a0aabf; width: 24px; height: 24px;"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="news-content">
+                                    <h3 class="news-title">Banjir Setinggi {{ $report->water_level_cm ?? '?' }}cm Melanda {{ $report->lokasi ?? 'Kawasan Bekasi' }}</h3>
+                                    <p class="news-excerpt">{{ Str::limit($report->description ?? 'Tidak ada deskripsi rinci dari pelapor.', 80) }}</p>
+                                    <div class="news-meta">
+                                        <span class="news-author"><i data-lucide="user" style="width: 12px; height: 12px;"></i> {{ $report->user->fullname ?? 'Warga Anonim' }}</span>
+                                        <span class="news-date"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> {{ $report->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center text-gray py-4">
+                                <i data-lucide="newspaper" style="width: 32px; height: 32px; margin: 0 auto 8px; color: var(--brand-teal);"></i>
+                                <p style="font-size: 13px;">Belum ada berita laporan banjir yang diverifikasi.</p>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
 
-                <!-- Right: Pintu Air -->
-                <div class="pintu-air-panel">
-                    <div>
+                <!-- Right: Pintu Air & Logistik -->
+                <div class="right-stacked-panels">
+                    <!-- TMA Panel -->
+                    <div class="map-card" style="margin-bottom: 20px;">
                         <div class="map-header-row" style="margin-bottom: 12px;">
                             <span class="map-title">Tinggi Muka Air (TMA)</span>
                             <span class="text-teal" style="font-size: 11px; font-weight: 700;">● LIVE 15M</span>
@@ -101,92 +125,48 @@
                                 </div>
                             @endforelse
                         </div>
-                    </div>
-
-                    <div class="prediction-box">
-                        <div class="prediction-title">PREDIKSI KEDATANGAN DEBIT AIR</div>
-                        <div class="prediction-text">
-                            Aliran air kiriman hulu terdeteksi bergerak ke wilayah hilir Kali Bekasi. Prediksi kenaikan TMA sekitar 20-35cm di Pintu Air Jatiasih pada pukul 14:15 WIB.
+                        <div class="prediction-box">
+                            <div class="prediction-title">PREDIKSI KEDATANGAN DEBIT AIR</div>
+                            <div class="prediction-text">
+                                Aliran air kiriman hulu terdeteksi bergerak ke wilayah hilir Kali Bekasi. Prediksi kenaikan TMA sekitar 20-35cm di Pintu Air Jatiasih pada pukul 14:15 WIB.
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- SOS & Logistik Row -->
-            <div class="two-column-row">
-                <!-- Left: Antrean SOS -->
-                <div class="map-card">
-                    <div class="card-header-row">
-                        <span class="card-header-title">
-                            <i data-lucide="alert-circle" style="color: var(--accent-orange); width: 18px; height: 18px;"></i>
-                            Antrean SOS Aktif
-                        </span>
-                        <a href="#" class="btn-green-link">Lihat Semua</a>
-                    </div>
-                    <div class="sos-list">
-                        @php $num = 1; @endphp
-                        @forelse($latestSos as $sos)
-                            <div class="sos-item">
-                                <div class="sos-item-left">
-                                    <div class="sos-number">{{ $num++ }}</div>
-                                    <div class="sos-details">
-                                        <span class="sos-title">{{ $sos->user->fullname }}</span>
-                                        <span class="sos-meta">
-                                            Kel. {{ $sos->user->kelurahan ?: 'Jatiasih' }}, Kec. {{ $sos->user->kecamatan ?: 'Jatiasih' }} • {{ $sos->created_at->diffForHumans() }}
-                                        </span>
-                                        <span class="sos-desc">Terjebak: {{ $sos->people_trapped }} Orang • Prioritas: {{ ucfirst($sos->priority_level) }}</span>
+                    <!-- Logistik Panel -->
+                    <div class="map-card">
+                        <div class="card-header-row">
+                            <span class="card-header-title">
+                                <i data-lucide="package" style="color: var(--brand-teal); width: 18px; height: 18px;"></i>
+                                Persediaan Logistik Terkini
+                            </span>
+                            <span class="text-gray" style="font-size: 12px; font-weight: 500;">Gudang Utama: Bekasi Timur</span>
+                        </div>
+                        <div class="logistik-rows">
+                            @forelse($logistikStats as $stat)
+                                @php
+                                    $percent = $stat->total_need > 0 ? min(100, round(($stat->total_fulfilled / $stat->total_need) * 100)) : 0;
+                                    $colorClass = $percent < 30 ? 'red' : ($percent < 70 ? 'orange' : 'green');
+                                    $redirectUrl = auth()->user()->role == 'Pengelola_Posko' ? route('pengelola.dashboard') : route('donasi.hub');
+                                @endphp
+                                <div class="logistik-row">
+                                    <div class="logistik-label-row">
+                                        <span class="logistik-name">{{ $stat->category }}</span>
+                                        <span class="logistik-qty">{{ number_format($stat->total_fulfilled) }} / {{ number_format($stat->total_need) }} Unit</span>
+                                    </div>
+                                    <div class="progress-bar-wrapper">
+                                        <div class="progress-track">
+                                            <div class="progress-fill {{ $colorClass }}" style="width: {{ $percent }}%;"></div>
+                                        </div>
+                                        <button class="btn-add-mini" onclick="window.location.href='{{ $redirectUrl }}'"><i data-lucide="plus" style="width: 10px; height: 10px;"></i> Tambah</button>
                                     </div>
                                 </div>
-                                <div>
-                                    @if($sos->status == 'waiting')
-                                        <button class="btn-action red">Verifikasi</button>
-                                    @else
-                                        <button class="btn-action gray" disabled>Diproses</button>
-                                    @endif
+                            @empty
+                                <div style="padding: 24px; text-align: center; color: var(--color-text-muted); font-size: 13px;">
+                                    Belum ada data kebutuhan logistik.
                                 </div>
-                            </div>
-                        @empty
-                            <div class="text-center text-gray py-4" style="width: 100%;">
-                                <i data-lucide="check-circle-2" style="width: 32px; height: 32px; margin: 0 auto 8px; color: var(--brand-teal);"></i>
-                                <p style="font-size: 13px;">Tidak ada antrean SOS darurat saat ini.</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-
-                <!-- Right: Persediaan Logistik -->
-                <div class="map-card">
-                    <div class="card-header-row">
-                        <span class="card-header-title">
-                            <i data-lucide="package" style="color: var(--brand-teal); width: 18px; height: 18px;"></i>
-                            Persediaan Logistik Terkini
-                        </span>
-                        <span class="text-gray" style="font-size: 12px; font-weight: 500;">Gudang Utama: Bekasi Timur</span>
-                    </div>
-                    <div class="logistik-rows">
-                        @forelse($logistikStats as $stat)
-                            @php
-                                $percent = $stat->total_need > 0 ? min(100, round(($stat->total_fulfilled / $stat->total_need) * 100)) : 0;
-                                $colorClass = $percent < 30 ? 'red' : ($percent < 70 ? 'orange' : 'green');
-                                $redirectUrl = auth()->user()->role == 'Pengelola_Posko' ? route('pengelola.dashboard') : route('donasi.hub');
-                            @endphp
-                            <div class="logistik-row">
-                                <div class="logistik-label-row">
-                                    <span class="logistik-name">{{ $stat->category }}</span>
-                                    <span class="logistik-qty">{{ number_format($stat->total_fulfilled) }} / {{ number_format($stat->total_need) }} Unit</span>
-                                </div>
-                                <div class="progress-bar-wrapper">
-                                    <div class="progress-track">
-                                        <div class="progress-fill {{ $colorClass }}" style="width: {{ $percent }}%;"></div>
-                                    </div>
-                                    <button class="btn-add-mini" onclick="window.location.href='{{ $redirectUrl }}'"><i data-lucide="plus" style="width: 10px; height: 10px;"></i> Tambah</button>
-                                </div>
-                            </div>
-                        @empty
-                            <div style="padding: 24px; text-align: center; color: var(--color-text-muted); font-size: 13px;">
-                                Belum ada data kebutuhan logistik.
-                            </div>
-                        @endforelse
+                            @endforelse
+                        </div>
                     </div>
                 </div>
             </div>

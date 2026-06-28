@@ -160,70 +160,7 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Akun Anda sedang menunggu verifikasi oleh Admin BPBD.');
     }
 
-    /**
-     * Tampilkan Form Registrasi Admin.
-     */
-    public function showRegisterStep2Admin()
-    {
-        return view('auth.register-step2-admin');
-    }
 
-    /**
-     * Proses Pendaftaran Admin BPBD.
-     */
-    public function registerAdmin(Request $request)
-    {
-        $request->validate([
-            'fullname' => 'required|string|max:100',
-            'email' => 'required|email|max:100|unique:users,email',
-            'phone' => 'required|string|max:20|unique:users,phone',
-            'password' => 'required|string|min:8|confirmed',
-            'nip' => 'required|string|size:18|unique:users,nip',
-            'jabatan' => 'required|string|max:100',
-            'unit_kerja' => 'required|string|max:100',
-            'document' => 'required|file|mimes:jpeg,png,pdf|max:5120',
-        ], [
-            'fullname.required' => 'Nama lengkap wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.unique' => 'Email sudah terdaftar.',
-            'phone.required' => 'Nomor HP wajib diisi.',
-            'phone.unique' => 'Nomor HP sudah terdaftar.',
-            'password.required' => 'Kata sandi wajib diisi.',
-            'password.min' => 'Kata sandi minimal 8 karakter.',
-            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
-            'nip.required' => 'NIP wajib diisi.',
-            'nip.size' => 'NIP harus berukuran 18 karakter.',
-            'nip.unique' => 'NIP sudah terdaftar.',
-            'jabatan.required' => 'Pilih jabatan Anda.',
-            'unit_kerja.required' => 'Unit kerja wajib diisi.',
-            'document.required' => 'Dokumen verifikasi (Kartu Pegawai/SK) wajib diunggah.',
-            'document.mimes' => 'Dokumen harus berupa file JPEG, PNG, atau PDF.',
-            'document.max' => 'Ukuran file dokumen maksimal 5MB.',
-        ]);
-
-        $documentPath = null;
-        if ($request->hasFile('document')) {
-            $documentPath = $request->file('document')->store('documents', 'public');
-        }
-
-        $user = User::create([
-            'fullname' => $request->fullname,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'role' => 'Admin_BPBD',
-            'nip' => $request->nip,
-            'jabatan' => $request->jabatan,
-            'unit_kerja' => $request->unit_kerja,
-            'document_path' => $documentPath,
-            'status' => 'approved',
-        ]);
-
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return redirect()->route('dashboard')->with('success', 'Pendaftaran Admin berhasil! Selamat datang di dashboard BPBD.');
-    }
 
     /**
      * Tampilkan Form Registrasi Pengelola Posko.

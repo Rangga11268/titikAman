@@ -44,8 +44,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/register/relawan', [AuthController::class, 'registerRelawan'])->name('register.step2.relawan.submit');
     
     // Admin Registration
-    Route::get('/register/admin', [AuthController::class, 'showRegisterStep2Admin'])->name('register.step2.admin');
-    Route::post('/register/admin', [AuthController::class, 'registerAdmin'])->name('register.step2.admin.submit');
+    // Removed per user request
     
     // Pengelola Registration
     Route::get('/register/pengelola', [AuthController::class, 'showRegisterStep2Pengelola'])->name('register.step2.pengelola');

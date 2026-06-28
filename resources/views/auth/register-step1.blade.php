@@ -122,25 +122,6 @@
                                 <span class="role-tag">Verifikasi</span>
                             </div>
                         </div>
-
-                        <!-- Card Admin BPBD -->
-                        <div class="role-card" onclick="selectRole('admin')">
-                            <div class="role-card-header">
-                                <div class="role-icon-box">
-                                    <i data-lucide="shield"></i>
-                                </div>
-                                <input type="radio" name="role_select" id="role_admin" value="admin" class="role-radio">
-                            </div>
-                            <div class="role-info">
-                                <span class="role-title">Admin BPBD</span>
-                                <p class="role-desc">Akses penuh dashboard analisis data dan validasi informasi resmi.</p>
-                            </div>
-                            <div class="role-tags">
-                                <span class="role-tag">Akses Penuh</span>
-                                <span class="role-tag">Validasi</span>
-                                <span class="role-tag">Analitik</span>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Action Buttons -->
