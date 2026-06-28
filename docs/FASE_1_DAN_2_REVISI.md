@@ -49,9 +49,10 @@ Sistem informasi TitikAman dirancang untuk mengakomodasi 4 (empat) kategori peng
 
 1. **Warga Terdampak (Masyarakat Umum / Donatur)**: Pengguna dari elemen masyarakat luas, baik yang berada di area rawan bencana untuk melaporkan situasi, maupun masyarakat umum yang ingin berpartisipasi memberikan donasi bantuan.
 2. **Admin Relawan (Komandan Tim SAR / Dispatcher)**: Pengguna yang bertindak sebagai pusat kendali operasional — memantau antrian SOS, menugaskan misi ke anggota tim, dan mereview pendaftar relawan baru.
-3. **Relawan Lapangan (Anggota Tim SAR / Evakuasi)**: Pengguna yang bergerak secara mobil di lapangan untuk mengeksekusi aksi penyelamatan. Mendapat penugasan melalui komunikasi WhatsApp dari Admin Relawan.
-4. **Pengelola Posko (Petugas Shelter)**: Pengguna yang berada di titik pengungsian untuk mengelola fasilitas akomodasi, mendata kapasitas hunian, serta mengatur ketersediaan logistik bantuan.
-5. **Admin BPBD (Badan Penanggulangan Bencana Daerah)**: Pengguna tingkat tinggi (Super User) yang memegang kendali penuh atas validasi data kebencanaan, pembaruan status peringatan dini, verifikasi akun pengguna, serta pengawasan sistem secara makro.
+3. **Pengelola Posko (Petugas Shelter)**: Pengguna yang berada di titik pengungsian untuk mengelola fasilitas akomodasi, mendata kapasitas hunian, serta mengatur ketersediaan logistik bantuan.
+4. **Admin BPBD (Badan Penanggulangan Bencana Daerah)**: Pengguna tingkat tinggi (Super User) yang memegang kendali penuh atas validasi data kebencanaan, pembaruan status peringatan dini, verifikasi akun pengguna, serta pengawasan sistem secara makro.
+
+Selain 4 aktor di atas, terdapat **Relawan Lapangan** yang terdaftar melalui formulir registrasi Relawan/SAR. Relawan Lapangan menyimpan data diri dan dokumen di sistem, namun tidak memiliki akses ke halaman dashboard operasional. Seluruh penugasan dan koordinasi dilakukan oleh **Admin Relawan** melalui komunikasi WhatsApp.
 
 ### b. Jelaskan fungsi sesuai kebutuhan pengguna
 
@@ -87,21 +88,7 @@ e) **Memantau dan Menyelesaikan Misi Aktif**: Melihat misi yang sedang berjalan 
 
 f) **Melihat Riwayat & Ekspor Data Misi**: Mengakses seluruh riwayat misi (aktif dan selesai, sepanjang masa), melihat detail lengkap misi melalui modal, mengekspor data ke CSV, dan menghubungi relawan via WhatsApp langsung dari tabel riwayat.
 
-#### 3. Relawan Lapangan (Anggota Tim SAR / Evakuasi)
-
-a) **Proses Pendaftaran dan Verifikasi**: Calon relawan mendaftar melalui formulir registrasi dengan mengisi data diri (NIK, keahlian, organisasi) dan mengunggah dokumen KTP/Sertifikat. Akun akan berstatus **pending** hingga disetujui oleh Admin Relawan.
-
-b) **Cek Status Verifikasi**: Relawan yang mendaftar dapat login dan melihat status verifikasi akun mereka. Jika masih pending, sistem menampilkan halaman status dengan informasi estimasi waktu verifikasi. Jika ditolak, sistem menampilkan alasan penolakan dan kontak Admin BPBD.
-
-c) **Menerima Penugasan Misi via WhatsApp**: Setelah akun disetujui, relawan tidak memiliki akses ke dashboard operasional. Seluruh instruksi evakuasi, lokasi korban, dan koordinat GPS dikirimkan langsung melalui **pesan WhatsApp** oleh Admin Relawan. Pesan tersebut mencakup:
-   - Status darurat dan prioritas penanganan
-   - Nama dan kontak pelapor
-   - Alamat dan titik lokasi (link Google Maps)
-   - Jumlah korban dan kelompok rentan di lokasi
-
-d) **Dashboard Umum**: Relawan yang sudah disetujui dapat mengakses dashboard umum untuk melihat informasi peta genangan, status pintu air, dan data kebencanaan publik — namun tidak memiliki akses ke halaman Mission Control.
-
-#### 4. Pengelola Posko (Petugas Shelter)
+#### 3. Pengelola Posko (Petugas Shelter)
 
 a) **Manajemen Daya Tampung Posko**: Memperbarui data jumlah pengungsi riil secara berkala (kapasitas maksimum vs hunian aktual) untuk mencegah terjadinya penumpukan pengungsi yang melebihi batas muat aman posko.
 
@@ -111,7 +98,7 @@ c) **Verifikasi dan Validasi Donasi**: Memeriksa kiriman logistik yang datang da
 
 d) **Manajemen Status Operasional**: Mengubah status posko menjadi **Aktif**, **Penuh**, atau **Tutup**. Posko yang ditutup akan disembunyikan dari peta publik dan hub donasi (tetap tampil di arsip sebagai riwayat dengan label abu-abu).
 
-#### 5. Admin BPBD (Badan Penanggulangan Bencana Daerah)
+#### 4. Admin BPBD (Badan Penanggulangan Bencana Daerah)
 
 a) **Moderasi dan Validasi Laporan Warga**: Memeriksa laporan titik banjir yang dikirim oleh masyarakat (pending, verified, rejected) guna menyaring informasi palsu atau hoaks sebelum dipublikasikan secara luas di peta digital. Admin juga dapat menandai laporan yang sudah surut (**Set Surut**).
 
