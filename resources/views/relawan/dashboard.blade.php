@@ -672,28 +672,7 @@ document.addEventListener('DOMContentLoaded', function () {
     lucide.createIcons();
 });
 
-// Modal Helpers
-window.openModal = function(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.style.display = 'flex';
-        setTimeout(() => {
-            modal.classList.add('active');
-        }, 10);
-    }
-};
-
-window.closeModal = function(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.classList.remove('active');
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 300);
-    }
-};
-
-// Modal Logic (Global Scope)
+// Modal Logic
 window.openReviewModal = function(id, name, phone, skill, org, kec, kel) {
     document.getElementById('rev_name').textContent = name;
     document.getElementById('rev_phone').textContent = phone;

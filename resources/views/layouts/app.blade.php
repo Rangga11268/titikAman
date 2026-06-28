@@ -186,6 +186,27 @@
         lucide.createIcons();
     </script>
     <script>
+        // Global Modal Helpers
+        window.openModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    modal.classList.add('active');
+                }, 10);
+            }
+        };
+
+        window.closeModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function () {
             const activeNotifs = @json($realNotifs);
 

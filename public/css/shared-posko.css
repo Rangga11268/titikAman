@@ -739,6 +739,210 @@ body {
     width: 100%;
 }
 
+/* =========================================================
+   Donation Section
+   ========================================================= */
+.donasi-section {
+    background: white;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 24px;
+}
+
+.donasi-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eef0f2;
+}
+
+.donasi-icon-bg {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background-color: rgba(0, 106, 96, 0.1);
+    color: var(--brand-teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.donasi-icon-bg i {
+    width: 22px;
+    height: 22px;
+}
+
+.donasi-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy-dark);
+    margin: 0;
+}
+
+.donasi-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.donasi-form-grid .span-2 {
+    grid-column: span 2;
+}
+
+.donasi-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy-dark);
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.donasi-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--navy-dark);
+    outline: none;
+    background: white;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.donasi-input:focus {
+    border-color: var(--brand-teal);
+    box-shadow: 0 0 0 3px rgba(0, 106, 96, 0.1);
+}
+
+.donasi-input::placeholder {
+    color: #9ca3af;
+}
+
+.donasi-select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--navy-dark);
+    outline: none;
+    background: white;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+}
+
+.donasi-select:focus {
+    border-color: var(--brand-teal);
+    box-shadow: 0 0 0 3px rgba(0, 106, 96, 0.1);
+}
+
+.donasi-file-upload {
+    position: relative;
+    width: 100%;
+    border: 1px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: #fafbfc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.donasi-file-upload:hover {
+    border-color: var(--brand-teal);
+    background: rgba(0, 106, 96, 0.02);
+}
+
+.donasi-file-upload i {
+    width: 28px;
+    height: 28px;
+    color: #9ca3af;
+}
+
+.donasi-file-upload span {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.donasi-file-upload input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.donasi-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(59, 130, 246, 0.06);
+    border: 1px solid rgba(59, 130, 246, 0.12);
+    border-radius: 8px;
+    margin-top: 4px;
+}
+
+.donasi-info i {
+    width: 16px;
+    height: 16px;
+    color: #3b82f6;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.donasi-info-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #374151;
+}
+
+.donasi-submit {
+    width: 100%;
+    height: 46px;
+    background: var(--brand-teal);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s ease;
+    margin-top: 8px;
+}
+
+.donasi-submit:hover {
+    background: var(--brand-teal-hover);
+}
+
+.donasi-submit i {
+    width: 16px;
+    height: 16px;
+}
+
 .map-card-right {
     background: white;
     border: 1px solid var(--card-border);

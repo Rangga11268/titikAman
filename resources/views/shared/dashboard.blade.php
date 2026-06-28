@@ -65,7 +65,26 @@
                     </div>
                     <div class="news-list">
                         @forelse($verifiedReports as $report)
-                            <div class="news-item">
+                            @php
+                                $reportData = json_encode([
+                                    'report_id'         => $report->report_id,
+                                    'water_height_cm'   => $report->water_height_cm,
+                                    'street_name'       => $report->street_name,
+                                    'kecamatan'         => $report->kecamatan,
+                                    'kelurahan'         => $report->kelurahan,
+                                    'status_akses_jalan' => $report->status_akses_jalan ?? 'Masih Bisa Dilewati',
+                                    'listrik_padam'     => $report->listrik_padam,
+                                    'air_masih_naik'    => $report->air_masih_naik,
+                                    'butuh_evakuasi'    => $report->butuh_evakuasi,
+                                    'warga_terisolasi'  => $report->warga_terisolasi,
+                                    'keterangan_bebas'  => $report->keterangan_bebas,
+                                    'photo_evidence'    => $report->photo_evidence,
+                                    'reporter_name'     => $report->user->fullname ?? 'Warga Anonim',
+                                    'time_ago'          => $report->created_at->diffForHumans(),
+                                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                                $reportDataEscaped = htmlspecialchars($reportData, ENT_QUOTES, 'UTF-8');
+                            @endphp
+                            <div class="news-item" onclick="openReportDetailModal(this)" data-report="{!! $reportDataEscaped !!}">
                                 <div class="news-thumbnail">
                                     @if($report->photo_evidence)
                                         <img src="{{ asset('storage/' . $report->photo_evidence) }}" alt="Foto Laporan">
@@ -395,5 +414,104 @@
             });
         }
     });
+</script>
+
+<!-- Report Detail Modal -->
+<div id="reportDetailModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div class="modal-content" style="background: white; border-radius: 12px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+            <h2 style="font-size: 16px; font-weight: 700; color: #031f41; display: flex; align-items: center; gap: 8px; margin: 0;">
+                <i data-lucide="file-text" style="width: 18px; height: 18px;"></i> Detail Laporan Banjir
+            </h2>
+            <button type="button" onclick="closeModal('reportDetailModal')" style="background: none; border: none; cursor: pointer; color: #6b7280;">
+                <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+
+        <!-- Modal Image -->
+        <div id="modal-report-img-wrapper" style="width: 100%; height: 180px; border-radius: 8px; overflow: hidden; background: #f3f4f5; margin-bottom: 16px; display: flex; align-items: center; justify-content: center;">
+            <img id="modal-report-img" src="" alt="Foto Laporan" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+        </div>
+
+        <!-- Street & Height -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <div>
+                <div style="font-size: 14px; font-weight: 600; color: #031f41;" id="modal-report-street"></div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 2px;" id="modal-report-domisili"></div>
+            </div>
+            <div style="background: rgba(186,26,26,0.1); color: #ba1a1a; border-radius: 8px; padding: 6px 12px; font-weight: 700; font-size: 18px; white-space: nowrap;" id="modal-report-height"></div>
+        </div>
+
+        <!-- Keterangan -->
+        <div style="font-size: 13px; color: #374151; line-height: 1.6; margin-bottom: 16px; padding: 12px; background: #f9fafb; border-radius: 8px;" id="modal-report-desc"></div>
+
+        <!-- Condition Badges Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+            <div style="padding: 10px; background: #f3f4f5; border-radius: 8px;">
+                <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Akses Jalan</div>
+                <span id="modal-report-akses" style="font-size: 12px; font-weight: 600; color: #031f41;"></span>
+            </div>
+            <div style="padding: 10px; background: #f3f4f5; border-radius: 8px;">
+                <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Listrik</div>
+                <span id="modal-report-listrik" style="font-size: 12px; font-weight: 600;"></span>
+            </div>
+            <div style="padding: 10px; background: #f3f4f5; border-radius: 8px;">
+                <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Air</div>
+                <span id="modal-report-air" style="font-size: 12px; font-weight: 600;"></span>
+            </div>
+            <div style="padding: 10px; background: #f3f4f5; border-radius: 8px;">
+                <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Evakuasi</div>
+                <span id="modal-report-evakuasi" style="font-size: 12px; font-weight: 600;"></span>
+            </div>
+            <div style="padding: 10px; background: #f3f4f5; border-radius: 8px;">
+                <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Terisolasi</div>
+                <span id="modal-report-terisolasi" style="font-size: 12px; font-weight: 600;"></span>
+            </div>
+        </div>
+
+        <!-- Reporter & Time -->
+        <div style="font-size: 12px; color: #6b7280; padding-top: 12px; border-top: 1px solid #e5e7eb;" id="modal-report-meta"></div>
+    </div>
+</div>
+
+<script>
+window.openReportDetailModal = function(element) {
+    const report = JSON.parse(element.getAttribute('data-report'));
+
+    document.getElementById('modal-report-street').textContent = report.street_name || 'Kawasan Bekasi';
+    document.getElementById('modal-report-height').textContent = (report.water_height_cm || '?') + ' cm';
+    document.getElementById('modal-report-domisili').textContent = (report.kelurahan || '') + ', ' + (report.kecamatan || '');
+    document.getElementById('modal-report-desc').textContent = report.keterangan_bebas || 'Tidak ada deskripsi rinci dari pelapor.';
+    document.getElementById('modal-report-meta').innerHTML = 'Dilaporkan oleh <strong>' + report.reporter_name + '</strong> &bull; ' + report.time_ago;
+
+    document.getElementById('modal-report-akses').textContent = report.status_akses_jalan || 'Masih Bisa Dilewati';
+
+    const listrikEl = document.getElementById('modal-report-listrik');
+    listrikEl.textContent = report.listrik_padam ? 'Padam' : 'Menyala';
+    listrikEl.style.color = report.listrik_padam ? '#ba1a1a' : '#006a60';
+
+    const airEl = document.getElementById('modal-report-air');
+    airEl.textContent = report.air_masih_naik ? 'Masih Naik' : 'Surut / Stabil';
+    airEl.style.color = report.air_masih_naik ? '#ba1a1a' : '#006a60';
+
+    const evakEl = document.getElementById('modal-report-evakuasi');
+    evakEl.textContent = report.butuh_evakuasi ? 'Ya' : 'Tidak';
+    evakEl.style.color = report.butuh_evakuasi ? '#ba1a1a' : '#6b7280';
+
+    const terisolasiEl = document.getElementById('modal-report-terisolasi');
+    terisolasiEl.textContent = report.warga_terisolasi ? 'Ya' : 'Tidak';
+    terisolasiEl.style.color = report.warga_terisolasi ? '#ba1a1a' : '#6b7280';
+
+    const imgEl = document.getElementById('modal-report-img');
+    const imgWrapper = document.getElementById('modal-report-img-wrapper');
+    if (report.photo_evidence) {
+        imgEl.src = '/storage/' + report.photo_evidence;
+        imgEl.style.display = 'block';
+    } else {
+        imgEl.style.display = 'none';
+    }
+
+    window.openModal('reportDetailModal');
+};
 </script>
 @endsection
