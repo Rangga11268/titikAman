@@ -34,8 +34,22 @@ class SendEarlyWarningNotificationJob implements ShouldQueue
     {
         $riverName = $this->waterGate->river_name;
         
-        // Define target areas based on river flow
-        $targetKecamatan = ['Bekasi Timur', 'Bekasi Selatan', 'Rawalumbu']; // Default matching areas for river flows in Bekasi
+        // Define target areas based on river flow (DAS Mapping)
+        $riverMapping = [
+            'Sungai Cileungsi' => ['Bekasi Timur', 'Bekasi Selatan', 'Rawalumbu'],
+            'Sungai Bekasi' => ['Bekasi Timur', 'Bekasi Utara', 'Bekasi Selatan'],
+            'Sungai Cakung' => ['Bekasi Barat', 'Medansatria']
+        ];
+        
+        $targetKecamatan = $riverMapping[$riverName] ?? ['Bekasi Timur', 'Bekasi Selatan', 'Rawalumbu'];
+
+        // Throttling mechanism: Cache warning status for 1 hour to prevent notification spam
+        $cacheKey = "early_warning_gate_{$this->waterGate->gate_id}_{$this->newStatus}";
+        if (\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+            Log::info("SIMULATED SMS/NOTIFICATION THROTTLED for gate {$this->waterGate->gate_name} status {$this->newStatus}");
+            return;
+        }
+        \Illuminate\Support\Facades\Cache::put($cacheKey, true, now()->addHour());
 
         // Query citizens in the target area
         $citizens = User::where('role', 'Warga')

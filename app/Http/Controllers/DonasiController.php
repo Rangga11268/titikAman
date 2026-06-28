@@ -113,6 +113,21 @@ class DonasiController extends Controller
         ]);
 
         try {
+            $need = \App\Models\ShelterNeed::findOrFail($request->need_id);
+            $remainingNeed = max(0, $need->quantity_need - $need->quantity_fulfilled);
+
+            if ($remainingNeed <= 0) {
+                return redirect()
+                    ->back(fallback: route('donasi.hub'))
+                    ->with('error', 'Gagal mengirim donasi: Kebutuhan posko untuk barang ini sudah terpenuhi.');
+            }
+
+            if ($request->quantity_donated > $remainingNeed) {
+                return redirect()
+                    ->back(fallback: route('donasi.hub'))
+                    ->with('error', "Gagal mengirim donasi: Jumlah donasi ({$request->quantity_donated}) melebihi sisa kebutuhan posko ({$remainingNeed}).");
+            }
+
             $data = $request->only(['need_id', 'quantity_donated', 'shipping_receipt_no']);
             $data['donor_id'] = auth()->id();
 

@@ -67,13 +67,55 @@ class SmsWebhookController extends Controller
             }
         }
 
+        // Dynamic Geolocation Parsing (SMS Pintar)
+        // Map common areas in Bekasi to approximate coordinates
+        $areaCoordinates = [
+            'margahayu'       => ['lat' => -6.24410000, 'lng' => 107.01180000],
+            'margajaya'       => ['lat' => -6.23490000, 'lng' => 106.99940000],
+            'kayuringin'      => ['lat' => -6.23830000, 'lng' => 106.99220000],
+            'jatiasih'        => ['lat' => -6.28910000, 'lng' => 107.00210000],
+            'bekasi timur'    => ['lat' => -6.24410000, 'lng' => 107.01180000],
+            'bekasi selatan'  => ['lat' => -6.23830000, 'lng' => 106.99220000],
+            'rawalumbu'       => ['lat' => -6.26880000, 'lng' => 106.98330000],
+        ];
+
+        $latitude = -6.241586; // Default Bekasi center
+        $longitude = 106.992416; // Default Bekasi center
+
+        $bodyLower = strtolower($body);
+        $matched = false;
+
+        // 1. Scan SMS body for area keywords
+        foreach ($areaCoordinates as $keyword => $coords) {
+            if (str_contains($bodyLower, $keyword)) {
+                $latitude = $coords['lat'];
+                $longitude = $coords['lng'];
+                $matched = true;
+                break;
+            }
+        }
+
+        // 2. Fallback: Scan user's registered kelurahan or kecamatan
+        if (!$matched && $user) {
+            $userKel = strtolower($user->kelurahan ?? '');
+            $userKec = strtolower($user->kecamatan ?? '');
+
+            foreach ($areaCoordinates as $keyword => $coords) {
+                if ($userKel === $keyword || str_contains($userKel, $keyword) || $userKec === $keyword || str_contains($userKec, $keyword)) {
+                    $latitude = $coords['lat'];
+                    $longitude = $coords['lng'];
+                    break;
+                }
+            }
+        }
+
         $data = [
             'user_id' => $user->user_id ?? 1,
             'people_trapped' => $peopleTrapped,
             'vulnerable_groups_count' => 0, // Cannot determine from simple SMS, default 0
             'description' => '[OFFLINE SMS] ' . $desc,
-            'latitude' => -6.241586, // Default Bekasi center
-            'longitude' => 106.992416, // Default Bekasi center
+            'latitude' => $latitude,
+            'longitude' => $longitude,
         ];
 
         try {
