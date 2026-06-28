@@ -100,7 +100,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('register.step2.pengelola.submit') }}" method="POST" id="pengelolaForm">
+            <form action="{{ route('register.step2.pengelola.submit') }}" method="POST" id="pengelolaForm" enctype="multipart/form-data">
                 @csrf
 
                 <!-- Informasi Pengelola Section (Database Required Fields) -->
@@ -304,6 +304,24 @@
                     <span class="error-text" style="display: block; margin-top: -16px; margin-bottom: 16px;">{{ $message }}</span>
                 @enderror
 
+                <!-- Foto Posko Section -->
+                <h3 class="section-title">
+                    <i data-lucide="camera"></i>
+                    <span>Foto Posko</span>
+                </h3>
+
+                <div class="upload-area" onclick="document.getElementById('shelter_photo').click()">
+                    <input type="file" id="shelter_photo" name="photo" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handlePhotoSelected(this)">
+                    <div class="upload-icon-wrapper">
+                        <i data-lucide="image-plus"></i>
+                    </div>
+                    <span class="upload-title" id="photoTitle">Upload Foto Posko (Opsional)</span>
+                    <span class="upload-subtitle" id="photoSubtitle">Format JPG/PNG, Maks 5MB</span>
+                </div>
+                @error('photo')
+                    <span class="error-text" style="display: block; margin-top: 4px;">{{ $message }}</span>
+                @enderror
+
                 <!-- Verifikasi Lokasi Section -->
                 <h3 class="section-title">
                     <i data-lucide="map-pin"></i>
@@ -456,5 +474,16 @@
             }
         });
     });
+
+    function handlePhotoSelected(input) {
+        if (input.files && input.files[0]) {
+            const fileName = input.files[0].name;
+            const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2);
+            document.getElementById('photoTitle').textContent = "File Terpilih: " + fileName;
+            document.getElementById('photoSubtitle').textContent = `Ukuran File: ${fileSize} MB (Klik kembali untuk mengganti)`;
+            document.querySelector('.upload-area').style.borderColor = "var(--brand-teal)";
+            document.querySelector('.upload-area').style.backgroundColor = "rgba(0, 106, 96, 0.02)";
+        }
+    }
 </script>
 @endsection

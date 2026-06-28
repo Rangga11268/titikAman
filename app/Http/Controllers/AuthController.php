@@ -186,6 +186,7 @@ class AuthController extends Controller
             'facilities' => 'required|array',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'photo' => 'nullable|image|max:5120',
         ], [
             'fullname.required' => 'Nama lengkap wajib diisi.',
             'email.required' => 'Email wajib diisi.',
@@ -201,7 +202,15 @@ class AuthController extends Controller
             'facilities.required' => 'Pilih minimal satu fasilitas posko.',
             'latitude.required' => 'Pilih lokasi posko pada peta.',
             'longitude.required' => 'Pilih lokasi posko pada peta.',
+            'photo.image' => 'Foto posko harus berupa file gambar.',
+            'photo.max' => 'Ukuran foto posko maksimal 5MB.',
         ]);
+
+        // Handle photo upload
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('shelters', 'public');
+        }
 
         // Create the shelter first
         $shelter = \App\Models\Shelter::create([
@@ -214,6 +223,7 @@ class AuthController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'facilities' => $request->facilities,
+            'photo' => $photoPath,
         ]);
 
         // Create the user and link to shelter

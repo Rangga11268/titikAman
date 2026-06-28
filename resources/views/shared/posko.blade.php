@@ -126,7 +126,7 @@
                         @endphp
                         <div class="shelter-horizontal-card">
                             <div class="shelter-image-col">
-                                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=200&auto=format&fit=crop" class="shelter-img" alt="{{ $shelter->shelter_name }}">
+                                <img src="{{ $shelter->photo ? asset('storage/' . $shelter->photo) : asset('assets/landing/hero-map.png') }}" class="shelter-img" alt="{{ $shelter->shelter_name }}" style="object-fit: cover; width: 100%; height: 100%;">
                                 <div class="status-overlay {{ $statusColor }}">{{ $statusText }}</div>
                             </div>
                             <div class="shelter-body-col">

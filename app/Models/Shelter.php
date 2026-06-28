@@ -18,6 +18,7 @@ class Shelter extends Model
         'latitude',
         'longitude',
         'facilities',
+        'photo',
     ];
 
     protected $casts = [
