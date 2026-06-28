@@ -67,8 +67,8 @@
                         @forelse($verifiedReports as $report)
                             <div class="news-item">
                                 <div class="news-thumbnail">
-                                    @if($report->photo_path)
-                                        <img src="{{ asset('storage/' . $report->photo_path) }}" alt="Foto Laporan">
+                                    @if($report->photo_evidence)
+                                        <img src="{{ asset('storage/' . $report->photo_evidence) }}" alt="Foto Laporan">
                                     @else
                                         <div class="news-thumbnail-placeholder">
                                             <i data-lucide="image" style="color: #a0aabf; width: 24px; height: 24px;"></i>
@@ -76,8 +76,8 @@
                                     @endif
                                 </div>
                                 <div class="news-content">
-                                    <h3 class="news-title">Banjir Setinggi {{ $report->water_level_cm ?? '?' }}cm Melanda {{ $report->lokasi ?? 'Kawasan Bekasi' }}</h3>
-                                    <p class="news-excerpt">{{ Str::limit($report->description ?? 'Tidak ada deskripsi rinci dari pelapor.', 80) }}</p>
+                                    <h3 class="news-title">Banjir Setinggi {{ $report->water_height_cm ?? '?' }}cm Melanda {{ $report->street_name ?? 'Kawasan Bekasi' }}</h3>
+                                    <p class="news-excerpt">{{ Str::limit($report->keterangan_bebas ?? 'Tidak ada deskripsi rinci dari pelapor.', 80) }}</p>
                                     <div class="news-meta">
                                         <span class="news-author"><i data-lucide="user" style="width: 12px; height: 12px;"></i> {{ $report->user->fullname ?? 'Warga Anonim' }}</span>
                                         <span class="news-date"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> {{ $report->created_at->diffForHumans() }}</span>
