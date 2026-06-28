@@ -138,6 +138,7 @@
                     </div>
                     <div class="panel-body" id="sos-queue-container">
                         @forelse ($waitingSos as $sos)
+                            @php
                                 $priorityLabel = match($sos->priority_level) {
                                     'high'   => 'TINGGI',
                                     'medium' => 'SEDANG',
@@ -317,7 +318,7 @@
                                                 Misi Selesai: {{ $mission->sosRequest->user->kelurahan ?? 'Lokasi' }}
                                             </div>
                                             <div class="activity-meta">
-                                                {{ $mission->resolved_at->format('H:i') }} WIB
+                                                @if($mission->resolved_at){{ $mission->resolved_at->format('H:i') }} WIB • @endif
                                                 • {{ $mission->sosRequest->people_trapped }} Orang terevakuasi
                                             </div>
                                         </div>
@@ -482,8 +483,13 @@
                                             <span class="badge-terkonsepsi" style="background: #fef3c7; color: #d97706;">BERJALAN</span>
                                         @endif
                                     </td>
-                                    <td style="text-align: right;">
-                                        <button type="button" class="btn-tinjau" style="padding: 4px 10px; font-size: 11px;" onclick="openMissionDetail({{ $mission->mission_id }})">Detail</button>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <div style="display: flex; gap: 4px; justify-content: flex-end;">
+                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $mission->volunteer->phone ?? '') }}?text=Halo%20{{ urlencode($mission->volunteer->fullname ?? 'Relawan') }}%2C%20saya%20dari%20Tim%20Admin%20Relawan%20TitikAman." target="_blank" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; font-size: 11px; font-weight: 700; color: #25D366; text-decoration: none; border: 1px solid #25D366; border-radius: 6px;">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                            </a>
+                                            <button type="button" class="btn-tinjau" style="padding: 4px 10px; font-size: 11px;" onclick="openMissionDetail({{ $mission->mission_id }})">Detail</button>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -821,65 +827,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Plot SOS queue markers
+    // Plot SOS queue markers with colored circles
     const sosQueue = @json($sosQueueMapData);
     const priorityColors = { high: '#dc2626', medium: '#f59e0b', low: '#006a60' };
 
     sosQueue.forEach(function (sos) {
         if (!sos.lat || !sos.lng) return;
         const color = priorityColors[sos.priority] || '#6b7280';
-        const icon = createSosIcon(color);
-        L.marker([sos.lat, sos.lng], { icon })
-            .addTo(map)
-            .bindPopup(`
-                <div style="font-family:'Inter',sans-serif;min-width:180px;">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;margin-bottom:4px;">SOS Darurat</div>
-                    <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:6px;">${sos.location}</div>
-                    <div style="display:flex;gap:12px;font-size:12px;color:#4b5563;">
-                        <span><strong>${sos.people}</strong> Jiwa</span>
-                        <span style="text-transform:capitalize;">Prioritas: <strong>${sos.priority}</strong></span>
-                    </div>
-                </div>
-            `);
-    });
-
-    // Plot shelter markers
-    const shelters = @json($shelterMapData);
-    const shelterIcon = createShelterIcon();
-
-    shelters.forEach(function (s) {
-        if (!s.lat || !s.lng) return;
-        L.marker([s.lat, s.lng], { icon: shelterIcon })
-            .addTo(map)
-            .bindPopup(`
-                <div style="font-family:'Inter',sans-serif;min-width:200px;">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#006a60;margin-bottom:4px;">Posko Pengungsian</div>
-                    <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px;">${s.name}</div>
-                    <div style="font-size:11px;color:#6b7280;margin-bottom:6px;">${s.address}</div>
-                    <div style="display:flex;gap:12px;font-size:11px;color:#4b5563;">
-                        <span><strong>${s.occupants}</strong>/${s.capacity} Jiwa</span>
-                        <span>MCK: ${s.toilet === 'Yes' ? 'Tersedia' : 'Tidak'}</span>
-                    </div>
-                </div>
-            `);
-    });
-
-    // Plot flood report markers
-    const floodReports = @json($reportMapData);
-    const floodIcon = createFloodIcon();
-
-    floodReports.forEach(function (r) {
-        if (!r.lat || !r.lng) return;
-        L.marker([r.lat, r.lng], { icon: floodIcon })
-            .addTo(map)
-            .bindPopup(`
-                <div style="font-family:'Inter',sans-serif;min-width:180px;">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#0284c7;margin-bottom:4px;">Laporan Banjir</div>
-                    <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px;">${r.street}</div>
-                    <div style="font-size:12px;color:#4b5563;">Tinggi Air: <strong>${r.height} cm</strong></div>
-                    <div style="font-size:11px;color:#9ca3af;margin-top:2px;">${r.reporter}</div>
-                </div>
-            `);
+        L.marker([sos.lat, sos.lng], {
+            icon: L.divIcon({
+                html: `<div style="width:24px;height:24px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>`,
+                className: '',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
+            })
+        }).addTo(map).bindPopup(`<strong>SOS</strong> ${sos.location}<br>${sos.people} jiwa`);
     });
 
     // Global helper for "tinjau detail" button

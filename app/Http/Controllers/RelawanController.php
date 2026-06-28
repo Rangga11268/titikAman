@@ -55,8 +55,9 @@ class RelawanController extends Controller
 
         // Average response time (minutes) — computed in PHP, not in Blade
         $avgResponseMinutes = 0;
-        if ($misiSelesaiCount > 0 && $completedMissions->isNotEmpty()) {
-            $totalMinutes = $completedMissions->sum(function ($m) {
+        $completedOnly = $completedMissions->filter(fn($m) => $m->resolved_at !== null);
+        if ($misiSelesaiCount > 0 && $completedOnly->isNotEmpty()) {
+            $totalMinutes = $completedOnly->sum(function ($m) {
                 return $m->resolved_at->diffInMinutes($m->created_at);
             });
             $avgResponseMinutes = (int) round($totalMinutes / $misiSelesaiCount);
@@ -68,6 +69,7 @@ class RelawanController extends Controller
         // Anggota Tim Aktif (yang sudah di-approve), grouped by team (kecamatan)
         $anggotaTim = \App\Models\User::where('role', 'Relawan')
             ->where('status', 'approved')
+            ->where('user_id', '!=', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy(function($user) {

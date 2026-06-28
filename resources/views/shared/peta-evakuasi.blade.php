@@ -248,7 +248,7 @@
                 }
             });
 
-            // Add Shelter Markers (Teal circles)
+            // Add Shelter Markers (House icons)
             @php
                 $shelterMapData = $shelters
                     ->map(function ($shelter) {
@@ -278,43 +278,53 @@
             @endphp
             const shelters = @json($shelterMapData);
 
+            // Custom shelter SVG icon
+            const shelterSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+
             shelters.forEach(function(s) {
                 if (s.lat && s.lng) {
-                    let color = s.status === 'full' ? '#4b5563' : (s.status === 'almost_full' ? '#f59e0b' :
-                        '#006a60');
-                    let statusLabel = s.status === 'full' ?
-                        '<span style="color:#4b5563;font-weight:bold;">Penuh</span>' :
-                        (s.status === 'almost_full' ?
-                            '<span style="color:#f59e0b;font-weight:bold;">Hampir Penuh</span>' :
-                            '<span style="color:#006a60;font-weight:bold;">Tersedia</span>');
+                    let bgColor = s.status === 'full' ? '#6b7280' : (s.status === 'almost_full' ? '#f59e0b' : '#006a60');
+                    let statusLabel = s.status === 'full' ? 'Penuh' : (s.status === 'almost_full' ? 'Hampir Penuh' : 'Tersedia');
+                    let labelColor = s.status === 'full' ? '#6b7280' : (s.status === 'almost_full' ? '#f59e0b' : '#006a60');
 
+                    L.marker([s.lat, s.lng], {
+                        icon: L.divIcon({
+                            html: `<div style="width:32px;height:32px;border-radius:6px;background:${bgColor};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">${shelterSvg}</div>`,
+                            className: '',
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 16],
+                        })
+                    }).addTo(map).bindPopup(
+                        `<strong>${s.name}</strong><br>Status: <strong style="color:${labelColor}">${statusLabel}</strong><br>Kapasitas: ${s.occupants}/${s.max} Jiwa`
+                    );
+
+                    // Add radius circle for context
                     L.circle([s.lat, s.lng], {
-                            color: color,
-                            fillColor: color,
-                            fillOpacity: 0.6,
-                            radius: 120
-                        }).addTo(map)
-                        .bindPopup(
-                            `<strong>${s.name}</strong><br>Status: ${statusLabel}<br>Kapasitas: ${s.occupants}/${s.max} Jiwa`
-                            );
+                        color: bgColor,
+                        fillColor: bgColor,
+                        fillOpacity: 0.1,
+                        weight: 2,
+                        radius: 100
+                    }).addTo(map);
                 }
             });
 
-            // Add Reports / Danger Zones Markers (Red drops)
+            // Add Reports / Danger Zones Markers (Water drop icons)
             const reports = @json($reportMapData);
+            const floodSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>';
 
             reports.forEach(function(r) {
                 if (r.lat && r.lng) {
-                    L.circleMarker([r.lat, r.lng], {
-                            radius: 6,
-                            fillColor: '#ba1a1a',
-                            color: '#fff',
-                            weight: 1.5,
-                            fillOpacity: 0.9
-                        }).addTo(map)
-                        .bindPopup(
-                            `<strong>Zona Bahaya / Genangan</strong><br>${r.description}<br>Tinggi Air: ${r.height} cm`
-                            );
+                    L.marker([r.lat, r.lng], {
+                        icon: L.divIcon({
+                            html: `<div style="width:28px;height:28px;border-radius:50%;background:#ba1a1a;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">${floodSvg}</div>`,
+                            className: '',
+                            iconSize: [28, 28],
+                            iconAnchor: [14, 14],
+                        })
+                    }).addTo(map).bindPopup(
+                        `<strong>Zona Banjir / Genangan</strong><br>${r.description}<br>Tinggi Air: ${r.height} cm`
+                    );
                 }
             });
 
