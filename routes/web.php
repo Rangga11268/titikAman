@@ -108,6 +108,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/dashboard', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::post('/admin/report/{id}/verify', [\App\Http\Controllers\AdminController::class, 'verifyReport'])->name('admin.report.verify');
         Route::post('/admin/report/{id}/reject', [\App\Http\Controllers\AdminController::class, 'rejectReport'])->name('admin.report.reject');
+        Route::post('/admin/report/{id}/resolve', [\App\Http\Controllers\AdminController::class, 'resolveReport'])->name('admin.report.resolve');
         Route::get('/admin/tma', [\App\Http\Controllers\AdminController::class, 'tma'])->name('admin.tma');
         Route::post('/admin/tma/{id}/update', [\App\Http\Controllers\AdminController::class, 'updateTma'])->name('admin.tma.update');
         Route::get('/admin/report/export', [\App\Http\Controllers\AdminController::class, 'exportReports'])->name('admin.report.export');

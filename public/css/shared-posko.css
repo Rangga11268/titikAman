@@ -622,6 +622,7 @@ body {
 .status-overlay.green { background-color: var(--brand-teal); }
 .status-overlay.orange { background-color: var(--accent-orange); }
 .status-overlay.red { background-color: var(--accent-red); }
+.status-overlay.gray { background-color: #6b7280; }
 
 .shelter-body-col {
     padding: 16px;

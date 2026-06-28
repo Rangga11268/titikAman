@@ -119,6 +119,9 @@
                             } elseif ($shelter->status == 'almost_full') {
                                 $statusColor = 'orange';
                                 $statusText = 'HAMPIR PENUH';
+                            } elseif ($shelter->status == 'closed') {
+                                $statusColor = 'gray';
+                                $statusText = 'POSKO DITUTUP';
                             }
                         @endphp
                         <div class="shelter-horizontal-card">
@@ -151,11 +154,13 @@
                                 </div>
 
                                 <div class="shelter-buttons">
-                                    @if($shelter->status != 'full')
+                                    @if($shelter->status == 'closed')
+                                        <button class="btn-card disabled" disabled style="background-color: #9ca3af !important; color: white !important; cursor: not-allowed;">Posko Sudah Ditutup</button>
+                                    @elseif($shelter->status == 'full')
+                                        <button class="btn-card disabled" disabled>Posko Terisi Penuh</button>
+                                    @else
                                         <button class="btn-card outline" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination={{ $shelter->latitude }},{{ $shelter->longitude }}', '_blank')">Lihat Rute</button>
                                         <button class="btn-card filled" onclick="focusShelterMap({{ $shelter->latitude }}, {{ $shelter->longitude }}, '{{ $shelter->shelter_name }}')">Fokus Peta</button>
-                                    @else
-                                        <button class="btn-card disabled" disabled>Posko Terisi Penuh</button>
                                     @endif
                                 </div>
                             </div>

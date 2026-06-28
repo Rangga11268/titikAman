@@ -8,7 +8,7 @@
         </div>
         <div class="sidebar-partner-badge">
             <div class="partner-logo">
-                <img src="{{ asset('assets/logo-bpbd.png') }}" alt="BPBD" onerror="this.src='https://placehold.co/24x24/ffffff/031f41?text=B'">
+                <img src="{{ asset('assets\landing\bpbd-badge.png') }}" alt="BPBD" onerror="this.src='https://placehold.co/24x24/ffffff/031f41?text=B'">
             </div>
             <div class="partner-text-wrap">
                 <span class="partner-label">Official Partner</span>

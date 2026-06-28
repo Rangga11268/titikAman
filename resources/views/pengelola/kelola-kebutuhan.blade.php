@@ -151,7 +151,6 @@ if (!function_exists('parseNeedItem')) {
                  ========================================== -->
             <div class="pengelola-header-top">
                 <div class="pengelola-title-block">
-                    <h1>Kelola Kebutuhan Posko</h1>
                     <p>{{ $shelter->shelter_name }} — Dikelola oleh: <strong>{{ auth()->user()->fullname }}</strong></p>
                 </div>
                 <div class="header-right-widgets">
@@ -170,10 +169,6 @@ if (!function_exists('parseNeedItem')) {
                             <span>{{ $pendingCount }} DONASI MENUNGGU VERIFIKASI</span>
                         </div>
                     @endif
-                    <div class="notification-bell" title="Notifikasi" style="position: relative; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">
-                        <i data-lucide="bell" class="icon-btn-widget" style="width: 20px; height: 20px; margin: 0;"></i>
-                        <div class="notification-dot" style="position: absolute; top: -4px; right: -4px; width: 8px; height: 8px; background-color: var(--color-accent-red); border-radius: 50%;"></div>
-                    </div>
                     <i data-lucide="help-circle" class="icon-btn-widget" style="width: 20px; height: 20px;"></i>
                 </div>
             </div>

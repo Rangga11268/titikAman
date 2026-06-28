@@ -159,8 +159,16 @@
                                     <span>{{ $log->street_name }}</span>
                                     <span class="text-teal font-bold">{{ $log->water_height_cm }} cm</span>
                                 </div>
-                                <div class="log-item-desc">
-                                    Tindakan: <strong>{{ strtoupper($log->verification_status) }}</strong> pada {{ $log->updated_at->format('H:i') }}
+                                <div class="log-item-desc" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>Tindakan: <strong>{{ strtoupper($log->verification_status) }}</strong> pada {{ $log->updated_at->format('H:i') }}</span>
+                                    @if($log->verification_status === 'verified' && $log->water_height_cm > 0)
+                                    <form action="{{ route('admin.report.resolve', $log->report_id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Tandai titik banjir ini sudah surut (0 cm)?');">
+                                        @csrf
+                                        <button type="submit" style="background: none; border: 1px solid var(--color-accent-green); color: var(--color-accent-green); border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; cursor: pointer;">
+                                            Set Surut
+                                        </button>
+                                    </form>
+                                    @endif
                                 </div>
                             </div>
                         @empty
@@ -198,7 +206,18 @@
             @if($rep->latitude && $rep->longitude)
                 L.marker([{{ $rep->latitude }}, {{ $rep->longitude }}])
                     .addTo(map)
-                    .bindPopup("<strong>{{ $rep->street_name }}</strong><br>Tinggi: {{ $rep->water_height_cm }} cm");
+                    .bindPopup(`
+                        <div style="text-align: center;">
+                            <strong>{{ $rep->street_name }}</strong><br>
+                            Tinggi Air: {{ $rep->water_height_cm }} cm<br>
+                            <form action="{{ route('admin.report.resolve', $rep->report_id) }}" method="POST" style="margin-top: 10px;" onsubmit="return confirm('Tandai titik banjir ini sudah surut (0 cm)?');">
+                                @csrf
+                                <button type="submit" style="background: var(--color-accent-green); color: white; border: none; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                                    Tandai Surut
+                                </button>
+                            </form>
+                        </div>
+                    `);
             @endif
         @endforeach
 
@@ -212,5 +231,6 @@
                 radius: 200
             }).addTo(map).bindPopup("<strong>Laporan Sedang Diproses</strong>").openPopup();
         @endif
+    });
 </script>
 @endsection

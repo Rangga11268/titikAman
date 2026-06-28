@@ -189,7 +189,7 @@
    ========================================================= */
 .main-grid {
     display: grid;
-    grid-template-columns: 35% 40% 25%;
+    grid-template-columns: 7fr 8fr 5fr;
     gap: 24px;
     align-items: start;
 }
@@ -930,6 +930,25 @@
     cursor: pointer;
 }
 
+@media (max-width: 1200px) {
+    .main-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .main-grid > .right-panel-col {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+    .stat-cards-row {
+        flex-wrap: wrap;
+    }
+    .stat-card {
+        flex: 1 1 calc(50% - 16px);
+        min-width: 0;
+    }
+}
+
 @media (max-width: 1024px) {
     .dashboard-sidebar {
         position: fixed;
@@ -948,10 +967,72 @@
         display: flex !important;
         z-index: 2000;
     }
+    .relawan-content-area {
+        padding: 24px 16px;
+    }
     .main-grid {
+        grid-template-columns: 1fr;
+    }
+    .main-grid > .right-panel-col {
         grid-template-columns: 1fr;
     }
     .stat-cards-row {
         flex-wrap: wrap;
+    }
+    .stat-card {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .relawan-content-area {
+        padding: 16px 8px;
+        gap: 16px;
+    }
+    .stat-cards-row {
+        gap: 8px;
+    }
+    .stat-card {
+        padding: 12px;
+    }
+    .stat-card-value {
+        font-size: 24px;
+    }
+    .main-grid {
+        gap: 16px;
+    }
+    .sos-queue-panel {
+        max-height: 400px;
+    }
+    .map-panel {
+        height: 400px;
+    }
+    .history-panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .history-table thead th,
+    .history-table tbody td {
+        padding: 10px 8px;
+        font-size: 12px;
+        white-space: normal;
+        word-break: break-word;
+    }
+    .sos-item {
+        padding: 12px;
+    }
+    .map-panel-header {
+        padding: 12px;
+    }
+    .panel-header {
+        padding: 12px;
+    }
+    .panel-header-left {
+        font-size: 14px;
+    }
+    .td-time, .td-location, .td-regular, .td-duration {
+        white-space: normal;
+        word-break: break-word;
     }
 }

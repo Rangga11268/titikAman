@@ -60,8 +60,14 @@ class RelawanController extends Controller
         // Pendaftar Tim (Anggota Relawan yang baru mendaftar)
         $pendaftarTim = \App\Models\User::where('role', 'Relawan')->where('status', 'pending')->orderBy('created_at', 'desc')->get();
 
-        // Anggota Tim Aktif (yang sudah di-approve)
-        $anggotaTim = \App\Models\User::where('role', 'Relawan')->where('status', 'approved')->orderBy('created_at', 'desc')->get();
+        // Anggota Tim Aktif (yang sudah di-approve), grouped by team (kecamatan)
+        $anggotaTim = \App\Models\User::where('role', 'Relawan')
+            ->where('status', 'approved')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy(function($user) {
+                return $user->kecamatan ? 'Tim ' . $user->kecamatan : 'Tim Reguler';
+            });
 
         return view('relawan.dashboard', compact(
             'activeMission',
@@ -87,25 +93,40 @@ class RelawanController extends Controller
     {
         $request->validate([
             'sos_id' => 'required|integer|exists:sos_requests,sos_id',
+            'volunteer_id' => 'nullable|integer|exists:users,user_id',
         ]);
 
         try {
+            $assignedVolunteerId = $request->volunteer_id ?? auth()->id();
             $mission = $this->rescueMissionService->acceptMission(
                 (int) $request->sos_id,
-                auth()->id()
+                $assignedVolunteerId
             );
+            
+            $mission->load(['sosRequest.user']);
+            $volunteer = \App\Models\User::find($assignedVolunteerId);
+            $sos = $mission->sosRequest;
+            $pelapor = $sos->user->fullname ?? 'Warga';
+            $lokasi = ($sos->user->kelurahan ?? '') . ', ' . ($sos->user->kecamatan ?? '');
+            $mapsLink = "https://maps.google.com/maps?q={$sos->latitude},{$sos->longitude}";
+            
+            $waMessage = "🚨 *DARURAT SOS!* Segera meluncur ke lokasi.\nPelapor: {$pelapor}\nLokasi: {$lokasi}\nPrioritas: " . strtoupper($sos->priority_level) . "\nGoogle Maps: {$mapsLink}";
+            $waUrl = "https://wa.me/" . preg_replace('/[^0-9]/', '', $volunteer->phone) . "?text=" . urlencode($waMessage);
 
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Misi evakuasi berhasil diterima! Silakan menuju lokasi korban.',
-                    'mission' => $mission->load(['sosRequest', 'sosRequest.user'])
+                    'mission' => $mission,
+                    'wa_url' => $waUrl
                 ]);
             }
 
             return redirect()
                 ->route('relawan.dashboard')
-                ->with('success', 'Misi evakuasi berhasil diterima! Peta rute telah diaktifkan.');
+                ->with('success', 'Misi evakuasi berhasil ditugaskan!')
+                ->with('wa_url', $waUrl)
+                ->with('wa_name', $volunteer->fullname);
         } catch (Exception $e) {
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([

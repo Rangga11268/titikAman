@@ -49,11 +49,10 @@ class AdminController extends Controller
             ->orderBy("updated_at", "desc")
             ->get();
 
-        // All verified reports for summary map
-        $verifiedReports = FloodReport::where(
-            "verification_status",
-            "verified",
-        )->get();
+        // All verified reports for summary map (only active ones)
+        $verifiedReports = FloodReport::where("verification_status", "verified")
+            ->where("water_height_cm", ">", 0)
+            ->get();
 
         return view(
             "admin.dashboard",
@@ -88,6 +87,20 @@ class AdminController extends Controller
         return redirect()
             ->route("admin.dashboard")
             ->with("success", "Laporan berhasil ditolak!");
+    }
+
+    /**
+     * Mark flood report as resolved (surut)
+     */
+    public function resolveReport($id)
+    {
+        $report = FloodReport::findOrFail($id);
+        $report->water_height_cm = 0;
+        $report->save();
+
+        return redirect()
+            ->route("admin.dashboard")
+            ->with("success", "Laporan banjir berhasil ditandai surut!");
     }
 
     /**

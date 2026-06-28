@@ -174,6 +174,7 @@ class SharedController extends Controller
         $shelters   = Shelter::all();
         $waterGates = WaterGate::orderBy('danger_status', 'desc')->get();
         $reports    = FloodReport::where('verification_status', 'verified')
+            ->where('water_height_cm', '>', 0)
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->orderBy('created_at', 'desc')

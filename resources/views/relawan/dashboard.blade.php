@@ -40,6 +40,25 @@
 
         {{-- ============== CONTENT AREA ============== --}}
         <div class="relawan-content-area">
+            
+            @if(session('error'))
+                <div class="alert-danger" style="margin-bottom: 24px; padding: 16px; background: #fee2e2; color: #b91c1c; border-radius: 8px;">
+                    {{ session('error') }}
+                </div>
+            @endif
+            @if(session('wa_url'))
+                <div style="background: #e0f2f1; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #006a60; display: flex; flex-direction: column; gap: 12px;">
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; color: #006a60; font-size: 16px;">Misi Berhasil Ditugaskan!</h3>
+                        <p style="margin: 0; font-size: 14px; color: #374151;">Segera hubungi <strong>{{ session('wa_name') }}</strong> untuk menyampaikan detail misi ini.</p>
+                    </div>
+                    <div>
+                        <a href="{{ session('wa_url') }}" target="_blank" style="display: inline-flex; align-items: center; background: #25D366; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; gap: 8px;">
+                            <i data-lucide="message-circle" style="width: 18px; height: 18px;"></i> Kirim Pesan via WhatsApp
+                        </a>
+                    </div>
+                </div>
+            @endif
 
             {{-- Flash Messages --}}
             @if (session('success'))
@@ -153,12 +172,10 @@
                                         </span>
                                     @endif
                                 </div>
-                                @if(!$activeMission)
-                                    <form action="{{ route('relawan.mission.accept') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="sos_id" value="{{ $sos->sos_id }}">
-                                        <button type="submit" class="btn-accept-mission">AMBIL MISI INI</button>
-                                    </form>
+                                 @if(!$activeMission)
+                                     <button type="button" class="btn-accept-mission" onclick="document.getElementById('assign_sos_id').value = '{{ $sos->sos_id }}'; openModal('assignModal');" style="background-color: #006a60; color: white; border: none; border-radius: 8px; font-weight: 700; width: 100%; padding: 10px; cursor: pointer; text-transform: uppercase;">
+                                         TUGASKAN KE TIM
+                                     </button>
                                 @else
                                     <button type="button" class="btn-tinjau" onclick="focusOnSos({{ $sos->latitude }}, {{ $sos->longitude }})">
                                         TINJAU DETAIL
@@ -347,14 +364,9 @@
                                     <td class="td-regular">{{ $pendaftar->organisasi ?? '-' }}</td>
                                     <td class="td-time">{{ $pendaftar->created_at->format('d M Y, H:i') }}</td>
                                     <td style="text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
-                                        <form action="{{ route('relawan.member.approve', $pendaftar->user_id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn-green-link" style="padding: 4px 12px; font-size: 12px; border-radius: 4px; border: 1px solid #10b981; background: #ecfdf5; color: #047857; font-weight: 600; cursor: pointer;">Terima</button>
-                                        </form>
-                                        <form action="{{ route('relawan.member.reject', $pendaftar->user_id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn-green-link" style="padding: 4px 12px; font-size: 12px; border-radius: 4px; border: 1px solid #ef4444; background: #fef2f2; color: #b91c1c; font-weight: 600; cursor: pointer;">Tolak</button>
-                                        </form>
+                                        <button type="button" class="btn-green-link" onclick="openReviewModal({{ $pendaftar->user_id }}, '{{ addslashes($pendaftar->fullname) }}', '{{ addslashes($pendaftar->phone) }}', '{{ addslashes($pendaftar->keahlian ?? '-') }}', '{{ addslashes($pendaftar->organisasi ?? '-') }}', '{{ addslashes($pendaftar->kecamatan ?? '-') }}', '{{ addslashes($pendaftar->kelurahan ?? '-') }}')" style="padding: 4px 12px; font-size: 12px; border-radius: 4px; border: 1px solid #10b981; background: #ecfdf5; color: #047857; font-weight: 600; cursor: pointer;">
+                                            Review
+                                        </button>
                                     </td>
                                 </tr>
                             @empty
@@ -370,41 +382,50 @@
             {{-- ============ ROW 2.6: ANGGOTA TIM AKTIF ============ --}}
             <div class="history-panel" style="margin-bottom: 24px;">
                 <div class="history-panel-header">
-                    <div class="history-panel-header-left">
-                        <i data-lucide="user-check"></i>
-                        <span>Anggota Tim Aktif</span>
+                    <span>Anggota Tim Aktif (Berdasarkan Wilayah)</span>
+                </div>
+                
+                @forelse($anggotaTim as $teamName => $members)
+                <div style="margin: 16px 24px;">
+                    <h3 style="font-size: 15px; color: var(--navy-dark); margin-bottom: 8px; font-weight: 700; border-bottom: 2px solid #e5e7eb; padding-bottom: 4px;">{{ $teamName }}</h3>
+                    <div class="table-responsive">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Lengkap</th>
+                                    <th>No. HP</th>
+                                    <th>Keahlian</th>
+                                    <th>Organisasi</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($members as $anggota)
+                                    <tr>
+                                        <td class="td-regular" style="font-weight: 600; color: #111827;">{{ $anggota->fullname }}</td>
+                                        <td class="td-regular">{{ $anggota->phone }}</td>
+                                        <td class="td-regular">{{ $anggota->keahlian ?? '-' }}</td>
+                                        <td class="td-regular">{{ $anggota->organisasi ?? '-' }}</td>
+                                        <td>
+                                            <span class="badge-terkonsepsi" style="background: #d1f4e0; color: #006a60;">AKTIF</span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div style="overflow-x: auto;">
+                @empty
+                <div class="table-responsive">
                     <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th>Nama Lengkap</th>
-                                <th>No. HP</th>
-                                <th>Keahlian</th>
-                                <th>Organisasi</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
                         <tbody>
-                            @forelse($anggotaTim as $anggota)
-                                <tr>
-                                    <td class="td-regular" style="font-weight: 600; color: #111827;">{{ $anggota->fullname }}</td>
-                                    <td class="td-regular">{{ $anggota->phone }}</td>
-                                    <td class="td-regular">{{ $anggota->keahlian ?? '-' }}</td>
-                                    <td class="td-regular">{{ $anggota->organisasi ?? '-' }}</td>
-                                    <td>
-                                        <span class="badge-terkonsepsi" style="background: #d1f4e0; color: #006a60;">AKTIF</span>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr class="empty-history-row">
-                                    <td colspan="5">Belum ada anggota di tim ini.</td>
-                                </tr>
-                            @endforelse
+                            <tr class="empty-history-row">
+                                <td colspan="5">Belum ada anggota di tim ini.</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
+                @endforelse
             </div>
 
             {{-- ============ ROW 3: RIWAYAT MISI TABLE ============ --}}
@@ -457,6 +478,77 @@
 
         </div>{{-- end .relawan-content-area --}}
     </div>{{-- end .relawan-main-canvas --}}
+
+    <!-- Review Volunteer Modal -->
+    <div id="reviewModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: 12px; width: 100%; max-width: 450px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 18px; color: var(--navy-dark); margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="user-check" style="width: 20px; height: 20px;"></i> Review Pendaftar
+                </h2>
+                <button type="button" onclick="closeReviewModal()" style="background: none; border: none; cursor: pointer; color: #6b7280;">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            <div style="margin-bottom: 24px;">
+                <p><strong>Nama:</strong> <span id="rev_name"></span></p>
+                <p><strong>Telepon:</strong> <span id="rev_phone"></span></p>
+                <p><strong>Keahlian:</strong> <span id="rev_skill"></span></p>
+                <p><strong>Organisasi:</strong> <span id="rev_org"></span></p>
+                <p><strong>Lokasi:</strong> <span id="rev_loc"></span></p>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <form id="rejectForm" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" style="padding: 10px 16px; border-radius: 6px; border: 1px solid #ef4444; background: #fef2f2; color: #b91c1c; font-weight: 600; cursor: pointer;">Tolak</button>
+                </form>
+                <form id="approveForm" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" style="padding: 10px 16px; border-radius: 6px; border: none; background: #10b981; color: white; font-weight: 600; cursor: pointer;">Terima & Masukkan Tim</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Mission Modal -->
+    <div id="assignModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: 12px; width: 100%; max-width: 450px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 18px; color: var(--navy-dark); margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="users" style="width: 20px; height: 20px;"></i> Tugaskan Misi SOS
+                </h2>
+                <button type="button" onclick="closeModal('assignModal')" style="background: none; border: none; cursor: pointer; color: #6b7280;">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            
+            <form action="{{ route('relawan.mission.accept') }}" method="POST">
+                @csrf
+                <input type="hidden" name="sos_id" id="assign_sos_id" value="">
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Pilih Anggota Tim:</label>
+                    <select name="volunteer_id" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; outline: none;">
+                        <option value="">-- Pilih Anggota --</option>
+                        <option value="{{ auth()->id() }}">Saya Sendiri (Admin Relawan)</option>
+                        @foreach($anggotaTim as $teamName => $members)
+                            <optgroup label="{{ $teamName }}">
+                                @foreach($members as $member)
+                                    <option value="{{ $member->user_id }}">{{ $member->fullname }} ({{ $member->phone }})</option>
+                                @endforeach
+                            </optgroup>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" onclick="closeModal('assignModal')" style="padding: 10px 16px; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #374151; font-weight: 600; cursor: pointer;">Batal</button>
+                    <button type="submit" style="padding: 10px 16px; border-radius: 6px; border: none; background: #006a60; color: white; font-weight: 600; cursor: pointer;">Tugaskan Misi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 @endsection
 
 @section('dashboard-scripts')
@@ -567,5 +659,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
     lucide.createIcons();
 });
+
+// Modal Helpers
+window.openModal = function(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+    }
+};
+
+window.closeModal = function(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+    }
+};
+
+// Modal Logic (Global Scope)
+window.openReviewModal = function(id, name, phone, skill, org, kec, kel) {
+    document.getElementById('rev_name').textContent = name;
+    document.getElementById('rev_phone').textContent = phone;
+    document.getElementById('rev_skill').textContent = skill;
+    document.getElementById('rev_org').textContent = org;
+    document.getElementById('rev_loc').textContent = kel + ', ' + kec;
+    
+    document.getElementById('approveForm').action = '/relawan/member/' + id + '/approve';
+    document.getElementById('rejectForm').action = '/relawan/member/' + id + '/reject';
+    
+    window.openModal('reviewModal');
+};
+
+window.closeReviewModal = function() {
+    window.closeModal('reviewModal');
+};
+
 </script>
 @endsection
