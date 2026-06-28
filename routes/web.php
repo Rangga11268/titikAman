@@ -60,7 +60,6 @@ Route::middleware('auth')->group(function () {
 
     // Dashboard Utama — all roles
     Route::get('/dashboard', [SharedController::class, 'dashboard'])->name('dashboard');
-    Route::get('/warga/dashboard', [WargaController::class, 'dashboard'])->name('warga.dashboard');
 
     // Shared All-Role Pages
     Route::get('/peta-evakuasi', [SharedController::class, 'petaEvakuasi'])->name('peta.evakuasi');

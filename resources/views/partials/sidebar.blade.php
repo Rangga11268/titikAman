@@ -18,7 +18,7 @@
     </div>
 
     <nav class="sidebar-nav">
-        <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') || request()->routeIs('warga.dashboard') ? 'active' : '' }}">
+        <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <i data-lucide="layout-dashboard"></i>
             <span>Dashboard Utama</span>
         </a>

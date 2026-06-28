@@ -17,9 +17,9 @@ class SharedController extends Controller
      */
     public function dashboard()
     {
-        $role = auth()->user()->role;
-        if ($role === 'Warga') {
-            return redirect()->route('warga.dashboard');
+        // Admin / BPBD redirect to admin dashboard
+        if (auth()->user()->role === 'Admin_BPBD') {
+            return redirect()->route('admin.dashboard');
         }
 
         // Stat Cards

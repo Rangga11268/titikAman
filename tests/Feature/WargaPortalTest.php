@@ -36,7 +36,7 @@ class WargaPortalTest extends TestCase
      */
     public function test_dashboard_requires_auth(): void
     {
-        $response = $this->get(route('warga.dashboard'));
+        $response = $this->get(route('dashboard'));
         $response->assertRedirect(route('login'));
     }
 
@@ -45,9 +45,9 @@ class WargaPortalTest extends TestCase
      */
     public function test_warga_can_access_dashboard(): void
     {
-        $response = $this->actingAs($this->wargaUser)->get(route('warga.dashboard'));
+        $response = $this->actingAs($this->wargaUser)->get(route('dashboard'));
         $response->assertStatus(200);
-        $response->assertViewIs('warga.dashboard');
+        $response->assertViewIs('shared.dashboard');
     }
 
     /**
@@ -70,7 +70,7 @@ class WargaPortalTest extends TestCase
             'photo_evidence' => $photo,
         ]);
 
-        $response->assertRedirect(route('warga.dashboard'));
+        $response->assertRedirect(route('dashboard'));
         $response->assertSessionHas('success');
 
         // Check report in database
