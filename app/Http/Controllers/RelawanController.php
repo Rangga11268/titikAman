@@ -143,11 +143,17 @@ class RelawanController extends Controller
                 ]);
             }
 
+            session([
+                'wa_url' => $waUrl,
+                'wa_name' => $volunteer->fullname,
+                'wa_pelapor' => $pelapor,
+                'wa_lokasi' => $lokasi,
+                'wa_maps' => $mapsLink,
+            ]);
+
             return redirect()
                 ->route('relawan.dashboard')
-                ->with('success', 'Misi evakuasi berhasil ditugaskan!')
-                ->with('wa_url', $waUrl)
-                ->with('wa_name', $volunteer->fullname);
+                ->with('success', 'Misi evakuasi berhasil ditugaskan!');
         } catch (Exception $e) {
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
@@ -285,5 +291,14 @@ class RelawanController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Dismiss the WhatsApp notification banner by clearing session data.
+     */
+    public function dismissWa()
+    {
+        session()->forget(['wa_url', 'wa_name', 'wa_pelapor', 'wa_lokasi', 'wa_maps']);
+        return redirect()->route('relawan.dashboard');
     }
 }
