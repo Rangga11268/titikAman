@@ -173,7 +173,7 @@
                                     @endif
                                 </div>
                                 @if(!$activeMissions->isNotEmpty() || true)
-                                    <button type="button" class="btn-accept-mission" onclick="try { document.getElementById('assign_sos_id').value = '{{ $sos->sos_id }}'; document.getElementById('assignModal').style.display = 'flex'; } catch(e) { alert('Error: ' + e.message); }" style="background-color: #006a60; color: white; border: none; border-radius: 8px; font-weight: 700; width: 100%; padding: 10px; cursor: pointer; text-transform: uppercase;">
+                                    <button type="button" class="btn-accept-mission" onclick="document.getElementById('assign_sos_id').value = '{{ $sos->sos_id }}'; openModal('assignModal');" style="background-color: #006a60; color: white; border: none; border-radius: 8px; font-weight: 700; width: 100%; padding: 10px; cursor: pointer; text-transform: uppercase;">
                                          TUGASKAN KE TIM
                                     </button>
                                 @endif
@@ -227,49 +227,51 @@
 
                     @if ($activeMissions->isNotEmpty())
                         {{-- Active Mission Cards --}}
-                        @foreach($activeMissions as $activeMission)
-                        <div class="active-mission-card" style="margin-bottom: 16px;">
-                            <div class="active-mission-header">
-                                <div class="active-mission-title">MISI AKTIF ({{ $activeMission->volunteer->fullname ?? 'Relawan' }})</div>
-                                <span class="status-badge-diproses">DIPROSES</span>
-                            </div>
-                            <div>
-                                <div class="mission-info-block">
-                                    <div class="mission-info-label">LOKASI</div>
-                                    <div class="mission-info-value">
-                                        {{ $activeMission->sosRequest->user->kelurahan ?? 'Lokasi' }},
-                                        {{ $activeMission->sosRequest->user->kecamatan ?? 'Bekasi' }}
+                        <div style="max-height: 400px; overflow-y: auto; padding-right: 8px; margin-bottom: 16px;">
+                            @foreach($activeMissions as $activeMission)
+                            <div class="active-mission-card" style="margin-bottom: 16px;">
+                                <div class="active-mission-header">
+                                    <div class="active-mission-title">MISI AKTIF ({{ $activeMission->volunteer->fullname ?? 'Relawan' }})</div>
+                                    <span class="status-badge-diproses">DIPROSES</span>
+                                </div>
+                                <div>
+                                    <div class="mission-info-block">
+                                        <div class="mission-info-label">LOKASI</div>
+                                        <div class="mission-info-value">
+                                            {{ $activeMission->sosRequest->user->kelurahan ?? 'Lokasi' }},
+                                            {{ $activeMission->sosRequest->user->kecamatan ?? 'Bekasi' }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div class="mission-info-block">
-                                    <div class="mission-info-label">PELAPOR</div>
-                                    <div class="mission-reporter-row">
-                                        <div class="mission-info-value">{{ $activeMission->sosRequest->user->fullname }}</div>
-                                        <a href="tel:{{ $activeMission->sosRequest->user->phone }}" class="btn-phone-call">
-                                            <i data-lucide="phone"></i>
-                                        </a>
+                                <div>
+                                    <div class="mission-info-block">
+                                        <div class="mission-info-label">PELAPOR</div>
+                                        <div class="mission-reporter-row">
+                                            <div class="mission-info-value">{{ $activeMission->sosRequest->user->fullname }}</div>
+                                            <a href="tel:{{ $activeMission->sosRequest->user->phone }}" class="btn-phone-call">
+                                                <i data-lucide="phone"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="mission-action-btns">
+                                    <a href="https://maps.google.com/maps?q={{ $activeMission->sosRequest->latitude }},{{ $activeMission->sosRequest->longitude }}"
+                                       target="_blank" class="btn-maps">
+                                        <i data-lucide="map"></i>
+                                        MAPS
+                                    </a>
+                                    <form action="{{ route('relawan.mission.complete', $activeMission->mission_id) }}" method="POST"
+                                          onsubmit="return confirm('Konfirmasi: Korban sudah berhasil dievakuasi dengan aman?')">
+                                        @csrf
+                                        <button type="submit" class="btn-selesai" style="width: 100%;">
+                                            <i data-lucide="check-circle-2"></i>
+                                            SELESAI
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="mission-action-btns">
-                                <a href="https://maps.google.com/maps?q={{ $activeMission->sosRequest->latitude }},{{ $activeMission->sosRequest->longitude }}"
-                                   target="_blank" class="btn-maps">
-                                    <i data-lucide="map"></i>
-                                    MAPS
-                                </a>
-                                <form action="{{ route('relawan.mission.complete', $activeMission->mission_id) }}" method="POST"
-                                      onsubmit="return confirm('Konfirmasi: Korban sudah berhasil dievakuasi dengan aman?')">
-                                    @csrf
-                                    <button type="submit" class="btn-selesai" style="width: 100%;">
-                                        <i data-lucide="check-circle-2"></i>
-                                        SELESAI
-                                    </button>
-                                </form>
-                            </div>
+                            @endforeach
                         </div>
-                        @endforeach
                     @else
                         <div class="idle-mission-card">
                             <i data-lucide="shield-check"></i>
