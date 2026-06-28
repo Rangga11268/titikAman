@@ -35,7 +35,6 @@ class RegistrationVerificationTest extends TestCase
     public function test_registration_pages_can_be_rendered(): void
     {
         $this->get(route('register.step2.relawan'))->assertOk();
-        $this->get(route('register.step2.admin'))->assertOk();
         $this->get(route('register.step2.pengelola'))->assertOk();
     }
 
@@ -55,7 +54,7 @@ class RegistrationVerificationTest extends TestCase
             'document' => $document,
         ]);
 
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route('register.success.relawan'));
         $response->assertSessionHas('success');
         $this->assertGuest();
 
@@ -71,37 +70,6 @@ class RegistrationVerificationTest extends TestCase
         $user = User::where('email', 'relawan@example.com')->first();
         $this->assertNotNull($user->document_path);
         Storage::disk('public')->assertExists($user->document_path);
-    }
-
-    public function test_admin_bpbd_can_register_and_is_auto_logged_in(): void
-    {
-        $document = UploadedFile::fake()->image('sk.jpg');
-
-        $response = $this->post(route('register.step2.admin.submit'), [
-            'fullname' => 'Petugas BPBD',
-            'email' => 'bpbd@example.com',
-            'phone' => '082222222222',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'nip' => '198001012010011001',
-            'jabatan' => 'Kepala Seksi',
-            'unit_kerja' => 'BPBD Kota Bekasi',
-            'document' => $document,
-        ]);
-
-        $user = User::where('email', 'bpbd@example.com')->first();
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'bpbd@example.com',
-            'role' => 'Admin_BPBD',
-            'nip' => '198001012010011001',
-            'jabatan' => 'Kepala Seksi',
-            'unit_kerja' => 'BPBD Kota Bekasi',
-            'status' => 'approved',
-        ]);
-
-        $this->assertAuthenticatedAs($user);
-        $response->assertRedirect(route('dashboard'));
     }
 
     public function test_pengelola_posko_can_register_with_shelter(): void

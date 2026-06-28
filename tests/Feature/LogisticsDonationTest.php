@@ -52,6 +52,10 @@ class LogisticsDonationTest extends TestCase
             'latitude' => -6.2425,
             'longitude' => 107.0022,
         ]);
+
+        // Link manager to shelter
+        $this->managerUser->shelter_id = $this->shelter->shelter_id;
+        $this->managerUser->save();
     }
 
     /**
@@ -77,6 +81,11 @@ class LogisticsDonationTest extends TestCase
      */
     public function test_pengelola_can_access_dashboard_and_select_shelter(): void
     {
+        // Set user to Admin_BPBD and remove shelter_id to test selection
+        $this->managerUser->role = 'Admin_BPBD';
+        $this->managerUser->shelter_id = null;
+        $this->managerUser->save();
+
         // 1. First dashboard access (no shelter selected yet)
         $response = $this->actingAs($this->managerUser)->get(route('pengelola.dashboard'));
         $response->assertStatus(200);
