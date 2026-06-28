@@ -115,6 +115,10 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // Assign s1 to Pengelola Posko Test
+        $pengelola->shelter_id = $s1->shelter_id;
+        $pengelola->save();
+
         // Seed Shelter Needs
         \App\Models\ShelterNeed::updateOrCreate(
             ['shelter_id' => $s1->shelter_id, 'item_name' => 'Makanan Siap Saji'],
