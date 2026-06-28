@@ -679,6 +679,27 @@
         ];
     })->values()->all();
 
+    // Shelter map data
+    $shelterMapData = $activeShelters->map(fn($s) => [
+        'lat' => (float) $s->latitude,
+        'lng' => (float) $s->longitude,
+        'name' => $s->shelter_name,
+        'address' => $s->address,
+        'status' => $s->status,
+        'occupants' => $s->current_occupants,
+        'capacity' => $s->max_capacity,
+        'toilet' => $s->has_toilet_facilities,
+    ])->values();
+
+    // Flood report map data
+    $reportMapData = $verifiedReports->map(fn($r) => [
+        'lat' => (float) $r->latitude,
+        'lng' => (float) $r->longitude,
+        'street' => $r->street_name,
+        'height' => $r->water_height_cm,
+        'reporter' => $r->user->fullname ?? '-',
+    ])->values();
+
     // Missions history data for detail modal
     $missionsJson = $completedMissions->map(fn($m) => [
         'mission_id' => $m->mission_id,
@@ -739,11 +760,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const activeMissionsData = @json($activeMissionsMapData);
 
     if (activeMissionsData && activeMissionsData.length > 0) {
-        const victimIcon = L.divIcon({
-            html: `<div class="victim-pulse"></div>`,
-            iconAnchor: [8, 8]
-        });
         activeMissionsData.forEach(function(m) {
+            const victimIcon = L.divIcon({
+                html: `<div style="width:32px;height:32px;position:relative;">
+                    <div style="position:absolute;top:0;left:0;width:32px;height:32px;border-radius:50%;background:#ba1a1a;border:3px solid white;box-shadow:0 0 0 4px rgba(186,26,26,0.4),0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;animation:pulse-ring 2s infinite;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                </div>`,
+                className: '',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+            });
             L.marker([m.lat, m.lng], { icon: victimIcon })
                 .addTo(map)
                 .bindPopup(`<b>KORBAN AKTIF:</b> ${m.name}<br>${m.people} jiwa terjebak<br><b>Tim:</b> ${m.volunteer}`)
@@ -754,23 +781,105 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Custom marker SVG icons
+    function createSosIcon(color) {
+        return L.divIcon({
+            html: `<div style="width:28px;height:28px;position:relative;">
+                <div style="position:absolute;top:0;left:0;width:28px;height:28px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+            </div>`,
+            className: '',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+        });
+    }
+
+    function createShelterIcon() {
+        return L.divIcon({
+            html: `<div style="width:28px;height:28px;position:relative;">
+                <div style="position:absolute;top:0;left:0;width:28px;height:28px;border-radius:6px;background:#006a60;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+            </div>`,
+            className: '',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+        });
+    }
+
+    function createFloodIcon() {
+        return L.divIcon({
+            html: `<div style="width:28px;height:28px;position:relative;">
+                <div style="position:absolute;top:0;left:0;width:28px;height:28px;border-radius:50%;background:#0284c7;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                </div>
+            </div>`,
+            className: '',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+        });
+    }
+
     // Plot SOS queue markers
     const sosQueue = @json($sosQueueMapData);
-
-    const priorityColors = { high: '#ba1a1a', medium: '#f59e0b', low: '#006a60' };
+    const priorityColors = { high: '#dc2626', medium: '#f59e0b', low: '#006a60' };
 
     sosQueue.forEach(function (sos) {
         if (!sos.lat || !sos.lng) return;
-        const color = priorityColors[sos.priority] || '#031f41';
-        const icon = L.divIcon({
-            html: `<div style="width:16px;height:16px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 0 0 3px ${color}44;"></div>`,
-            className: '',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8]
-        });
+        const color = priorityColors[sos.priority] || '#6b7280';
+        const icon = createSosIcon(color);
         L.marker([sos.lat, sos.lng], { icon })
             .addTo(map)
-            .bindPopup(`<b>${sos.location}</b><br>${sos.people} jiwa terjebak`);
+            .bindPopup(`
+                <div style="font-family:'Inter',sans-serif;min-width:180px;">
+                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;margin-bottom:4px;">SOS Darurat</div>
+                    <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:6px;">${sos.location}</div>
+                    <div style="display:flex;gap:12px;font-size:12px;color:#4b5563;">
+                        <span><strong>${sos.people}</strong> Jiwa</span>
+                        <span style="text-transform:capitalize;">Prioritas: <strong>${sos.priority}</strong></span>
+                    </div>
+                </div>
+            `);
+    });
+
+    // Plot shelter markers
+    const shelters = @json($shelterMapData);
+    const shelterIcon = createShelterIcon();
+
+    shelters.forEach(function (s) {
+        if (!s.lat || !s.lng) return;
+        L.marker([s.lat, s.lng], { icon: shelterIcon })
+            .addTo(map)
+            .bindPopup(`
+                <div style="font-family:'Inter',sans-serif;min-width:200px;">
+                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#006a60;margin-bottom:4px;">Posko Pengungsian</div>
+                    <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px;">${s.name}</div>
+                    <div style="font-size:11px;color:#6b7280;margin-bottom:6px;">${s.address}</div>
+                    <div style="display:flex;gap:12px;font-size:11px;color:#4b5563;">
+                        <span><strong>${s.occupants}</strong>/${s.capacity} Jiwa</span>
+                        <span>MCK: ${s.toilet === 'Yes' ? 'Tersedia' : 'Tidak'}</span>
+                    </div>
+                </div>
+            `);
+    });
+
+    // Plot flood report markers
+    const floodReports = @json($reportMapData);
+    const floodIcon = createFloodIcon();
+
+    floodReports.forEach(function (r) {
+        if (!r.lat || !r.lng) return;
+        L.marker([r.lat, r.lng], { icon: floodIcon })
+            .addTo(map)
+            .bindPopup(`
+                <div style="font-family:'Inter',sans-serif;min-width:180px;">
+                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#0284c7;margin-bottom:4px;">Laporan Banjir</div>
+                    <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px;">${r.street}</div>
+                    <div style="font-size:12px;color:#4b5563;">Tinggi Air: <strong>${r.height} cm</strong></div>
+                    <div style="font-size:11px;color:#9ca3af;margin-top:2px;">${r.reporter}</div>
+                </div>
+            `);
     });
 
     // Global helper for "tinjau detail" button

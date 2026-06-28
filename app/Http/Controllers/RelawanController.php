@@ -77,6 +77,13 @@ class RelawanController extends Controller
         // Get array of active volunteer IDs (busy teams)
         $activeVolunteerIds = $activeMissions->pluck('volunteer_id')->toArray();
 
+        // Fetch active shelters and flood reports for map
+        $activeShelters = \App\Models\Shelter::whereIn('status', ['active', 'full'])->get();
+        $verifiedReports = \App\Models\FloodReport::where('verification_status', 'verified')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get();
+
         return view('relawan.dashboard', compact(
             'activeMissions',
             'waitingSos',
@@ -89,7 +96,9 @@ class RelawanController extends Controller
             'completedMissions',
             'pendaftarTim',
             'anggotaTim',
-            'activeVolunteerIds'
+            'activeVolunteerIds',
+            'activeShelters',
+            'verifiedReports'
         ));
     }
 
