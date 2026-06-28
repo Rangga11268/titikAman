@@ -89,6 +89,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/relawan/sos-data', [RelawanController::class, 'getWaitingSosData'])->name('relawan.sos.data');
         Route::post('/relawan/mission/accept', [RelawanController::class, 'acceptMission'])->name('relawan.mission.accept');
         Route::post('/relawan/mission/complete/{id}', [RelawanController::class, 'completeMission'])->name('relawan.mission.complete');
+        
+        Route::post('/relawan/member/{id}/approve', [RelawanController::class, 'approveMember'])->name('relawan.member.approve');
+        Route::post('/relawan/member/{id}/reject', [RelawanController::class, 'rejectMember'])->name('relawan.member.reject');
     });
 
     // Pengelola Posko Portal Routes

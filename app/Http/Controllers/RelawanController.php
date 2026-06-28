@@ -60,6 +60,9 @@ class RelawanController extends Controller
         // Pendaftar Tim (Anggota Relawan yang baru mendaftar)
         $pendaftarTim = \App\Models\User::where('role', 'Relawan')->where('status', 'pending')->orderBy('created_at', 'desc')->get();
 
+        // Anggota Tim Aktif (yang sudah di-approve)
+        $anggotaTim = \App\Models\User::where('role', 'Relawan')->where('status', 'approved')->orderBy('created_at', 'desc')->get();
+
         return view('relawan.dashboard', compact(
             'activeMission',
             'waitingSos',
@@ -69,7 +72,8 @@ class RelawanController extends Controller
             'misiSelesaiCount',
             'completedMissions',
             'avgResponseMinutes',
-            'pendaftarTim'
+            'pendaftarTim',
+            'anggotaTim'
         ));
     }
 
@@ -161,5 +165,29 @@ class RelawanController extends Controller
     {
         $waitingSos = $this->sosRepository->getWaitingRequests();
         return response()->json($waitingSos);
+    }
+
+    /**
+     * Approve a pending volunteer member.
+     */
+    public function approveMember($id)
+    {
+        $user = \App\Models\User::where('role', 'Relawan')->where('status', 'pending')->findOrFail($id);
+        $user->status = 'approved';
+        $user->save();
+
+        return redirect()->route('relawan.dashboard')->with('success', 'Anggota tim berhasil disetujui.');
+    }
+
+    /**
+     * Reject a pending volunteer member.
+     */
+    public function rejectMember($id)
+    {
+        $user = \App\Models\User::where('role', 'Relawan')->where('status', 'pending')->findOrFail($id);
+        $user->status = 'rejected';
+        $user->save();
+
+        return redirect()->route('relawan.dashboard')->with('success', 'Anggota tim berhasil ditolak.');
     }
 }

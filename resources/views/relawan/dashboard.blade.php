@@ -335,6 +335,7 @@
                                 <th>Keahlian</th>
                                 <th>Organisasi</th>
                                 <th>Waktu Mendaftar</th>
+                                <th style="text-align: right;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -345,10 +346,60 @@
                                     <td class="td-regular">{{ $pendaftar->keahlian ?? '-' }}</td>
                                     <td class="td-regular">{{ $pendaftar->organisasi ?? '-' }}</td>
                                     <td class="td-time">{{ $pendaftar->created_at->format('d M Y, H:i') }}</td>
+                                    <td style="text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
+                                        <form action="{{ route('relawan.member.approve', $pendaftar->user_id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn-green-link" style="padding: 4px 12px; font-size: 12px; border-radius: 4px; border: 1px solid #10b981; background: #ecfdf5; color: #047857; font-weight: 600; cursor: pointer;">Terima</button>
+                                        </form>
+                                        <form action="{{ route('relawan.member.reject', $pendaftar->user_id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn-green-link" style="padding: 4px 12px; font-size: 12px; border-radius: 4px; border: 1px solid #ef4444; background: #fef2f2; color: #b91c1c; font-weight: 600; cursor: pointer;">Tolak</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr class="empty-history-row">
-                                    <td colspan="5">Belum ada anggota baru yang mendaftar hari ini.</td>
+                                    <td colspan="6">Belum ada anggota baru yang mendaftar hari ini.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- ============ ROW 2.6: ANGGOTA TIM AKTIF ============ --}}
+            <div class="history-panel" style="margin-bottom: 24px;">
+                <div class="history-panel-header">
+                    <div class="history-panel-header-left">
+                        <i data-lucide="user-check"></i>
+                        <span>Anggota Tim Aktif</span>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Lengkap</th>
+                                <th>No. HP</th>
+                                <th>Keahlian</th>
+                                <th>Organisasi</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($anggotaTim as $anggota)
+                                <tr>
+                                    <td class="td-regular" style="font-weight: 600; color: #111827;">{{ $anggota->fullname }}</td>
+                                    <td class="td-regular">{{ $anggota->phone }}</td>
+                                    <td class="td-regular">{{ $anggota->keahlian ?? '-' }}</td>
+                                    <td class="td-regular">{{ $anggota->organisasi ?? '-' }}</td>
+                                    <td>
+                                        <span class="badge-terkonsepsi" style="background: #d1f4e0; color: #006a60;">AKTIF</span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr class="empty-history-row">
+                                    <td colspan="5">Belum ada anggota di tim ini.</td>
                                 </tr>
                             @endforelse
                         </tbody>

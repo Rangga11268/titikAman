@@ -167,7 +167,6 @@
                         @enderror
                     </div>
 
-                    <!-- Email & Credentials for registration success (needed by database) -->
                     <div class="form-row">
                         <div class="form-group" style="flex: 1;">
                             <label for="email" class="form-label">Email</label>
@@ -178,35 +177,14 @@
                                 <span class="error-text">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div>
-
-                    <div class="form-row">
                         <div class="form-group" style="flex: 1;">
-                            <label for="password" class="form-label">Kata Sandi</label>
-                            <div class="password-wrapper">
-                                <input type="password" id="password" name="password"
-                                    class="form-input @error('password') error @enderror" placeholder="Minimal 8 karakter"
-                                    required>
-                                <button type="button" class="password-toggle-btn"
-                                    onclick="togglePassword('password', 'eyeIcon1')">
-                                    <i data-lucide="eye" id="eyeIcon1"></i>
-                                </button>
-                            </div>
-                            @error('password')
+                            <label for="phone" class="form-label">Nomor WhatsApp Aktif</label>
+                            <input type="tel" id="phone" name="phone"
+                                class="form-input @error('phone') error @enderror" placeholder="Contoh: 081234567890"
+                                value="{{ old('phone') }}" required>
+                            @error('phone')
                                 <span class="error-text">{{ $message }}</span>
                             @enderror
-                        </div>
-
-                        <div class="form-group" style="flex: 1;">
-                            <label for="password_confirmation" class="form-label">Konfirmasi Kata Sandi</label>
-                            <div class="password-wrapper">
-                                <input type="password" id="password_confirmation" name="password_confirmation"
-                                    class="form-input" placeholder="Ulangi kata sandi" required>
-                                <button type="button" class="password-toggle-btn"
-                                    onclick="togglePassword('password_confirmation', 'eyeIcon2')">
-                                    <i data-lucide="eye" id="eyeIcon2"></i>
-                                </button>
-                            </div>
                         </div>
                     </div>
 
