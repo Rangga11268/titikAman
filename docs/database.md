@@ -64,6 +64,8 @@ Mengelola data posko pengungsian, termasuk ketersediaan fasilitas krusial sepert
 * **`status`** (Enum: `'active'`, `'full'`, `'closed'` - Default: `'active'`)
 * **`latitude`** (Decimal, 10,8) - Koordinat GPS lintang.
 * **`longitude`** (Decimal, 11,8) - Koordinat GPS bujur.
+* **`facilities`** (Text, Nullable) - JSON daftar fasilitas tambahan (Dapur Umum, Posko Kesehatan, dll).
+* **`photo`** (String, 255, Nullable) - Path foto posko yang diupload.
 * **`created_at` / `updated_at`** (Timestamp)
 
 ---
