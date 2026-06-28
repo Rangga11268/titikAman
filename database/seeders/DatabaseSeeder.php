@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
         $relawan = User::updateOrCreate(
             ['email' => 'relawan@example.com'],
             [
-                'fullname' => 'Relawan Test',
+                'fullname' => 'Admin Relawan',
                 'phone' => '081299999999',
                 'password' => Hash::make('password'),
                 'role' => 'Relawan',

@@ -38,18 +38,12 @@ class AuthController extends Controller
             ->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
-            if ($user->status === 'pending') {
-                return back()->withErrors([
-                    'login_id' => 'Akun Anda masih dalam proses verifikasi oleh Admin BPBD. Silakan tunggu atau hubungi Admin.',
-                ])->onlyInput('login_id');
-            } elseif ($user->status === 'rejected') {
-                return back()->withErrors([
-                    'login_id' => 'Pendaftaran akun Anda ditolak oleh Admin BPBD. Silakan hubungi BPBD Kota Bekasi untuk informasi lebih lanjut.',
-                ])->onlyInput('login_id');
-            }
-
             Auth::login($user, $request->boolean('remember'));
             $request->session()->regenerate();
+
+            if ($user->status !== 'approved') {
+                return redirect()->route('verification.status');
+            }
 
             return redirect()->intended(route('dashboard'));
         }
@@ -119,6 +113,9 @@ class AuthController extends Controller
             'nik' => 'required|string|size:16|unique:users,nik',
             'keahlian' => 'required|array',
             'organisasi' => 'nullable|string|max:100',
+            'kecamatan' => 'required|string|max:100',
+            'kelurahan' => 'required|string|max:100',
+            'password' => 'required|string|min:8|confirmed',
             'document' => 'required|file|mimes:jpeg,png,pdf|max:5120',
         ], [
             'fullname.required' => 'Nama lengkap wajib diisi.',
@@ -130,6 +127,11 @@ class AuthController extends Controller
             'nik.size' => 'NIK harus berukuran 16 karakter.',
             'nik.unique' => 'NIK sudah terdaftar.',
             'keahlian.required' => 'Pilih minimal satu keahlian.',
+            'kecamatan.required' => 'Kecamatan domisili wajib dipilih.',
+            'kelurahan.required' => 'Kelurahan domisili wajib dipilih.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
             'document.required' => 'Dokumen verifikasi (KTP) wajib diunggah.',
             'document.mimes' => 'Dokumen harus berupa file JPEG, PNG, atau PDF.',
             'document.max' => 'Ukuran file dokumen maksimal 5MB.',
@@ -143,28 +145,22 @@ class AuthController extends Controller
         User::create([
             'fullname' => $request->fullname,
             'email' => $request->email,
-            'password' => Hash::make(\Illuminate\Support\Str::random(40)),
+            'password' => Hash::make($request->password),
             'phone' => $request->phone,
             'role' => 'Relawan',
             'nik' => $request->nik,
+            'kecamatan' => $request->kecamatan,
+            'kelurahan' => $request->kelurahan,
             'keahlian' => implode(', ', $request->keahlian),
             'organisasi' => $request->organisasi,
             'document_path' => $documentPath,
             'status' => 'pending',
         ]);
 
-        return redirect()->route('register.success.relawan')->with('success', 'Pendaftaran sebagai anggota Relawan/SAR berhasil!');
+        return redirect()->route('login')->with('success', 'Pendaftaran sebagai anggota Relawan/SAR berhasil! Silakan login untuk melihat status verifikasi akun Anda.');
     }
 
 
-
-    /**
-     * Tampilkan Halaman Sukses Registrasi Relawan.
-     */
-    public function showRegisterRelawanSuccess()
-    {
-        return view('auth.register-relawan-success');
-    }
 
     /**
      * Tampilkan Form Registrasi Pengelola Posko.

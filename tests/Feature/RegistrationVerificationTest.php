@@ -51,10 +51,12 @@ class RegistrationVerificationTest extends TestCase
             'nik' => '3201234567890001',
             'keahlian' => ['Medis', 'Evakuasi'],
             'organisasi' => 'PMI Bekasi',
+            'kecamatan' => 'Bekasi Selatan',
+            'kelurahan' => 'Kayuringin Jaya',
             'document' => $document,
         ]);
 
-        $response->assertRedirect(route('register.success.relawan'));
+        $response->assertRedirect(route('login'));
         $response->assertSessionHas('success');
         $this->assertGuest();
 
@@ -111,7 +113,7 @@ class RegistrationVerificationTest extends TestCase
         $this->assertEquals(['Dapur Umum', 'Toilet'], $shelter->facilities);
     }
 
-    public function test_pending_user_cannot_login(): void
+    public function test_pending_user_is_redirected_to_verification(): void
     {
         User::create([
             'fullname' => 'Relawan Pending',
@@ -128,11 +130,11 @@ class RegistrationVerificationTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertSessionHasErrors('login_id');
-        $this->assertGuest();
+        $response->assertRedirect(route('verification.status'));
+        $this->assertAuthenticated();
     }
 
-    public function test_rejected_user_cannot_login(): void
+    public function test_rejected_user_is_redirected_to_verification(): void
     {
         User::create([
             'fullname' => 'Relawan Rejected',
@@ -149,8 +151,8 @@ class RegistrationVerificationTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertSessionHasErrors('login_id');
-        $this->assertGuest();
+        $response->assertRedirect(route('verification.status'));
+        $this->assertAuthenticated();
     }
 
     public function test_approved_user_can_login_after_verification(): void

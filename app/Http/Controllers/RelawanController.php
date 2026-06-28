@@ -30,6 +30,11 @@ class RelawanController extends Controller
      */
     public function dashboard()
     {
+        // Only Admin Relawan can access this dashboard
+        if (auth()->user()->email !== 'relawan@example.com') {
+            return redirect()->route('dashboard');
+        }
+
         $volunteerId = auth()->id();
         
         // Fetch all active missions for the dispatcher
@@ -45,8 +50,8 @@ class RelawanController extends Controller
         $misiSelesaiCount  = $this->rescueMissionRepository->getAllCompletedMissionsCount();
         $totalSosHariIni   = \App\Models\SosRequest::whereDate('created_at', today())->count();
 
-        // Completed missions today for history table
-        $completedMissions = $this->rescueMissionRepository->getAllCompletedMissions();
+        // All missions for history table (all time, ordered by most recent)
+        $completedMissions = $this->rescueMissionRepository->getAllMissions();
 
         // Average response time (minutes) — computed in PHP, not in Blade
         $avgResponseMinutes = 0;
@@ -98,11 +103,11 @@ class RelawanController extends Controller
     {
         $request->validate([
             'sos_id' => 'required|integer|exists:sos_requests,sos_id',
-            'volunteer_id' => 'nullable|integer|exists:users,user_id',
+            'volunteer_id' => 'required|integer|exists:users,user_id|different:' . auth()->id(),
         ]);
 
         try {
-            $assignedVolunteerId = $request->volunteer_id ?? auth()->id();
+            $assignedVolunteerId = (int) $request->volunteer_id;
             $mission = $this->rescueMissionService->acceptMission(
                 (int) $request->sos_id,
                 $assignedVolunteerId
@@ -215,5 +220,59 @@ class RelawanController extends Controller
         $user->save();
 
         return redirect()->route('relawan.dashboard')->with('success', 'Anggota tim berhasil ditolak.');
+    }
+
+    /**
+     * Export all missions to CSV.
+     */
+    public function exportMissions()
+    {
+        $missions = $this->rescueMissionRepository->getAllMissions();
+        $fileName = 'riwayat_misi_' . time() . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = ['ID Misi', 'ID SOS', 'Pelapor', 'No. HP Pelapor', 'Lokasi', 'Jumlah Orang', 'Kelompok Rentan', 'Prioritas', 'Deskripsi', 'Relawan Ditugaskan', 'No. HP Relawan', 'Ditugaskan Pada', 'Selesai Pada', 'Durasi (Menit)', 'Status'];
+
+        $callback = function () use ($missions, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($missions as $mission) {
+                $sos = $mission->sosRequest;
+                $user = $sos?->user;
+                $volunteer = $mission->volunteer;
+                $durasi = $mission->resolved_at ? (int) $mission->resolved_at->diffInMinutes($mission->created_at) : '-';
+                $status = $mission->resolved_at ? 'Selesai' : 'Berjalan';
+
+                fputcsv($file, [
+                    $mission->mission_id,
+                    $mission->sos_id,
+                    $user->fullname ?? '-',
+                    $user->phone ?? '-',
+                    ($user->kelurahan ?? '') . ', ' . ($user->kecamatan ?? ''),
+                    $sos->people_trapped ?? 0,
+                    $sos->vulnerable_groups_count ?? 0,
+                    $sos->priority_level ?? '-',
+                    $sos->description ?? '-',
+                    $volunteer->fullname ?? '-',
+                    $volunteer->phone ?? '-',
+                    $mission->assigned_at ? $mission->assigned_at->format('Y-m-d H:i:s') : '-',
+                    $mission->resolved_at ? $mission->resolved_at->format('Y-m-d H:i:s') : '-',
+                    $durasi,
+                    $status,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

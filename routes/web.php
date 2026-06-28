@@ -42,7 +42,6 @@ Route::middleware('guest')->group(function () {
     // Relawan Registration
     Route::get('/register/relawan', [AuthController::class, 'showRegisterStep2Relawan'])->name('register.step2.relawan');
     Route::post('/register/relawan', [AuthController::class, 'registerRelawan'])->name('register.step2.relawan.submit');
-    Route::get('/register/relawan/success', [AuthController::class, 'showRegisterRelawanSuccess'])->name('register.success.relawan');
     
     // Admin Registration
     // Removed per user request
@@ -55,9 +54,20 @@ Route::middleware('guest')->group(function () {
 use App\Http\Controllers\WargaController;
 use App\Http\Controllers\SharedController;
 
-// Auth Routes
+// Verification Status (accessible even if not approved)
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::get('/status-verifikasi', function () {
+        if (auth()->user()->status === 'approved') {
+            return redirect()->route('dashboard');
+        }
+        return view('auth.verification-status');
+    })->name('verification.status');
+});
+
+// Auth Routes (require approval)
+Route::middleware(['auth', 'approved'])->group(function () {
 
     // Dashboard Utama — all roles
     Route::get('/dashboard', [SharedController::class, 'dashboard'])->name('dashboard');
@@ -89,6 +99,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/relawan/sos-data', [RelawanController::class, 'getWaitingSosData'])->name('relawan.sos.data');
         Route::post('/relawan/mission/accept', [RelawanController::class, 'acceptMission'])->name('relawan.mission.accept');
         Route::post('/relawan/mission/complete/{id}', [RelawanController::class, 'completeMission'])->name('relawan.mission.complete');
+        Route::get('/relawan/mission/export', [RelawanController::class, 'exportMissions'])->name('relawan.mission.export');
         
         Route::post('/relawan/member/{id}/approve', [RelawanController::class, 'approveMember'])->name('relawan.member.approve');
         Route::post('/relawan/member/{id}/reject', [RelawanController::class, 'rejectMember'])->name('relawan.member.reject');

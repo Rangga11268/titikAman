@@ -111,9 +111,15 @@
                                     <span class="detail-label">Dokumen Identitas (KTP / Sertifikat)</span>
                                     <div class="detail-document">
                                         @if($selectedUser->document_path)
+                                            @php $isImage = preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $selectedUser->document_path); @endphp
+                                            @if($isImage)
+                                                <div style="margin-bottom: 10px;">
+                                                    <img src="{{ asset('storage/' . $selectedUser->document_path) }}" alt="Dokumen Verifikasi" style="max-width: 100%; max-height: 260px; border-radius: 8px; border: 1px solid rgba(196,198,207,0.4); object-fit: contain; background: #f8f9fa;">
+                                                </div>
+                                            @endif
                                             <a href="{{ asset('storage/' . $selectedUser->document_path) }}" target="_blank" class="btn-view-document">
                                                 <i data-lucide="file-text"></i>
-                                                <span>Lihat Dokumen Verifikasi</span>
+                                                <span>{{ $isImage ? 'Buka Gambar di Tab Baru' : 'Lihat Dokumen Verifikasi' }}</span>
                                             </a>
                                         @else
                                             <span class="detail-error">Dokumen tidak tersedia</span>

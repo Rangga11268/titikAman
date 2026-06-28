@@ -21,7 +21,7 @@ class RelawanPortalTest extends TestCase
 
         // Create volunteer
         $this->volunteerUser = User::create([
-            'fullname' => 'Relawan Test',
+            'fullname' => 'Admin Relawan',
             'email' => 'relawan@example.com',
             'phone' => '081299999999',
             'password' => bcrypt('password'),
@@ -84,6 +84,7 @@ class RelawanPortalTest extends TestCase
 
         $response = $this->actingAs($this->volunteerUser)->post(route('relawan.mission.accept'), [
             'sos_id' => $sos->sos_id,
+            'volunteer_id' => $this->wargaUser->user_id,
         ]);
 
         $response->assertRedirect(route('relawan.dashboard'));
@@ -98,7 +99,7 @@ class RelawanPortalTest extends TestCase
         // Assert rescue mission created
         $this->assertDatabaseHas('rescue_missions', [
             'sos_id' => $sos->sos_id,
-            'volunteer_id' => $this->volunteerUser->user_id,
+            'volunteer_id' => $this->wargaUser->user_id,
             'resolved_at' => null,
         ]);
     }

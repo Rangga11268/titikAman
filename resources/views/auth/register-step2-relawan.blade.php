@@ -177,12 +177,39 @@
                                 <span class="error-text">{{ $message }}</span>
                             @enderror
                         </div>
+                    </div>
+
+                    <!-- Domisili Section -->
+                    <h3 class="section-title">
+                        <i data-lucide="map-pin"></i>
+                        <span>Domisili</span>
+                    </h3>
+
+                    <div class="form-row">
                         <div class="form-group" style="flex: 1;">
-                            <label for="phone" class="form-label">Nomor WhatsApp Aktif</label>
-                            <input type="tel" id="phone" name="phone"
-                                class="form-input @error('phone') error @enderror" placeholder="Contoh: 081234567890"
-                                value="{{ old('phone') }}" required>
-                            @error('phone')
+                            <label for="kecamatan" class="form-label">Kecamatan *</label>
+                            <select id="kecamatan" name="kecamatan" class="form-select @error('kecamatan') error @enderror" required>
+                                <option value="" disabled {{ old('kecamatan') ? '' : 'selected' }}>Pilih Kecamatan</option>
+                                <option value="Pondok Gede" {{ old('kecamatan') == 'Pondok Gede' ? 'selected' : '' }}>Pondok Gede</option>
+                                <option value="Jatiasih" {{ old('kecamatan') == 'Jatiasih' ? 'selected' : '' }}>Jatiasih</option>
+                                <option value="Bekasi Timur" {{ old('kecamatan') == 'Bekasi Timur' ? 'selected' : '' }}>Bekasi Timur</option>
+                                <option value="Bekasi Selatan" {{ old('kecamatan') == 'Bekasi Selatan' ? 'selected' : '' }}>Bekasi Selatan</option>
+                                <option value="Bekasi Barat" {{ old('kecamatan') == 'Bekasi Barat' ? 'selected' : '' }}>Bekasi Barat</option>
+                                <option value="Bekasi Utara" {{ old('kecamatan') == 'Bekasi Utara' ? 'selected' : '' }}>Bekasi Utara</option>
+                                <option value="Rawalumbu" {{ old('kecamatan') == 'Rawalumbu' ? 'selected' : '' }}>Rawalumbu</option>
+                                <option value="Mustikajaya" {{ old('kecamatan') == 'Mustikajaya' ? 'selected' : '' }}>Mustikajaya</option>
+                            </select>
+                            @error('kecamatan')
+                                <span class="error-text">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group" style="flex: 1;">
+                            <label for="kelurahan" class="form-label">Kelurahan *</label>
+                            <select id="kelurahan" name="kelurahan" class="form-select @error('kelurahan') error @enderror" required>
+                                <option value="" disabled selected>Pilih Kelurahan</option>
+                            </select>
+                            @error('kelurahan')
                                 <span class="error-text">{{ $message }}</span>
                             @enderror
                         </div>
@@ -270,6 +297,34 @@
                         <span class="error-text" style="display: block; margin-top: 4px;">{{ $message }}</span>
                     @enderror
 
+                    <!-- Keamanan Akun Section -->
+                    <h3 class="section-title">
+                        <i data-lucide="lock"></i>
+                        <span>Keamanan Akun</span>
+                    </h3>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="password" class="form-label">Kata Sandi</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="password" name="password"
+                                    class="form-input @error('password') error @enderror"
+                                    placeholder="Minimal 8 karakter" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('password', 'pwIcon')" tabindex="-1">
+                                    <i id="pwIcon" data-lucide="eye"></i>
+                                </button>
+                            </div>
+                            @error('password')
+                                <span class="error-text">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="password_confirmation" class="form-label">Konfirmasi Kata Sandi</label>
+                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                class="form-input" placeholder="Ulangi kata sandi" required>
+                        </div>
+                    </div>
+
                     <div class="action-row">
                         <a href="{{ route('register.step1') }}" class="btn-back-link">
                             <i data-lucide="arrow-left"></i>
@@ -300,6 +355,47 @@
 
 @section('scripts')
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const kelurahanDb = {
+                'Pondok Gede': ['Jatiwaringin', 'Jatibening', 'Jatibening Baru', 'Jaticempaka', 'Jatimakmur'],
+                'Jatiasih': ['Jatiasih', 'Jatikramat', 'Jatiluhur', 'Jatirasa', 'Jatisari', 'Jati Mekar'],
+                'Bekasi Timur': ['Aren Jaya', 'Bekasi Jaya', 'Duren Jaya', 'Margahayu'],
+                'Bekasi Selatan': ['Jakamulya', 'Jakasetia', 'Kayuringin Jaya', 'Marga Jaya', 'Pekayon Jaya'],
+                'Bekasi Barat': ['Bintara', 'Bintara Jaya', 'Jakasampurna', 'Kota Baru', 'Kranji'],
+                'Bekasi Utara': ['Harapan Baru', 'Harapan Jaya', 'Kaliabang Tengah', 'Marga Mulya', 'Perwira', 'Teluk Pucung'],
+                'Rawalumbu': ['Bojong Rawalumbu', 'Bojong Menteng', 'Pengasinan', 'Sepanjang Jaya'],
+                'Mustikajaya': ['Mustikajaya', 'Mustikasari', 'Pedurenan', 'Cimuning']
+            };
+
+            const kecamatanSelect = document.getElementById('kecamatan');
+            const kelurahanSelect = document.getElementById('kelurahan');
+
+            function updateKelurahan(selectedKecamatan, selectedKelurahan = null) {
+                kelurahanSelect.innerHTML = '<option value="" disabled selected>Pilih Kelurahan</option>';
+                if (selectedKecamatan && kelurahanDb[selectedKecamatan]) {
+                    kelurahanDb[selectedKecamatan].forEach(kel => {
+                        const option = document.createElement('option');
+                        option.value = kel;
+                        option.textContent = kel;
+                        if (selectedKelurahan && kel === selectedKelurahan) {
+                            option.selected = true;
+                        }
+                        kelurahanSelect.appendChild(option);
+                    });
+                }
+            }
+
+            kecamatanSelect.addEventListener('change', function () {
+                updateKelurahan(this.value);
+            });
+
+            const oldKecamatan = "{{ old('kecamatan') }}";
+            const oldKelurahan = "{{ old('kelurahan') }}";
+            if (oldKecamatan) {
+                updateKelurahan(oldKecamatan, oldKelurahan);
+            }
+        });
+
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);

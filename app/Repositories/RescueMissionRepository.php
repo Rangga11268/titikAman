@@ -109,5 +109,17 @@ class RescueMissionRepository
             ->orderByDesc('resolved_at')
             ->get();
     }
+
+    /**
+     * Get ALL missions (active & completed, all time), for history table.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllMissions()
+    {
+        return RescueMission::with(['sosRequest', 'sosRequest.user', 'volunteer'])
+            ->orderByRaw('COALESCE(resolved_at, assigned_at, created_at) DESC')
+            ->get();
+    }
 }
 

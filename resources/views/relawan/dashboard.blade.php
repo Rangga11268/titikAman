@@ -138,7 +138,6 @@
                     </div>
                     <div class="panel-body" id="sos-queue-container">
                         @forelse ($waitingSos as $sos)
-                            @php
                                 $priorityLabel = match($sos->priority_level) {
                                     'high'   => 'TINGGI',
                                     'medium' => 'SEDANG',
@@ -364,7 +363,7 @@
                                     <td class="td-regular">{{ $pendaftar->organisasi ?? '-' }}</td>
                                     <td class="td-time">{{ $pendaftar->created_at->format('d M Y, H:i') }}</td>
                                     <td style="text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
-                                        <button type="button" class="btn-green-link" onclick="openReviewModal({{ $pendaftar->user_id }}, '{{ addslashes($pendaftar->fullname) }}', '{{ addslashes($pendaftar->phone) }}', '{{ addslashes($pendaftar->keahlian ?? '-') }}', '{{ addslashes($pendaftar->organisasi ?? '-') }}', '{{ addslashes($pendaftar->kecamatan ?? '-') }}', '{{ addslashes($pendaftar->kelurahan ?? '-') }}')" style="padding: 4px 12px; font-size: 12px; border-radius: 4px; border: 1px solid #10b981; background: #ecfdf5; color: #047857; font-weight: 600; cursor: pointer;">
+                                        <button type="button" class="btn-green-link" onclick="openReviewModal({{ $pendaftar->user_id }}, '{{ addslashes($pendaftar->fullname) }}', '{{ addslashes($pendaftar->phone) }}', '{{ addslashes($pendaftar->keahlian ?? '-') }}', '{{ addslashes($pendaftar->organisasi ?? '-') }}', '{{ addslashes($pendaftar->kecamatan ?? '-') }}', '{{ addslashes($pendaftar->kelurahan ?? '-') }}', '{{ addslashes($pendaftar->document_path ?? '') }}')" style="padding: 4px 12px; font-size: 12px; border-radius: 4px; border: 1px solid #10b981; background: #ecfdf5; color: #047857; font-weight: 600; cursor: pointer;">
                                             Review
                                         </button>
                                     </td>
@@ -437,9 +436,14 @@
                 <div class="history-panel-header">
                     <div class="history-panel-header-left">
                         <i data-lucide="clipboard-list"></i>
-                        <span>Riwayat Misi Hari Ini</span>
+                        <span>Riwayat Misi</span>
                     </div>
-                    <span style="font-size: 11px; font-weight: 700; color: #031f41; cursor: pointer;">LIHAT SEMUA</span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <a href="{{ route('relawan.mission.export') }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #006a60; text-decoration: none; padding: 4px 10px; border: 1px solid #006a60; border-radius: 6px;">
+                            <i data-lucide="download" style="width: 14px; height: 14px;"></i>
+                            Export CSV
+                        </a>
+                    </div>
                 </div>
                 <div style="overflow-x: auto;">
                     <table class="history-table">
@@ -447,32 +451,44 @@
                             <tr>
                                 <th>Waktu Selesai</th>
                                 <th>Lokasi</th>
+                                <th>Relawan</th>
                                 <th>Jumlah Orang</th>
-                                <th>Kelompok Rentan</th>
                                 <th>Durasi</th>
                                 <th>Status</th>
+                                <th style="text-align: right;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($completedMissions as $mission)
                                 <tr>
-                                    <td class="td-time">{{ $mission->resolved_at->format('H:i') }} WIB</td>
+                                    <td class="td-time">{{ $mission->resolved_at ? $mission->resolved_at->format('d M H:i') : ($mission->assigned_at ? $mission->assigned_at->format('d M H:i') : '-') }}</td>
                                     <td class="td-location">
                                         {{ $mission->sosRequest->user->kelurahan ?? 'Lokasi' }},
                                         {{ $mission->sosRequest->user->kecamatan ?? 'Bekasi' }}
                                     </td>
+                                    <td class="td-regular">{{ $mission->volunteer->fullname ?? '-' }}</td>
                                     <td class="td-regular">{{ $mission->sosRequest->people_trapped }} Orang</td>
-                                    <td class="td-regular">{{ $mission->sosRequest->vulnerable_groups_count }} Orang</td>
                                     <td class="td-duration">
-                                        {{ (int) $mission->resolved_at->diffInMinutes($mission->created_at) }} Menit
+                                        @if($mission->resolved_at)
+                                            {{ (int) $mission->resolved_at->diffInMinutes($mission->created_at) }} Menit
+                                        @else
+                                            -
+                                        @endif
                                     </td>
                                     <td>
-                                        <span class="badge-terkonsepsi">TERKONSEPSI</span>
+                                        @if($mission->resolved_at)
+                                            <span class="badge-terkonsepsi">SELESAI</span>
+                                        @else
+                                            <span class="badge-terkonsepsi" style="background: #fef3c7; color: #d97706;">BERJALAN</span>
+                                        @endif
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <button type="button" class="btn-tinjau" style="padding: 4px 10px; font-size: 11px;" onclick="openMissionDetail({{ $mission->mission_id }})">Detail</button>
                                     </td>
                                 </tr>
                             @empty
                                 <tr class="empty-history-row">
-                                    <td colspan="6">Belum ada misi selesai hari ini. Terus semangat! 💪</td>
+                                    <td colspan="7">Belum ada riwayat misi.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -500,6 +516,16 @@
                 <p><strong>Keahlian:</strong> <span id="rev_skill"></span></p>
                 <p><strong>Organisasi:</strong> <span id="rev_org"></span></p>
                 <p><strong>Lokasi:</strong> <span id="rev_loc"></span></p>
+                <div id="rev_doc_wrapper" style="margin-top: 12px; display: none;">
+                    <strong>Dokumen KTP / Sertifikat:</strong>
+                    <div style="margin-top: 8px;">
+                        <img id="rev_doc_img" src="" alt="Dokumen Verifikasi" style="max-width: 100%; max-height: 200px; border-radius: 6px; border: 1px solid rgba(196,198,207,0.4); object-fit: contain; background: #f8f9fa; display: none;">
+                        <a id="rev_doc_link" href="#" target="_blank" class="btn-view-document" style="display: none; align-items: center; gap: 6px; padding: 8px 14px; background: #006a60; color: white; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600;">
+                            <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                            <span>Lihat Dokumen</span>
+                        </a>
+                    </div>
+                </div>
             </div>
             <div style="display: flex; gap: 12px; justify-content: flex-end;">
                 <form id="rejectForm" method="POST" style="margin: 0;">
@@ -533,8 +559,7 @@
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Pilih Anggota Tim:</label>
                     <select name="volunteer_id" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; outline: none;">
-                        <option value="">-- Pilih Anggota --</option>
-                        <option value="{{ auth()->id() }}">Saya Sendiri (Admin Relawan)</option>
+                        <option value="">-- Pilih Anggota Tim --</option>
                         @foreach($anggotaTim as $teamName => $members)
                             <optgroup label="{{ $teamName }}">
                                 @foreach($members as $member)
@@ -552,6 +577,78 @@
                     <button type="submit" style="padding: 10px 16px; border-radius: 6px; border: none; background: #006a60; color: white; font-weight: 600; cursor: pointer;">Tugaskan Misi</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Mission Detail Modal -->
+    <div id="missionDetailModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: 12px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                <h2 style="font-size: 16px; font-weight: 700; color: #031f41; display: flex; align-items: center; gap: 8px; margin: 0;">
+                    <i data-lucide="clipboard-list" style="width: 18px; height: 18px;"></i>
+                    Detail Misi <span id="md_mission_id" style="color: #6b7280; font-weight: 500;"></span>
+                </h2>
+                <button type="button" onclick="closeModal('missionDetailModal')" style="background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px;">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px; grid-column: span 2;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Pelapor</div>
+                    <div style="font-weight: 700; color: #031f41;" id="md_reporter"></div>
+                    <div style="font-size: 12px; color: #6b7280; margin-top: 2px;" id="md_reporter_phone"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px; grid-column: span 2;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Lokasi</div>
+                    <div style="font-weight: 700; color: #031f41;" id="md_location"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Jumlah Orang</div>
+                    <div style="font-weight: 700; color: #031f41;" id="md_people"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Kelompok Rentan</div>
+                    <div style="font-weight: 700; color: #031f41;" id="md_vulnerable"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Prioritas</div>
+                    <div style="font-weight: 700; color: #031f41;" id="md_priority"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">ID SOS</div>
+                    <div style="font-weight: 700; color: #031f41;" id="md_sos_id"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px; grid-column: span 2;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Deskripsi</div>
+                    <div style="font-size: 13px; color: #374151; line-height: 1.5;" id="md_description"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px; grid-column: span 2;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Relawan Ditugaskan</div>
+                    <div style="font-weight: 700; color: #031f41;" id="md_volunteer"></div>
+                    <div style="font-size: 12px; color: #6b7280; margin-top: 2px;" id="md_volunteer_phone"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Ditugaskan Pada</div>
+                    <div style="font-weight: 700; color: #031f41; font-size: 12px;" id="md_assigned"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Selesai Pada</div>
+                    <div style="font-weight: 700; color: #031f41; font-size: 12px;" id="md_resolved"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Durasi</div>
+                    <div style="font-weight: 700; color: #031f41;" id="md_duration"></div>
+                </div>
+                <div style="padding: 10px; background: #f9fafb; border-radius: 8px;">
+                    <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Status</div>
+                    <div style="font-weight: 700;" id="md_status"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+                <button type="button" onclick="closeModal('missionDetailModal')" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #374151; font-weight: 600; cursor: pointer; font-size: 13px;">Tutup</button>
+            </div>
         </div>
     </div>
 
@@ -581,6 +678,25 @@
             'people'   => (int) $s->people_trapped,
         ];
     })->values()->all();
+
+    // Missions history data for detail modal
+    $missionsJson = $completedMissions->map(fn($m) => [
+        'mission_id' => $m->mission_id,
+        'sos_id' => $m->sos_id,
+        'reporter' => $m->sosRequest?->user?->fullname ?? '-',
+        'reporter_phone' => $m->sosRequest?->user?->phone ?? '-',
+        'location' => ($m->sosRequest?->user?->kelurahan ?? '') . ', ' . ($m->sosRequest?->user?->kecamatan ?? ''),
+        'people_trapped' => $m->sosRequest?->people_trapped ?? 0,
+        'vulnerable' => $m->sosRequest?->vulnerable_groups_count ?? 0,
+        'priority' => $m->sosRequest?->priority_level ?? '-',
+        'description' => $m->sosRequest?->description ?? '-',
+        'volunteer' => $m->volunteer?->fullname ?? '-',
+        'volunteer_phone' => $m->volunteer?->phone ?? '-',
+        'assigned_at' => $m->assigned_at ? $m->assigned_at->format('d M Y H:i') : '-',
+        'resolved_at' => $m->resolved_at ? $m->resolved_at->format('d M Y H:i') : '-',
+        'duration' => $m->resolved_at ? (int) $m->resolved_at->diffInMinutes($m->created_at) . ' Menit' : '-',
+        'status' => $m->resolved_at ? 'Selesai' : 'Berjalan',
+    ])->values();
 @endphp
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -673,7 +789,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Modal Logic
-window.openReviewModal = function(id, name, phone, skill, org, kec, kel) {
+window.openReviewModal = function(id, name, phone, skill, org, kec, kel, docPath) {
     document.getElementById('rev_name').textContent = name;
     document.getElementById('rev_phone').textContent = phone;
     document.getElementById('rev_skill').textContent = skill;
@@ -683,6 +799,28 @@ window.openReviewModal = function(id, name, phone, skill, org, kec, kel) {
     document.getElementById('approveForm').action = '/relawan/member/' + id + '/approve';
     document.getElementById('rejectForm').action = '/relawan/member/' + id + '/reject';
     
+    var docWrapper = document.getElementById('rev_doc_wrapper');
+    var docImg = document.getElementById('rev_doc_img');
+    var docLink = document.getElementById('rev_doc_link');
+    
+    if (docPath) {
+        docWrapper.style.display = 'block';
+        var fileUrl = '/storage/' + docPath;
+        var isImage = docPath.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+        
+        if (isImage) {
+            docImg.src = fileUrl;
+            docImg.style.display = 'block';
+            docLink.style.display = 'none';
+        } else {
+            docImg.style.display = 'none';
+            docLink.href = fileUrl;
+            docLink.style.display = 'inline-flex';
+        }
+    } else {
+        docWrapper.style.display = 'none';
+    }
+    
     window.openModal('reviewModal');
 };
 
@@ -690,5 +828,31 @@ window.closeReviewModal = function() {
     window.closeModal('reviewModal');
 };
 
+// Mission Detail Data
+const missionsData = @json($missionsJson);
+
+window.openMissionDetail = function(id) {
+    const mission = missionsData.find(m => m.mission_id === id);
+    if (!mission) return;
+
+    document.getElementById('md_mission_id').textContent = '#' + mission.mission_id;
+    document.getElementById('md_sos_id').textContent = '#' + mission.sos_id;
+    document.getElementById('md_reporter').textContent = mission.reporter;
+    document.getElementById('md_reporter_phone').textContent = mission.reporter_phone;
+    document.getElementById('md_location').textContent = mission.location;
+    document.getElementById('md_people').textContent = mission.people_trapped + ' Orang';
+    document.getElementById('md_vulnerable').textContent = mission.vulnerable + ' Orang';
+    document.getElementById('md_priority').textContent = mission.priority.charAt(0).toUpperCase() + mission.priority.slice(1);
+    document.getElementById('md_description').textContent = mission.description;
+    document.getElementById('md_volunteer').textContent = mission.volunteer;
+    document.getElementById('md_volunteer_phone').textContent = mission.volunteer_phone;
+    document.getElementById('md_assigned').textContent = mission.assigned_at;
+    document.getElementById('md_resolved').textContent = mission.resolved_at;
+    document.getElementById('md_duration').textContent = mission.duration;
+    document.getElementById('md_status').textContent = mission.status;
+    document.getElementById('md_status').style.color = mission.status === 'Selesai' ? '#006a60' : '#d97706';
+
+    window.openModal('missionDetailModal');
+};
 </script>
 @endsection
