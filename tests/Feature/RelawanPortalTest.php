@@ -25,7 +25,7 @@ class RelawanPortalTest extends TestCase
             'email' => 'relawan@example.com',
             'phone' => '081299999999',
             'password' => bcrypt('password'),
-            'role' => 'Relawan',
+            'role' => 'Admin_Relawan',
         ]);
 
         // Create citizen

@@ -31,7 +31,7 @@ class RelawanController extends Controller
     public function dashboard()
     {
         // Only Admin Relawan can access this dashboard
-        if (auth()->user()->email !== 'relawan@example.com') {
+        if (auth()->user()->role !== 'Admin_Relawan') {
             return redirect()->route('dashboard');
         }
 

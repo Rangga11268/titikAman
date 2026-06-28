@@ -29,9 +29,9 @@ class SharedAccessTest extends TestCase
         $this->relawanUser = User::create([
             'fullname' => 'Admin Relawan',
             'email' => 'relawan@example.com',
-            'phone' => '081200000002',
+            'phone' => '081299999999',
             'password' => bcrypt('password'),
-            'role' => 'Relawan',
+            'role' => 'Admin_Relawan',
         ]);
 
         $this->pengelolaUser = User::create([

@@ -93,8 +93,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::put('/warga/sos/update-location', [WargaController::class, 'updateSosLocation'])->name('warga.sos.update-location');
     });
 
-    // Relawan Portal Routes
-    Route::middleware('role:Relawan')->group(function () {
+    // Relawan Portal Routes (Admin Relawan only)
+    Route::middleware('role:Admin_Relawan')->group(function () {
         Route::get('/relawan/dashboard', [RelawanController::class, 'dashboard'])->name('relawan.dashboard');
         Route::get('/relawan/sos-data', [RelawanController::class, 'getWaitingSosData'])->name('relawan.sos.data');
         Route::post('/relawan/mission/accept', [RelawanController::class, 'acceptMission'])->name('relawan.mission.accept');

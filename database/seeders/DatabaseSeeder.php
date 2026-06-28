@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
                 'fullname' => 'Admin Relawan',
                 'phone' => '081299999999',
                 'password' => Hash::make('password'),
-                'role' => 'Relawan',
+                'role' => 'Admin_Relawan',
                 'kecamatan' => 'Bekasi Selatan',
                 'kelurahan' => 'Jaka Setia',
             ]

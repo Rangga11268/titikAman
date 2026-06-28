@@ -48,7 +48,7 @@
             </a>
         @endif
 
-        @if(auth()->user()->role == 'Relawan')
+        @if(auth()->user()->role == 'Admin_Relawan')
             <a href="{{ route('relawan.dashboard') }}" class="nav-item {{ request()->routeIs('relawan.dashboard') ? 'active' : '' }}">
                 <i data-lucide="shield"></i>
                 <span>Portal Relawan</span>
