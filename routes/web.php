@@ -42,6 +42,7 @@ Route::middleware('guest')->group(function () {
     // Relawan Registration
     Route::get('/register/relawan', [AuthController::class, 'showRegisterStep2Relawan'])->name('register.step2.relawan');
     Route::post('/register/relawan', [AuthController::class, 'registerRelawan'])->name('register.step2.relawan.submit');
+    Route::get('/register/relawan/success', [AuthController::class, 'showRegisterRelawanSuccess'])->name('register.success.relawan');
     
     // Admin Registration
     // Removed per user request

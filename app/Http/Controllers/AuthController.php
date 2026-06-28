@@ -157,10 +157,18 @@ class AuthController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Akun Anda sedang menunggu verifikasi oleh Admin BPBD.');
+        return redirect()->route('register.success.relawan')->with('success', 'Pendaftaran sebagai anggota Relawan/SAR berhasil!');
     }
 
 
+
+    /**
+     * Tampilkan Halaman Sukses Registrasi Relawan.
+     */
+    public function showRegisterRelawanSuccess()
+    {
+        return view('auth.register-relawan-success');
+    }
 
     /**
      * Tampilkan Form Registrasi Pengelola Posko.

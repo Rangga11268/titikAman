@@ -57,6 +57,9 @@ class RelawanController extends Controller
             $avgResponseMinutes = (int) round($totalMinutes / $misiSelesaiCount);
         }
 
+        // Pendaftar Tim (Anggota Relawan yang baru mendaftar)
+        $pendaftarTim = \App\Models\User::where('role', 'Relawan')->where('status', 'pending')->orderBy('created_at', 'desc')->get();
+
         return view('relawan.dashboard', compact(
             'activeMission',
             'waitingSos',
@@ -65,7 +68,8 @@ class RelawanController extends Controller
             'misiAktifku',
             'misiSelesaiCount',
             'completedMissions',
-            'avgResponseMinutes'
+            'avgResponseMinutes',
+            'pendaftarTim'
         ));
     }
 

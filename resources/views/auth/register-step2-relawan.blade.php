@@ -298,15 +298,11 @@
                             <span>Sebelumnya</span>
                         </a>
                         <button type="submit" class="btn-submit-teal">
-                            <span>Simpan & Lanjutkan</span>
+                            <span>Daftar Tim Relawan</span>
                             <i data-lucide="arrow-right"></i>
                         </button>
                     </div>
                 </form>
-
-                <div class="auth-footer-text">
-                    Sudah punya akun? <a href="{{ route('login') }}">Masuk di sini</a>
-                </div>
 
                 <!-- Bottom disclaimer -->
                 <div class="bottom-disclaimer">

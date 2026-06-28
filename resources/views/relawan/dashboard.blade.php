@@ -317,6 +317,45 @@
                 </div>
             </div>
 
+            {{-- ============ ROW 2.5: PENDAFTAR TIM ============ --}}
+            <div class="history-panel" style="margin-top: 24px; margin-bottom: 24px;">
+                <div class="history-panel-header">
+                    <div class="history-panel-header-left">
+                        <i data-lucide="users"></i>
+                        <span>Pendaftar Anggota Tim Baru</span>
+                    </div>
+                    <span style="font-size: 11px; font-weight: 700; color: #031f41; cursor: pointer;">KELOLA ANGGOTA</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Lengkap</th>
+                                <th>No. HP</th>
+                                <th>Keahlian</th>
+                                <th>Organisasi</th>
+                                <th>Waktu Mendaftar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($pendaftarTim as $pendaftar)
+                                <tr>
+                                    <td class="td-regular" style="font-weight: 600; color: #111827;">{{ $pendaftar->fullname }}</td>
+                                    <td class="td-regular">{{ $pendaftar->phone }}</td>
+                                    <td class="td-regular">{{ $pendaftar->keahlian ?? '-' }}</td>
+                                    <td class="td-regular">{{ $pendaftar->organisasi ?? '-' }}</td>
+                                    <td class="td-time">{{ $pendaftar->created_at->format('d M Y, H:i') }}</td>
+                                </tr>
+                            @empty
+                                <tr class="empty-history-row">
+                                    <td colspan="5">Belum ada anggota baru yang mendaftar hari ini.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             {{-- ============ ROW 3: RIWAYAT MISI TABLE ============ --}}
             <div class="history-panel">
                 <div class="history-panel-header">
