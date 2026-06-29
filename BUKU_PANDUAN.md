@@ -7,74 +7,120 @@
 
 ## 📌 Daftar Isi
 1. [Apa Itu TitikAman?](#-1-apa-itu-titikaman)
-2. [Struktur Tim & Peran](#-2-struktur-tim--peran)
-3. [Panduan Instalasi Lengkap](#-3-panduan-instalasi-lengkap)
-4. [Menjalankan Aplikasi](#-4-menjalankan-aplikasi)
-5. [Alur Sistem & Cara Pakai](#-5-alur-sistem--cara-pakai)
-6. [Fitur per Role](#-6-fitur-per-role)
-7. [Database & Struktur Data](#-7-database--struktur-data)
-8. [FAQ & Troubleshooting](#-8-faq--troubleshooting)
+2. [Tech Stack](#-2-tech-stack)
+3. [Struktur Tim & Peran](#-3-struktur-tim--peran)
+4. [Panduan Instalasi Lengkap](#-4-panduan-instalasi-lengkap)
+5. [Menjalankan Aplikasi](#-5-menjalankan-aplikasi)
+6. [Alur Sistem & Cara Pakai](#-6-alur-sistem--cara-pakai)
+7. [Fitur per Role](#-7-fitur-per-role)
+8. [Database & Struktur Data](#-8-database--struktur-data)
+9. [FAQ & Troubleshooting](#-9-faq--troubleshooting)
 
 ---
 
 ## 🏠 1. Apa Itu TitikAman?
 
-TitikAman adalah **sistem informasi kebencanaan berbasis web** yang dirancang untuk membantu proses mitigasi, respons, dan evakuasi bencana banjir di wilayah **Kota Bekasi dan sekitarnya**.
+TitikAman adalah **sistem informasi kebencanaan berbasis web** yang dirancang untuk membantu proses mitigasi, respons, dan evakuasi bencana banjir di wilayah **Kota Bekasi dan sekitarnya**. Platform ini menghubungkan warga terdampak, relawan kebencanaan, pengelola posko pengungsian, dan aparatur dinas (BPBD) dalam satu sistem terpadu.
 
 ### ✨ Fitur Utama
 | Fitur | Manfaat |
 |-------|---------|
-| 🚨 **SOS Darurat** | Warga terjebak banjir bisa mengirim sinyal evakuasi dengan lokasi GPS |
-| 🗺️ **Peta Genangan** | Visualisasi titik banjir berdasarkan laporan partisipatif dari warga |
-| 📊 **Dashboard TMA** | Data tinggi muka air pintu air (Sungai Cikeas, Bekasi, Cakung) |
+| 🚨 **SOS Darurat** | Warga terjebak banjir bisa mengirim sinyal evakuasi dengan lokasi GPS otomatis |
+| 🗺️ **Peta Genangan** | Visualisasi titik banjir berdasarkan laporan partisipatif dari warga (crowdsourcing) |
+| 📊 **Dashboard TMA** | Data tinggi muka air pintu air (Sungai Cikeas, Bekasi, Cakung) real-time |
 | 🏕️ **Manajemen Posko** | Update kapasitas pengungsi, kebutuhan logistik, dan donasi |
-| 🆘 **Misi Penyelamatan** | Admin Relawan menugaskan tim evakuasi ke lokasi SOS |
-| 📱 **Integrasi WhatsApp** | Koordinasi tim dan pengiriman instruksi evakuasi via WhatsApp |
+| 🆘 **Misi Penyelamatan** | Admin Relawan menugaskan tim evakuasi ke lokasi SOS dengan koordinasi WhatsApp |
+| 📱 **Integrasi WhatsApp** | Koordinasi tim dan pengiriman instruksi evakuasi via WhatsApp group |
+
+### 🎯 Tujuan
+- Mempercepat respons evakuasi korban banjir
+- Menyediakan data tinggi muka air secara real-time
+- Memudahkan koordinasi antara warga, relawan, dan BPBD
+- Meningkatkan transparansi distribusi bantuan logistik
 
 ---
 
-## 👥 2. Struktur Tim & Peran
+## 🧰 2. Tech Stack
+
+Dalam mengembangkan website TitikAman, kami menggunakan beberapa tech stack diantaranya adalah:
+
+| Kategori | Teknologi |
+|---|---|
+| **Framework** | Laravel 12, Bootstrap 5 |
+| **Database** | MySQL / MariaDB / SQLite |
+| **Bahasa Pemrograman** | PHP 8.3, CSS, JavaScript |
+| **Text Editor** | Visual Studio Code |
+| **Server** | Apache / Nginx (Production), `php artisan serve` (Local Development) |
+| **Real-time** | Laravel Reverb (WebSocket) |
+| **Peta Interaktif** | Leaflet.js + OpenStreetMap / CartoDB |
+| **Ikon** | Lucide Icons |
+| **Font** | Inter, Plus Jakarta Sans |
+| **Webhook** | SMS Gateway (n8n integration) |
+
+---
+
+## 👥 3. Struktur Tim & Peran
 
 Sistem ini memiliki **4 aktor utama** yang saling terintegrasi:
 
 ### 1️⃣ Warga (Masyarakat / Korban / Donatur)
+
+Warga adalah pengguna yang mendaftar sebagai masyarakat umum. Mereka bisa melaporkan banjir, mengirim sinyal SOS, dan berdonasi.
+
 | Aktivitas | Cara |
 |-----------|------|
-| **Daftar Akun** | Register pilih peran "Warga" |
-| **Lapor Banjir** | Buka menu Form Laporan → isi tinggi air + foto + lokasi |
-| **Kirim SOS** | Buka menu SOS Darurat → isi jumlah korban + kelompok rentan |
-| **Donasi** | Buka Hub Donasi → pilih posko & barang → upload bukti kirim |
-| **Lihat Peta** | Dashboard atau Peta Evakuasi → klik marker untuk detail |
+| **Daftar Akun** | Buka halaman register → pilih peran "Warga" → isi data diri → submit |
+| **Login** | Masuk dengan email & password yang sudah didaftarkan |
+| **Lapor Banjir** | Dashboard → menu "Lapor Banjir" → isi tinggi air (slider) → upload foto → pilih akses jalan & listrik → submit |
+| **Kirim SOS** | Dashboard → menu "SOS Darurat" → deteksi GPS otomatis → isi jumlah korban & kelompok rentan → submit |
+| **Donasi** | Halaman Posko → form donasi → pilih posko & barang kebutuhan → isi jumlah → upload bukti kirim |
+| **Lihat Peta** | Dashboard atau menu "Peta Evakuasi" → klik marker untuk detail informasi |
+| **Cek TMA** | Menu "Data Pintu Air" → lihat status tinggi muka air real-time |
 
 ### 2️⃣ Admin Relawan (Komandan Tim / Dispatcher)
+
+Admin Relawan adalah koordinator tim evakuasi. Mereka bisa melihat antrian SOS, menugaskan misi ke tim, dan mengelola anggota.
+
 | Aktivitas | Cara |
 |-----------|------|
 | **Login** | Login sebagai `relawan@example.com` / `password` |
 | **Lihat Antrian SOS** | Dashboard → panel kiri "Antrian SOS Terbaru" |
-| **Tugaskan Tim** | Klik **TUGASKAN KE TIM** → pilih tim → kirim WA |
-| **Review Anggota** | Card "Pendaftar Baru" → Review → Terima/Tolak |
-| **Export Riwayat** | Tabel "Riwayat Misi" → Export CSV |
+| **Tugaskan Tim** | Klik **TUGASKAN KE TIM** pada kartu SOS → pilih tim dari dropdown → klik Tugaskan Misi |
+| **Kirim WA Instruksi** | Setelah tugaskan, banner muncul → klik **WA ke Relawan** → otomatis redirect ke WhatsApp dengan pesan pre-filled berisi info SOS + Maps |
+| **Review Anggota Baru** | Card "Pendaftar Baru" → klik **Review** → lihat pratinjau dokumen KTP → Terima atau Tolak |
+| **Kirim WA Grup ke Anggota** | Setelah Terima anggota → klik **Kirim WA** → anggota otomatis dapat link grup tim |
+| **Kelola Anggota Tim** | Card tim (per kecamatan) → klik → modal daftar anggota → Edit (ubah keahlian/organisasi/tim) atau Hapus |
+| **Selesaikan Misi** | Kartu misi aktif → klik **SELESAI** → konfirmasi → status berubah completed |
+| **Lihat Riwayat Misi** | Tabel "Riwayat Misi" → 10 data terbaru → klik **Detail** untuk info lengkap → **Export CSV** untuk download |
+| **Monitor Peta** | Peta operasional → marker SOS (warna prioritas) → fullscreen (tombol ⛶) → refresh (tombol 🔁) |
 
 ### 3️⃣ Pengelola Posko (Petugas Shelter)
+
+Pengelola Posko adalah petugas yang mengelola posko pengungsian, kapasitas, dan logistik.
+
 | Aktivitas | Cara |
 |-----------|------|
 | **Login** | Login sebagai `pengelola@example.com` / `password` |
-| **Update Kapasitas** | Dashboard → Update jumlah pengungsi + status posko |
-| **Tambah Kebutuhan** | Tambah barang logistik yang dibutuhkan |
-| **Verifikasi Donasi** | Cek donasi masuk → verifikasi fisik → set delivered |
+| **Update Kapasitas** | Dashboard → ubah jumlah pengungsi → ubah status posko (Aktif/Penuh/Tutup) |
+| **Tambah Kebutuhan** | Klik **Tambah Kebutuhan** → isi nama barang, jumlah, urgensi → submit |
+| **Verifikasi Donasi** | Cek daftar donasi masuk → klik **Verifikasi** → cek fisik barang → set status "delivered" |
+| **Edit/Hapus Kebutuhan** | Klik ikon pensil untuk edit → ikon sampah untuk hapus |
 
 ### 4️⃣ Admin BPBD (Super User)
+
+Admin BPBD adalah administrator tertinggi yang memverifikasi laporan banjir, mengelola TMA, dan menyetujui akun pengguna baru.
+
 | Aktivitas | Cara |
 |-----------|------|
 | **Login** | Login sebagai `admin@example.com` / `password` |
-| **Verifikasi Laporan** | Dashboard admin → Verifikasi/Tolak laporan banjir |
-| **Set Surut** | Tandai laporan yang sudah surut (water_height = 0) |
-| **Update TMA** | Kelola TMA → input tinggi air baru |
-| **Verifikasi Pengguna** | /admin/verifikasi-pengguna → Setujui/Tolak akun baru |
+| **Verifikasi Laporan Banjir** | Dashboard admin → lihat laporan pending + foto → klik **Verifikasi** (muncul di peta) atau **Tolak** |
+| **Set Surut** | Klik **Set Surut** pada laporan yang sudah diverifikasi → tinggi air direset ke 0 |
+| **Update TMA** | Menu "Kelola TMA" → pilih pintu air → input tinggi air (cm) → sistem otomatis hitung status bahaya |
+| **Verifikasi Pengguna** | Menu "Verifikasi Pengguna" → lihat data lengkap + dokumen → **Setujui** atau **Tolak** akun baru |
 
 ---
 
-## 💻 3. Panduan Instalasi Lengkap
+## 💻 4. Panduan Instalasi Lengkap
 
 ### 📋 Spesifikasi Minimal
 | Komponen | Versi |
@@ -85,54 +131,118 @@ Sistem ini memiliki **4 aktor utama** yang saling terintegrasi:
 | MySQL / MariaDB | 8.0+ / 10.5+ |
 | Web Server | Apache / Nginx |
 
+### 🔧 Persiapan Awal
+Sebelum memulai instalasi, pastikan Anda sudah menginstall:
+1. **PHP** (>= 8.2) — [Download PHP](https://www.php.net/downloads)
+2. **Composer** — [Download Composer](https://getcomposer.org/download/)
+3. **Node.js** (>= 18) — [Download Node.js](https://nodejs.org/)
+4. **Database** — MySQL/MariaDB atau SQLite
+
 ### 🚀 Langkah Instalasi
 
+#### Langkah 1: Clone Repositori
 ```bash
-# 1. Clone repositori
 git clone https://github.com/Rangga11268/titikAman.git
 cd titikAman
+```
 
-# 2. Install dependencies PHP
+#### Langkah 2: Install Dependencies PHP
+```bash
 composer install
+```
+Proses ini akan mengunduh semua library PHP yang dibutuhkan (Laravel, Leaflet, dll).
 
-# 3. Install dependencies Node.js
+#### Langkah 3: Install Dependencies Node.js
+```bash
 npm install
+```
 
-# 4. Copy file environment
+#### Langkah 4: Copy File Environment
+```bash
 copy .env.example .env
+```
+> **Untuk pengguna Linux/Mac:** gunakan `cp .env.example .env`
 
-# 5. Generate key aplikasi
+#### Langkah 5: Generate Key Aplikasi
+```bash
 php artisan key:generate
+```
 
-# 6. Setup database (pilih salah satu)
+#### Langkah 6: Setup Database
 
-## Opsi A: SQLite (tanpa install database)
-## Buka file .env, ubah:
+**Opsi A: SQLite (Mudah, tanpa install database)**
+- Buka file `.env` dan ubah:
+```
 DB_CONNECTION=sqlite
+```
+- Hapus atau komentari baris `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
+- File database akan otomatis dibuat di `database/database.sqlite`
 
-## Opsi B: MySQL
-## Buka file .env, sesuaikan:
+**Opsi B: MySQL (Disarankan untuk produksi)**
+- Buat database baru (contoh: `db_titik_aman`)
+- Buka file `.env` dan sesuaikan:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
 DB_DATABASE=db_titik_aman
 DB_USERNAME=root
 DB_PASSWORD=
-
-# 7. Buat database (MySQL saja)
-php artisan db:create
-
-# 8. Jalankan migrasi
-php artisan migrate
-
-# 9. Isi data contoh
-php artisan db:seed
-
-# 10. Setup storage link (untuk upload file)
-php artisan storage:link
-
-# 11. Jalankan server development
-php artisan serve
 ```
 
-Buka browser: **http://localhost:8000**
+#### Langkah 7: Setup Reverb (WebSocket)
+Buka file `.env` dan sesuaikan konfigurasi Reverb:
+```
+BROADCAST_CONNECTION=reverb
+REVERB_APP_ID=302023
+REVERB_APP_KEY=g38qjq4htihjyn8qiswa
+REVERB_APP_SECRET=rahasia
+REVERB_HOST="localhost"
+REVERB_PORT=8080
+REVERB_SCHEME=http
+```
+
+#### Langkah 8: Jalankan Migrasi
+```bash
+php artisan migrate
+```
+Perintah ini akan membuat semua tabel di database.
+
+#### Langkah 9: Isi Data Contoh (Seeder)
+```bash
+php artisan db:seed
+```
+Perintah ini akan mengisi database dengan:
+- 15 akun demo (4 role berbeda + anggota tim)
+- 3 posko pengungsian
+- 5 kebutuhan logistik
+- 2 pintu air
+- 2 laporan banjir
+- 2 SOS request
+- 1 misi penyelamatan
+
+#### Langkah 10: Setup Storage Link
+```bash
+php artisan storage:link
+```
+Perintah ini membuat link dari `public/storage` ke `storage/app/public` agar file upload bisa diakses.
+
+#### Langkah 11: Jalankan Server
+```bash
+php artisan serve
+```
+Buka browser dan akses: **http://localhost:8000**
+
+#### Langkah 12: Jalankan Reverb (Untuk fitur real-time)
+Buka terminal baru:
+```bash
+php artisan reverb:start
+```
+
+### ✅ Verifikasi Instalasi
+1. Buka `http://localhost:8000` — landing page TitikAman muncul
+2. Login dengan `admin@example.com` / `password` — dashboard admin terbuka
+3. Cek menu "Verifikasi Pengguna" → data terisi
 
 ### 🔄 Perintah Penting Setelah Pull / Update
 ```bash
@@ -140,7 +250,6 @@ git pull origin main
 composer install
 php artisan migrate
 php artisan db:seed
-npm run build
 ```
 
 ### 🧪 Menjalankan Test Suite
@@ -151,11 +260,19 @@ Total: **59 test cases** (Unit + Feature) — mencakup autentikasi, admin portal
 
 ---
 
-## ▶️ 4. Menjalankan Aplikasi
+## ▶️ 5. Menjalankan Aplikasi
 
 ### Development Mode
+Buka **dua terminal** secara bersamaan:
+
+**Terminal 1 — Web Server:**
 ```bash
 php artisan serve
+```
+
+**Terminal 2 — Reverb (WebSocket untuk real-time):**
+```bash
+php artisan reverb:start
 ```
 
 ### Production Mode
@@ -167,171 +284,348 @@ npm run build
 php artisan serve --host=0.0.0.0 --port=8000
 ```
 
+### Akses Aplikasi
+| URL | Keterangan |
+|-----|------------|
+| `http://localhost:8000` | Landing page / Halaman utama |
+| `http://localhost:8000/login` | Halaman login |
+| `http://localhost:8000/register` | Halaman registrasi (pilih role) |
+
 ---
 
-## 🔄 5. Alur Sistem & Cara Pakai
+## 🔄 6. Alur Sistem & Cara Pakai
 
 ### 🔁 Alur Utama End-to-End
 ```
 Registrasi → Login → Dashboard → Aktivitas Sesuai Role → Logout
 ```
 
+---
+
 ### 🟢 Alur Warga
+
+#### 1. Registrasi & Login
 ```
-Register Warga → Login (auto) → Dashboard
-    ├── Laporkan Banjir (form wizard)
-    │   ├── Isi tinggi air (slider)
-    │   ├── Upload foto
-    │   ├── Pilih status akses jalan & listrik
-    │   └── Submit → status pending
-    │
-    ├── Kirim SOS Darurat
-    │   ├── Deteksi GPS otomatis
-    │   ├── Isi jumlah korban + kelompok rentan
-    │   └── Submit → masuk antrian Admin Relawan
-    │
-    ├── Donasi Logistik
-    │   ├── Pilih posko & barang
-    │   ├── Isi jumlah (maks = sisa kebutuhan)
-    │   ├── Upload foto bukti kirim
-    │   └── Submit → tunggu verifikasi pengelola
-    │
-    └── Lihat Dashboard
-        ├── Statistik banjir & SOS
-        ├── Berita laporan banjir (klik untuk detail)
-        └── Log aktivitas terbaru
+Buka /register → Pilih "Warga" → Isi Nama, Email, No HP, Password → Submit
+→ Redirect ke /login → Login dengan email & password → Masuk Dashboard Warga
 ```
 
-### 🔵 Alur Admin Relawan
+#### 2. Melaporkan Banjir
 ```
-Login (relawan@example.com / password) → Dashboard Mission Control
-    ├── Monitor Antrian SOS (panel kiri)
-    │   ├── SOS baru (status waiting) → tombol "TUGASKAN KE TIM"
-    │   ├── SOS butuh backup (status assigned) → tombol "KIRIM BANTUAN TIM"
-    │
-    ├── Tugaskan Misi
-    │   ├── Pilih tim dari dropdown → Tugaskan Misi
-    │   ├── Banner muncul dengan 4 tombol:
-    │   │   ├── WA ke Relawan (kirim instruksi ke lead tim)
-    │   │   ├── Share Grup [Tim] (bagikan ke grup WA tim)
-    │   │   ├── Minta Bantuan (grup gabungan)
-    │   │   └── Buka Google Maps
-    │   └── WA berisi: info SOS + Maps + prioritas
-    │
-    ├── Review Anggota Baru
-    │   ├── Card "Pendaftar Baru" → klik → Review
-    │   ├── Lihat pratinjau dokumen KTP
-    │   └── Terima → otomatis kirim WA link grup ke anggota
-    │
-    ├── Kelola Anggota Tim
-    │   ├── Card tim (Jatiasih, Bekasi Timur, dll.)
-    │   ├── Klik → modal daftar anggota (nama + no HP)
-    │   ├── Edit anggota (ubah keahlian, organisasi, pindah tim)
-    │   └── Hapus anggota
-    │
-    ├── Selesaikan Misi
-    │   ├── Kartu misi aktif → klik SELESAI
-    │   ├── Konfirmasi → status jadi completed
-    │   └── Masuk ke Riwayat Misi
-    │
-    ├── Riwayat Misi
-    │   ├── Tabel semua misi (10 terbaru)
-    │   ├── Detail (klik tombol Detail)
-    │   ├── WA ke relawan (langsung dari tabel)
-    │   └── Export CSV
-    │
-    ├── Peta Operasional
-    │   ├── Marker SOS (lingkaran warna prioritas)
-    │   ├── Marker misi aktif (pulsing)
-    │   ├── Fullscreen (klik tombol ⛶)
-    │   └── Refresh (klik tombol 🔁)
-    │
-    └── Statistik
-        ├── SOS Antri, Prioritas Tinggi
-        ├── Misi Aktif, Misi Selesai
-        └── Rata-rata respon (menit)
+Dashboard → Klik "Lapor Banjir" atau buka /warga/lapor
+  Langkah 1: Isi tinggi genangan (slider 0-200 cm)
+  Langkah 2: Upload foto bukti genangan
+  Langkah 3: Pilih status akses jalan & listrik
+  Langkah 4: Konfirmasi lokasi (deteksi otomatis)
+  Langkah 5: Submit → status "pending" menunggu verifikasi Admin BPBD
 ```
 
-### 🟡 Alur Pengelola Posko
+#### 3. Mengirim SOS Darurat
 ```
-Register → Login → Dashboard Kelola Posko
-    ├── Pilih Posko (jika baru daftar)
-    ├── Update Kapasitas (jumlah pengungsi, MCK, status)
-    ├── Tambah Kebutuhan Logistik (nama barang, jumlah, urgensi)
-    ├── Lihat Donasi Masuk → Verifikasi (delivered)
-    └── Status Posko: Aktif / Penuh / Tutup
-        └── Jika Tutup → posko hilang dari peta publik
-```
-
-### 🔴 Alur Admin BPBD
-```
-Login (admin@example.com / password) → Admin Dashboard
-    ├── Dashboard (statistik, peta, log, laporan pending)
-    ├── Verifikasi Laporan Banjir
-    │   ├── Lihat laporan pending + foto
-    │   ├── Verifikasi (muncul di peta) / Tolak / Set Surut
-    │
-    ├── Kelola TMA (Pintu Air)
-    │   ├── Input tinggi air (cm)
-    │   ├── Sistem otomatis hitung status bahaya
-    │   └── Notifikasi peringatan dini (DAS mapping + throttling)
-    │
-    └── Verifikasi Pengguna
-        ├── Filter: Relawan / Pengelola Posko
-        ├── Lihat data lengkap + dokumen
-        └── Setujui / Tolak
+Dashboard → Klik "SOS Darurat" atau buka /warga/sos
+  → Deteksi lokasi GPS otomatis (allow permission)
+  → Isi jumlah orang terjebak
+  → Pilih kelompok rentan (lansia, balita, ibu hamil, disabilitas)
+  → Sistem otomatis hitung prioritas (high/medium/low)
+  → Submit → masuk antrian Admin Relawan
+  → Status: waiting → assigned (ada tim ditugaskan) → completed (selamat)
 ```
 
-### 🟣 Alur Relawan (Anggota Tim)
+#### 4. Donasi Logistik
 ```
-Register → Upload KTP → Pending → Menunggu Review
-    ├── Admin Relawan Review → Terima
-    │   ├── WA masuk: link grup tim
-    │   └── Login → /status-verifikasi → approved
-    │       ├── Gabung grup WA tim
-    │       └── Lanjut ke Dashboard umum
-    │
-    └── Admin Relawan Review → Tolak
-        └── Login → /status-verifikasi → rejected
+Buka halaman /posko
+  → Lihat daftar posko aktif + peta sebaran
+  → Scroll ke bawah ke form "Kirim Bantuan Logistik"
+  → Pilih posko & barang kebutuhan dari dropdown
+  → Isi jumlah donasi (maks = sisa kebutuhan)
+  → Upload foto bukti pengiriman
+  → Submit → tunggu verifikasi pengelola posko
+```
+
+#### 5. Lihat Informasi
+```
+Dashboard (/dashboard):
+  → Statistik jumlah posko, pengungsi, laporan banjir
+  → Berita laporan banjir terbaru (klik untuk detail modal)
+  → Log aktivitas terkini
+
+Peta Evakuasi (/peta-evakuasi):
+  → Peta interaktif dengan marker posko & titik banjir
+  → Klik marker untuk info detail
+
+Data Pintu Air (/data-pintu-air):
+  → Tabel + peta lokasi pintu air
+  → Status TMA: Siaga 1 (Bahaya), Siaga 2, Siaga 3 (Waspada), Normal
+  → Export CSV
+
+Posko (/posko):
+  → Daftar posko dengan kapasitas, status, fasilitas
+  → Filter: Semua / Tersedia / Ada MCK
+  → Cari posko by nama (search)
+  → Pagination 5 per halaman
+  → Klik "Lihat Rute" → Google Maps arah
+  → Klik "Fokus Peta" → map zoom ke lokasi posko
 ```
 
 ---
 
-## 🎯 6. Fitur per Role
+### 🔵 Alur Admin Relawan
+
+#### 1. Login & Dashboard
+```
+Login sebagai relawan@example.com / password
+→ Dashboard Mission Control dengan layout 3 panel:
+  Kiri:   Antrian SOS Terbaru + Kartu misi aktif
+  Tengah: Peta operasional interaktif
+  Kanan:  Info tim + Riwayat misi
+```
+
+#### 2. Menangani SOS
+```
+Panel Kiri — Antrian SOS Terbaru:
+  → Lihat daftar SOS: nama pelapor, lokasi, jumlah korban, prioritas (high/medium/low)
+  → SOS baru (status waiting) → klik "TUGASKAN KE TIM"
+      → Modal pilih tim → dropdown tim per kecamatan
+      → Klik "Tugaskan Misi"
+      → Muncul banner hijau dengan tombol:
+          • WA ke Relawan: kirim instruksi ke nomor ketua tim
+          • Share Grup [Nama Tim]: bagikan ke grup WhatsApp tim
+          • Minta Bantuan: bagikan ke grup gabungan
+          • Buka Google Maps: navigasi ke lokasi SOS
+
+  → SOS butuh backup (status assigned, sudah ada tim) → klik "KIRIM BANTUAN TIM"
+      → Proses sama seperti tugaskan misi baru
+      → Tim kedua bertugas sebagai backup
+```
+
+#### 3. Menyelesaikan Misi
+```
+Panel Tengah — Misi Aktif:
+  → Kartu misi yang sedang berjalan
+  → Klik "SELESAI" → konfirmasi → misi selesai
+  → Masuk ke Riwayat Misi (tabel)
+```
+
+#### 4. Review Anggota Baru
+```
+Panel Kanan — Pendaftar Baru:
+  → Card "Pendaftar Baru" (jumlah pending)
+  → Isi: nama, email, no HP, keahlian, organisasi
+  → Lihat pratinjau dokumen KTP (klik link)
+  → Klik "Terima" → anggota approved
+      → Banner muncul: "Kirim WA" → otomatis buka WA dengan link grup tim
+  → Klik "Tolak" → anggota rejected
+```
+
+#### 5. Kelola Anggota Tim
+```
+Panel Kanan — Card Tim (per kecamatan):
+  → "Tim Bekasi Timur (Lead: Budi Santoso)" + jumlah anggota
+  → Klik card → modal daftar anggota
+      • Nama + No HP
+      • Tombol Edit: ubah keahlian, organisasi, kecamatan/kelurahan
+      • Tombol Pindah: pindahkan anggota ke tim lain
+      • Tombol Hapus: keluarkan dari tim
+```
+
+#### 6. Lihat Riwayat & Ekspor
+```
+Tabel "Riwayat Misi":
+  → 10 data terbaru (urutan waktu)
+  → Kolom: Tanggal, Lokasi, Korban, Prioritas, Tim/Lead, Status, Aksi
+  → Klik "Detail" → modal info lengkap misi
+  → Klik "WA" → kirim pesan ke relawan terkait
+  → Klik "Export CSV" → download semua riwayat
+```
+
+#### 7. Statistik
+```
+Kartu statistik di atas dashboard:
+  • SOS Antri: jumlah SOS yang belum ditugaskan
+  • Prioritas Tinggi: jumlah SOS prioritas high
+  • Misi Aktif: misi yang sedang berjalan
+  • Misi Selesai: total misi selesai hari ini
+  • Relawan Terdaftar: total anggota relawan terverifikasi
+  • Rata-rata Respon: waktu respon rata-rata (menit)
+```
+
+---
+
+### 🟡 Alur Pengelola Posko
+
+#### 1. Login & Dashboard
+```
+Login sebagai pengelola@example.com / password
+→ Dashboard Kelola Posko
+```
+
+#### 2. Update Kapasitas Posko
+```
+Dashboard:
+  → Lihat informasi posko (nama, kapasitas, pengungsi saat ini)
+  → Ubah jumlah pengungsi (input number)
+  → Ubah status posko:
+      • Aktif: normal, masih bisa menerima pengungsi
+      • Penuh: kapasitas maksimum tercapai
+      • Tutup: posko tidak beroperasi (hilang dari peta publik)
+  → Update fasilitas MCK (Ya/Tidak)
+```
+
+#### 3. Kelola Kebutuhan Logistik
+```
+Dashboard → Tombol "Tambah Kebutuhan":
+  → Nama barang (contoh: Makanan Siap Saji, Susu Formula, Selimut)
+  → Jumlah yang dibutuhkan
+  → Tingkat urgensi (High/Medium/Low)
+  → Submit → masuk ke daftar kebutuhan
+
+Tabel Kebutuhan:
+  → Edit: klik ikon pensil → ubah data
+  → Hapus: klik ikon sampah
+  → Status kebutuhan: terpenuhi/belum
+```
+
+#### 4. Verifikasi Donasi
+```
+Hub Logistik & Donasi (/pengelola/hub-logistik-donasi):
+  → Tabel donasi masuk dari warga
+  → Kolom: donatur, barang, jumlah, bukti foto, status
+  → Klik "Verifikasi" → cek fisik barang
+  → Set status "delivered" bila sudah sesuai
+```
+
+---
+
+### 🔴 Alur Admin BPBD
+
+#### 1. Login & Dashboard
+```
+Login sebagai admin@example.com / password
+→ Admin Dashboard dengan:
+  • Statistik: total laporan, posko, pengungsi, SOS
+  • Peta ringkas: marker laporan banjir terverifikasi
+  • Log aktivitas: riwayat tindakan admin
+  • Laporan pending: kartu laporan yang butuh verifikasi
+```
+
+#### 2. Verifikasi Laporan Banjir
+```
+Dashboard → Card laporan pending:
+  → Lihat detail: nama pelapor, tinggi air, foto, lokasi
+  → Klik "Verifikasi" → laporan muncul di peta publik
+  → Klik "Tolak" → laporan dihapus
+
+Menu /admin/dashboard:
+  → Tabel semua laporan (filter verified/pending/rejected)
+  → Klik "Set Surut" untuk laporan yang sudah surut (water_height = 0)
+```
+
+#### 3. Kelola TMA (Tinggi Muka Air)
+```
+Menu "Kelola TMA" (/admin/tma):
+  → Tabel pintu air: nama, tinggi air (cm), status bahaya, update terakhir
+  → Klik "Update" → modal input tinggi air baru (cm)
+  → Sistem otomatis menghitung status:
+      • 0-50 cm: Normal
+      • 51-100 cm: Siaga_3 (Waspada)
+      • 101-150 cm: Siaga_2 (Siaga)
+      • >150 cm: Siaga_1 (Bahaya)
+  → Notifikasi peringatan dini otomatis berdasarkan DAS (Daerah Aliran Sungai)
+```
+
+#### 4. Verifikasi Pengguna
+```
+Menu "Verifikasi Pengguna" (/admin/verifikasi-pengguna):
+  → Antrean pengajuan akun baru (role: Pengelola Posko)
+  → Klik nama → lihat data lengkap:
+      • Profil: nama, email, no HP
+      • Detail posko: nama, kapasitas, alamat, fasilitas
+      • Lokasi: latitude, longitude (tampilan peta)
+  → Klik "Setujui" → akun aktif
+  → Klik "Tolak" → akun ditolak
+```
+
+---
+
+### 🟣 Alur Relawan (Anggota Tim)
+
+#### 1. Registrasi & Review
+```
+Buka /register → Pilih "Relawan / SAR"
+  → Isi data diri: nama, NIK, no HP, email
+  → Pilih domisili: kecamatan & kelurahan
+  → Pilih keahlian: Water Rescue, Medis, Logistik
+  → Upload dokumen KTP/sertifikat
+  → Buat password
+  → Submit → status "pending"
+
+Menunggu Admin Relawan review:
+  → Jika diterima: dapat notifikasi WA link grup tim
+  → Jika ditolak: bisa login lihat status "ditolak"
+```
+
+#### 2. Cek Status Verifikasi
+```
+Login dengan akun yang sudah didaftarkan:
+  → Sistem deteksi status "pending/rejected"
+  → Redirect ke /status-verifikasi
+
+Jika status "pending":
+  → Ikon jam pasir
+  → Info: "Akun Anda sedang dalam proses verifikasi"
+  → Tombol: Hubungi Admin BPBD via WA
+  → Tombol: Keluar (logout)
+
+Jika status "approved":
+  → Ikon centang hijau
+  → Info: "Akun Anda telah diverifikasi"
+  → Tampilkan link grup WhatsApp tim
+  → Tombol: Masuk ke Dashboard
+
+Jika status "rejected":
+  → Ikon silang merah
+  → Info: "Pendaftaran ditolak"
+  → Tombol: Hubungi Admin BPBD via WA
+```
+
+---
+
+## 🎯 7. Fitur per Role
 
 ### ✅ Fitur Warga
 | Halaman | URL | Fungsi |
 |---------|-----|--------|
-| Dashboard | `/dashboard` | Statistik & berita banjir |
+| Dashboard | `/dashboard` | Statistik banjir, berita, log aktivitas |
 | Peta Evakuasi | `/peta-evakuasi` | Peta interaktif marker posko & banjir |
-| Form Laporan | `/warga/lapor` | Lapor genangan banjir (wizard multi-step) |
-| SOS Darurat | `/warga/sos` | Kirim sinyal evakuasi |
-| Hub Donasi | `/donasi` | Donasi logistik ke posko |
-| Data Pintu Air | `/data-pintu-air` | Status TMA real-time |
-| Posko | `/posko` | Daftar posko aktif + donasi |
+| Form Laporan Banjir | `/warga/lapor` | Lapor genangan banjir (form multi-step) |
+| SOS Darurat | `/warga/sos` | Kirim sinyal evakuasi darurat |
+| Donasi Logistik | `/posko` | Donasi logistik ke posko (scroll ke form) |
+| Data Pintu Air | `/data-pintu-air` | Status tinggi muka air real-time |
+| Daftar Posko | `/posko` | Cari & filter posko aktif, lihat peta |
 
 ### ✅ Fitur Admin Relawan
 | Halaman | URL | Fungsi |
 |---------|-----|--------|
-| Dashboard | `/relawan/dashboard` | Mission Control lengkap |
-| SOS Data (JSON) | `/relawan/sos-data` | Data SOS untuk AJAX refresh |
-| Export Misi | `/relawan/mission/export` | Download CSV riwayat misi |
+| Dashboard Mission Control | `/relawan/dashboard` | Panel utama: antrian SOS, peta, misi, tim |
+| Data SOS (AJAX) | `/relawan/sos-data` | Endpoint JSON untuk refresh peta |
+| Export Riwayat Misi | `/relawan/mission/export` | Download CSV riwayat misi |
 
 ### ✅ Fitur Pengelola Posko
 | Halaman | URL | Fungsi |
 |---------|-----|--------|
-| Dashboard | `/pengelola/dashboard` | Kelola kapasitas, logistik & donasi |
+| Dashboard Kelola Posko | `/pengelola/dashboard` | Update kapasitas, kebutuhan, donasi |
+| Hub Logistik & Donasi | `/pengelola/hub-logistik-donasi` | Verifikasi donasi masuk |
 
 ### ✅ Fitur Admin BPBD
 | Halaman | URL | Fungsi |
 |---------|-----|--------|
-| Dashboard | `/admin/dashboard` | Verifikasi laporan, peta, log |
+| Dashboard Admin | `/admin/dashboard` | Verifikasi laporan, peta, log aktivitas |
 | Kelola TMA | `/admin/tma` | Input tinggi air pintu air |
 | Verifikasi Pengguna | `/admin/verifikasi-pengguna` | Setujui/tolak akun baru |
 
 ---
 
-## 🗄️ 7. Database & Struktur Data
+## 🗄️ 8. Database & Struktur Data
 
 ### 🧩 8 Tabel Utama
 
@@ -356,61 +650,54 @@ users ──┬── flood_reports (1:N melaporkan)
 shelters ──┬── shelter_needs (1:N membutuhkan)
            └── shelter_needs ── donations (1:N terpenuhi)
 
-sos_requests ── rescue_missions (1:1 memicu)
+sos_requests ── rescue_missions (1:N memicu, banyak tim bisa ditugaskan ke 1 SOS)
 ```
 
 ### 👤 Role di Database
 | Role | Deskripsi |
 |------|-----------|
-| `Warga` | Masyarakat umum, punya akses ke dashboard umum |
-| `Admin_Relawan` | Dispatcher, punya akses ke Mission Control |
-| `Relawan` | Label data registrasi saja, tidak punya akses dashboard khusus |
+| `Warga` | Masyarakat umum, akses ke dashboard umum & laporan |
+| `Admin_Relawan` | Dispatcher/koordinator tim, akses Mission Control |
+| `Relawan` | Label data anggota tim, tidak punya akses dashboard khusus |
 | `Pengelola_Posko` | Manajemen posko dan logistik |
 | `Admin_BPBD` | Super user, verifikasi laporan dan TMA |
 
 ### 🎨 Status Workflow
 
-**SOS Request:** `waiting` → `assigned` → `completed`
-
-**Flood Report:** `pending` → `verified` / `rejected` (bisa Set Surut)
-
-**Shelter:** `active` → `full` → `closed` (closed = arsip abu-abu)
-
-**Donation:** `pending` → `accepted` → `delivered`
-
-**User Akun:** `pending` → `approved` / `rejected`
+```
+SOS Request:     waiting → assigned → completed
+Flood Report:    pending → verified / rejected (bisa Set Surut)
+Shelter:         active → full → closed
+Donation:        pending → accepted → delivered
+User Akun:       pending → approved / rejected
+```
 
 ---
 
-## ❓ 8. FAQ & Troubleshooting
+## ❓ 9. FAQ & Troubleshooting
 
-### Error umum & Solusi
+### ❌ Error Umum & Solusi
 
-❌ **Error: Target class [controller] does not exist**
-➡️ Jalankan `composer dump-autoload`
+| Error | Penyebab | Solusi |
+|-------|----------|--------|
+| `Target class [controller] does not exist` | Cache autoload | `composer dump-autoload` |
+| `Base table or view not found` | Migrasi belum jalan | `php artisan migrate` |
+| `No application encryption key` | Key belum digenerate | `php artisan key:generate` |
+| Foto/File tidak muncul | Storage link belum dibuat | `php artisan storage:link` |
+| `Call to a member function format() on null` | Data seeder belum jalan | `php artisan db:seed` |
+| Error WebSocket/Pusher | Reverb tidak jalan | `php artisan reverb:start` |
+| Halaman 403 | Role tidak punya akses | Login dengan akun yang sesuai |
+| Halaman 419 | Sesi habis | Login ulang |
+| Halaman 500 | Error server | Cek log: `storage/logs/laravel.log` |
 
-❌ **Error: Base table or view not found**
-➡️ Jalankan `php artisan migrate`
-
-❌ **Error: No application encryption key**
-➡️ Jalankan `php artisan key:generate`
-
-❌ **Foto/File tidak muncul**
-➡️ Jalankan `php artisan storage:link`
-
-❌ **Error: Pusher/WebSocket connection failed**
-➡️ Abaikan — tidak mempengaruhi fungsi aplikasi, hanya notifikasi real-time
-
-❌ **Halaman error 500 | Call to a member function format() on null**
-➡️ Pastikan data seeder sudah dijalankan: `php artisan db:seed`
-
-### Akun Testing
+### 👥 Akun Testing
 
 | Role | Email | Password |
 |------|-------|----------|
 | Admin BPBD | `admin@example.com` | `password` |
 | Admin Relawan | `relawan@example.com` | `password` |
 | Pengelola Posko | `pengelola@example.com` | `password` |
+| Warga | `warga@example.com` | `password` |
 | Lead Tim Bekasi Timur | `lead.bekasitimur@example.com` | `password` |
 | Lead Tim Jatiasih | `lead.jatiasih@example.com` | `password` |
 | Lead Tim Rawalumbu | `lead.rawalumbu@example.com` | `password` |
@@ -428,6 +715,15 @@ php artisan migrate:fresh --seed
 php artisan route:list
 ```
 
+**Lihat log error terbaru:**
+```bash
+# Windows (PowerShell)
+Get-Content storage/logs/laravel.log -Tail 20
+
+# Linux/Mac
+tail -20 storage/logs/laravel.log
+```
+
 **Clear cache:**
 ```bash
 php artisan view:clear
@@ -435,9 +731,15 @@ php artisan cache:clear
 php artisan config:clear
 ```
 
-**Lihat data di database langsung via tinker:**
+**Cek data via Tinker:**
 ```bash
 php artisan tinker
 > \App\Models\User::count()
 > \App\Models\User::where('role', 'Admin_Relawan')->pluck('email')
+> \App\Models\SosRequest::where('status', 'waiting')->count()
 ```
+
+### 📞 Kontak & Dukungan
+Jika mengalami kendala teknis, hubungi:
+- **Developer**: [Rangga11268](https://github.com/Rangga11268)
+- **Repositori**: [github.com/Rangga11268/titikAman](https://github.com/Rangga11268/titikAman)

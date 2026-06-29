@@ -4,6 +4,21 @@
 
 Aplikasi ini dibangun menggunakan **Laravel 12** secara bersih (*from scratch*) tanpa scaffolding Breeze/Jetstream untuk memastikan kontrol penuh atas struktur data dan keamanan sistem.
 
+## 🧰 Tech Stack
+
+| Kategori | Teknologi |
+|---|---|
+| **Framework** | Laravel 12, Bootstrap 5 |
+| **Database** | MySQL / MariaDB / SQLite |
+| **Bahasa Pemrograman** | PHP 8.3, JavaScript, CSS |
+| **Text Editor** | Visual Studio Code |
+| **Server** | Apache / Nginx (Production), `php artisan serve` (Local Development) |
+| **Real-time** | Laravel Reverb (WebSocket) |
+| **Peta** | Leaflet.js + OpenStreetMap / CartoDB |
+| **Icons** | Lucide Icons |
+| **Font** | Inter, Plus Jakarta Sans |
+| **Webhook** | SMS Gateway (n8n integration) |
+
 ---
 
 ## 🚀 Fitur Utama
