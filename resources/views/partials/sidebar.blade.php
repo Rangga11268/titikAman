@@ -96,6 +96,6 @@
         </form>
     </nav>
     <div class="sidebar-footer">
-        © 2024 BNPB × BPBD Bekasi
+        © 2026 BNPB × BPBD Bekasi
     </div>
 </div>

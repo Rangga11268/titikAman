@@ -375,7 +375,7 @@
                     <a href="#">Kebijakan Privasi</a>
                     <a href="#">Bantuan</a>
                 </div>
-                <span>© 2024 TitikAman. All Rights Reserved.</span>
+                <span>© 2026 TitikAman. All Rights Reserved.</span>
             </div>
         </div>
     </div>
