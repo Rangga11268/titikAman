@@ -1017,13 +1017,71 @@
         align-items: flex-start;
         gap: 8px;
     }
-    .history-table thead th,
-    .history-table tbody td {
-        padding: 10px 8px;
-        font-size: 12px;
-        white-space: normal;
-        word-break: break-word;
+    
+    /* Responsive Stacked Cards Table for Mobile */
+    .history-table, 
+    .history-table thead, 
+    .history-table tbody, 
+    .history-table th, 
+    .history-table td, 
+    .history-table tr { 
+        display: block; 
     }
+    
+    .history-table thead tr { 
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .history-table tr { 
+        border: 1px solid #c4c6cf;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        background: white;
+    }
+    
+    .history-table td { 
+        border: none;
+        border-bottom: 1px dashed #e5e7eb; 
+        position: relative;
+        padding-left: 45% !important; 
+        text-align: left !important;
+        white-space: normal;
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        padding: 8px 0 !important;
+    }
+    
+    .history-table td:last-child {
+        border-bottom: 0;
+        justify-content: flex-end;
+        padding-left: 0 !important;
+    }
+    
+    .history-table td::before { 
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        width: 40%; 
+        padding-right: 10px; 
+        white-space: nowrap;
+        font-weight: 700;
+        color: #44474e;
+        content: attr(data-label);
+        font-size: 10px;
+        text-transform: uppercase;
+        text-align: left;
+    }
+
+    .history-table td:last-child::before {
+        content: "";
+    }
+    
     .sos-item {
         padding: 12px;
     }
