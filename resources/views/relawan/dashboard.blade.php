@@ -167,7 +167,12 @@
                             <div class="sos-item {{ $sos->priority_level }}" data-sos-id="{{ $sos->sos_id }}">
                                 <div class="sos-item-header">
                                     <span class="sos-priority-badge {{ $sos->priority_level }}">{{ $priorityLabel }}</span>
-                                    <span class="sos-time">{{ $sos->created_at->format('H:i') }} WIB</span>
+                                    <div style="display: flex; gap: 4px; align-items: center;">
+                                        @if($sos->status === 'assigned')
+                                            <span style="font-size: 9px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 2px 6px; border-radius: 4px;">BANTUAN</span>
+                                        @endif
+                                        <span class="sos-time">{{ $sos->created_at->format('H:i') }} WIB</span>
+                                    </div>
                                 </div>
                                 <div class="sos-location">
                                     {{ $sos->user->kelurahan ?? 'Lokasi' }}, {{ $sos->user->kecamatan ?? 'Bekasi' }}
@@ -191,9 +196,15 @@
                                     @endif
                                 </div>
                                 @if(!$activeMissions->isNotEmpty() || true)
+                                    @if($sos->status === 'waiting')
                                     <button type="button" class="btn-accept-mission" onclick="document.getElementById('assign_sos_id').value = '{{ $sos->sos_id }}'; openModal('assignModal');" style="background-color: #006a60; color: white; border: none; border-radius: 8px; font-weight: 700; width: 100%; padding: 10px; cursor: pointer; text-transform: uppercase;">
                                          TUGASKAN KE TIM
                                     </button>
+                                    @else
+                                    <button type="button" onclick="document.getElementById('assign_sos_id').value = '{{ $sos->sos_id }}'; openModal('assignModal');" style="background-color: #b45309; color: white; border: none; border-radius: 8px; font-weight: 700; width: 100%; padding: 10px; cursor: pointer; text-transform: uppercase;">
+                                         KIRIM BANTUAN TIM
+                                    </button>
+                                    @endif
                                 @endif
                             </div>
                         @empty
@@ -213,10 +224,10 @@
                             <span>Peta Operasional Bekasi</span>
                         </div>
                         <div class="map-panel-actions">
-                            <button class="map-icon-btn" title="Refresh peta">
+                            <button class="map-icon-btn" id="map-refresh-btn" title="Refresh peta">
                                 <i data-lucide="refresh-cw"></i>
                             </button>
-                            <button class="map-icon-btn" title="Fullscreen">
+                            <button class="map-icon-btn" id="map-fullscreen-btn" title="Fullscreen">
                                 <i data-lucide="maximize-2"></i>
                             </button>
                         </div>
@@ -361,7 +372,7 @@
                     </div>
                     <span style="font-size: 11px; font-weight: 700; color: #031f41; cursor: pointer;">KELOLA ANGGOTA</span>
                 </div>
-                <div style="overflow-x: auto;">
+                <div style="overflow-x: auto; max-height: 280px; overflow-y: auto;">
                     <table class="history-table">
                         <thead>
                             <tr>
@@ -405,8 +416,8 @@
                 
                 @forelse($anggotaTim as $teamName => $members)
                 <div style="margin: 16px 24px;">
-                    <h3 style="font-size: 15px; color: var(--navy-dark); margin-bottom: 8px; font-weight: 700; border-bottom: 2px solid #e5e7eb; padding-bottom: 4px;">{{ $teamName }}</h3>
-                    <div class="table-responsive">
+                    <h3 style="font-size: 15px; color: var(--navy-dark); margin-bottom: 8px; font-weight: 700; border-bottom: 2px solid #e5e7eb; padding-bottom: 4px;">{{ $teamName }} <span style="font-size: 11px; font-weight: 500; color: #6b7280;">({{ $members->count() }} anggota)</span></h3>
+                    <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
                         <table class="history-table">
                             <thead>
                                 <tr>
@@ -415,10 +426,11 @@
                                     <th>Keahlian</th>
                                     <th>Organisasi</th>
                                     <th>Status</th>
+                                    <th style="text-align: right;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($members as $anggota)
+                                @foreach($members->take(10) as $anggota)
                                     <tr>
                                         <td class="td-regular" style="font-weight: 600; color: #111827;">{{ $anggota->fullname }}</td>
                                         <td class="td-regular">{{ $anggota->phone }}</td>
@@ -431,6 +443,15 @@
                                                 <span class="badge-terkonsepsi" style="background: #d1f4e0; color: #006a60;">TERSEDIA</span>
                                             @endif
                                         </td>
+                                        <td style="text-align: right; white-space: nowrap;">
+                                            <div style="display: flex; gap: 4px; justify-content: flex-end;">
+                                                <button type="button" class="btn-tinjau" style="padding: 3px 8px; font-size: 10px;" onclick="openEditMember({{ $anggota->user_id }}, '{{ addslashes($anggota->fullname) }}', '{{ addslashes($anggota->keahlian ?? '') }}', '{{ addslashes($anggota->organisasi ?? '') }}', '{{ addslashes($anggota->kecamatan ?? '') }}', '{{ addslashes($anggota->kelurahan ?? '') }}')">Edit</button>
+                                                <form action="{{ route('relawan.member.remove', $anggota->user_id) }}" method="POST" onsubmit="return confirm('Hapus {{ $anggota->fullname }} dari tim?')" style="margin: 0;">
+                                                    @csrf
+                                                    <button type="submit" class="btn-tinjau" style="padding: 3px 8px; font-size: 10px; border-color: #ef4444; color: #dc2626;">Hapus</button>
+                                                </form>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -442,7 +463,7 @@
                     <table class="history-table">
                         <tbody>
                             <tr class="empty-history-row">
-                                <td colspan="5">Belum ada anggota di tim ini.</td>
+                                    <td colspan="6">Belum ada anggota di tim ini.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -458,6 +479,7 @@
                         <span>Riwayat Misi</span>
                     </div>
                     <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="font-size: 11px; font-weight: 600; color: #6b7280;">{{ $totalMissionsCount }} misi</span>
                         <a href="{{ route('relawan.mission.export') }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #006a60; text-decoration: none; padding: 4px 10px; border: 1px solid #006a60; border-radius: 6px;">
                             <i data-lucide="download" style="width: 14px; height: 14px;"></i>
                             Export CSV
@@ -478,7 +500,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($completedMissions as $mission)
+                            @forelse($completedMissionsDisplay as $mission)
                                 <tr>
                                     <td class="td-time">{{ $mission->resolved_at ? $mission->resolved_at->format('d M H:i') : ($mission->assigned_at ? $mission->assigned_at->format('d M H:i') : '-') }}</td>
                                     <td class="td-location">
@@ -581,19 +603,19 @@
                 <input type="hidden" name="sos_id" id="assign_sos_id" value="">
                 
                 <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Pilih Anggota Tim:</label>
+                    <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Pilih Tim Respon:</label>
                     <select name="volunteer_id" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; outline: none;">
-                        <option value="">-- Pilih Anggota Tim --</option>
-                        @foreach($anggotaTim as $teamName => $members)
-                            <optgroup label="{{ $teamName }}">
-                                @foreach($members as $member)
-                                    <option value="{{ $member->user_id }}" {{ in_array($member->user_id, $activeVolunteerIds) ? 'disabled' : '' }} style="{{ in_array($member->user_id, $activeVolunteerIds) ? 'color: #9ca3af; font-style: italic;' : 'font-weight: 500;' }}">
-                                        {{ $member->fullname }} - {{ $member->phone }} {{ in_array($member->user_id, $activeVolunteerIds) ? '(Sedang Dalam Misi)' : '(Tersedia)' }}
-                                    </option>
-                                @endforeach
-                            </optgroup>
+                        <option value="">-- Pilih Tim --</option>
+                        @foreach($teams as $team)
+                            <option value="{{ $team['id'] }}" style="{{ in_array($team['id'], $activeVolunteerIds) ? 'color: #b45309; font-weight: 600;' : 'font-weight: 500;' }}">
+                                {{ $team['label'] }} {{ in_array($team['id'], $activeVolunteerIds) ? '(Dalam Misi — Kirim Bantuan)' : '(Tersedia)' }}
+                            </option>
                         @endforeach
                     </select>
+                    <p style="margin-top: 6px; font-size: 11px; color: #9ca3af;">Tim yang sedang dalam misi tetap bisa dipilih sebagai bantuan (backup).</p>
+                    @if($teams->isEmpty())
+                        <p style="margin-top: 8px; font-size: 12px; color: #9ca3af;">Belum ada tim yang terdaftar.</p>
+                    @endif
                 </div>
 
                 <div style="display: flex; gap: 12px; justify-content: flex-end;">
@@ -673,6 +695,78 @@
             <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
                 <button type="button" onclick="closeModal('missionDetailModal')" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #374151; font-weight: 600; cursor: pointer; font-size: 13px;">Tutup</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Edit Member Modal -->
+    <div id="editMemberModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: 12px; width: 100%; max-width: 480px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 style="font-size: 16px; font-weight: 700; color: #031f41; display: flex; align-items: center; gap: 8px; margin: 0;">
+                    <i data-lucide="user-cog" style="width: 18px; height: 18px;"></i>
+                    Edit Anggota Tim
+                </h2>
+                <button type="button" onclick="closeEditMemberModal()" style="background: none; border: none; cursor: pointer; color: #6b7280;">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+
+            <form id="editMemberForm" method="POST" style="display: flex; flex-direction: column; gap: 16px;">
+                @csrf
+                <input type="hidden" name="user_id" id="em_user_id">
+
+                <div style="background: #f3f4f6; border-radius: 8px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 4px;">ANGGOTA</div>
+                    <div style="font-weight: 700; font-size: 15px; color: #111827;" id="em_name"></div>
+                    <div style="font-size: 12px; color: #6b7280; margin-top: 2px;">Tim saat ini: <span id="em_current_team" style="font-weight: 600; color: #006a60;"></span></div>
+                </div>
+
+                <div style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                    <div style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px;">EDIT DATA</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <label for="em_keahlian" style="font-size: 12px; font-weight: 700; color: #374151; display: block; margin-bottom: 4px;">Keahlian</label>
+                            <input type="text" id="em_keahlian" name="keahlian" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; box-sizing: border-box;" placeholder="Evakuasi, Medis">
+                        </div>
+                        <div>
+                            <label for="em_organisasi" style="font-size: 12px; font-weight: 700; color: #374151; display: block; margin-bottom: 4px;">Organisasi</label>
+                            <input type="text" id="em_organisasi" name="organisasi" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; box-sizing: border-box;" placeholder="PMI, SAR">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                    <div style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px;">PINDAH TIM</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <label for="em_kecamatan" style="font-size: 12px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Tim Tujuan (Kecamatan)</label>
+                            <select id="em_kecamatan" name="kecamatan" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; background: white; box-sizing: border-box; cursor: pointer;" onchange="updateKelurahanEdit()">
+                                <option value="">— Biarkan Sama —</option>
+                                <option value="Pondok Gede">Pondok Gede</option>
+                                <option value="Jatiasih">Jatiasih</option>
+                                <option value="Bekasi Timur">Bekasi Timur</option>
+                                <option value="Bekasi Selatan">Bekasi Selatan</option>
+                                <option value="Bekasi Barat">Bekasi Barat</option>
+                                <option value="Bekasi Utara">Bekasi Utara</option>
+                                <option value="Rawalumbu">Rawalumbu</option>
+                                <option value="Mustikajaya">Mustikajaya</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="em_kelurahan" style="font-size: 12px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Kelurahan</label>
+                            <select id="em_kelurahan" name="kelurahan" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; background: white; box-sizing: border-box; cursor: pointer;">
+                                <option value="">Pilih Kelurahan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p style="font-size: 11px; color: #9ca3af; margin: 6px 0 0 0;">Pilih kecamatan yang berbeda untuk memindahkan anggota ke tim wilayah lain.</p>
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px;">
+                    <button type="button" onclick="closeEditMemberModal()" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #374151; font-weight: 600; cursor: pointer; font-size: 13px;">Batal</button>
+                    <button type="submit" style="padding: 8px 16px; border-radius: 6px; border: none; background: #006a60; color: white; font-weight: 600; cursor: pointer; font-size: 13px;">Simpan Perubahan</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -845,27 +939,73 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Plot SOS queue markers with colored circles
-    const sosQueue = @json($sosQueueMapData);
+    // SOS markers layer group (for refresh)
+    var sosMarkerLayer = L.layerGroup().addTo(map);
     const priorityColors = { high: '#dc2626', medium: '#f59e0b', low: '#006a60' };
 
-    sosQueue.forEach(function (sos) {
-        if (!sos.lat || !sos.lng) return;
-        const color = priorityColors[sos.priority] || '#6b7280';
-        L.marker([sos.lat, sos.lng], {
-            icon: L.divIcon({
-                html: `<div style="width:24px;height:24px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>`,
-                className: '',
-                iconSize: [24, 24],
-                iconAnchor: [12, 12],
-            })
-        }).addTo(map).bindPopup(`<strong>SOS</strong> ${sos.location}<br>${sos.people} jiwa`);
-    });
+    function plotSosMarkers(sosQueue) {
+        sosMarkerLayer.clearLayers();
+        sosQueue.forEach(function (sos) {
+            if (!sos.lat || !sos.lng) return;
+            const color = priorityColors[sos.priority] || '#6b7280';
+            var marker = L.marker([sos.lat, sos.lng], {
+                icon: L.divIcon({
+                    html: `<div style="width:24px;height:24px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>`,
+                    className: '',
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12],
+                })
+            }).bindPopup(`<strong>SOS</strong> ${sos.location}<br>${sos.people} jiwa`);
+            sosMarkerLayer.addLayer(marker);
+        });
+    }
+
+    // Plot initial SOS markers
+    plotSosMarkers(@json($sosQueueMapData));
 
     // Global helper for "tinjau detail" button
     window.focusOnSos = function(lat, lng) {
         map.setView([lat, lng], 15);
     };
+
+    // ---- Map Refresh Button ----
+    document.getElementById('map-refresh-btn').addEventListener('click', function () {
+        this.style.animation = 'spin 1s linear infinite';
+        fetch('{{ route("relawan.sos.data") }}')
+            .then(res => res.json())
+            .then(function (data) {
+                var newSos = data.map(function (s) {
+                    return {
+                        lat: parseFloat(s.latitude),
+                        lng: parseFloat(s.longitude),
+                        priority: s.priority_level,
+                        location: (s.user?.kelurahan ?? '') + ', ' + (s.user?.kecamatan ?? ''),
+                        people: s.people_trapped
+                    };
+                });
+                plotSosMarkers(newSos);
+            })
+            .catch(function () {})
+            .finally(function () {
+                document.getElementById('map-refresh-btn').style.animation = '';
+            });
+    });
+
+    // ---- Map Fullscreen Toggle ----
+    document.getElementById('map-fullscreen-btn').addEventListener('click', function () {
+        var panel = document.querySelector('.map-panel');
+        var icon = this.querySelector('i');
+        panel.classList.toggle('fullscreen-mode');
+        if (panel.classList.contains('fullscreen-mode')) {
+            icon.setAttribute('data-lucide', 'minimize-2');
+            document.querySelector('.relawan-main-canvas').style.overflow = 'hidden';
+        } else {
+            icon.setAttribute('data-lucide', 'maximize-2');
+            document.querySelector('.relawan-main-canvas').style.overflow = '';
+        }
+        lucide.createIcons();
+        setTimeout(function () { map.invalidateSize(); }, 100);
+    });
 
     // ---- SOS Queue Auto-Refresh every 30s ----
     setInterval(function () {
@@ -942,6 +1082,60 @@ window.openMissionDetail = function(id) {
     document.getElementById('md_status').style.color = mission.status === 'Selesai' ? '#006a60' : '#d97706';
 
     window.openModal('missionDetailModal');
+};
+
+// Edit Member
+const editKelurahanDb = {
+    'Pondok Gede': ['Jatiwaringin', 'Jatibening', 'Jatibening Baru', 'Jaticempaka', 'Jatimakmur'],
+    'Jatiasih': ['Jatiasih', 'Jatikramat', 'Jatiluhur', 'Jatirasa', 'Jatisari', 'Jati Mekar'],
+    'Bekasi Timur': ['Aren Jaya', 'Bekasi Jaya', 'Duren Jaya', 'Margahayu'],
+    'Bekasi Selatan': ['Jakamulya', 'Jakasetia', 'Kayuringin Jaya', 'Marga Jaya', 'Pekayon Jaya'],
+    'Bekasi Barat': ['Bintara', 'Bintara Jaya', 'Jakasampurna', 'Kota Baru', 'Kranji'],
+    'Bekasi Utara': ['Harapan Baru', 'Harapan Jaya', 'Kaliabang Tengah', 'Marga Mulya', 'Perwira', 'Teluk Pucung'],
+    'Rawalumbu': ['Bojong Rawalumbu', 'Bojong Menteng', 'Pengasinan', 'Sepanjang Jaya'],
+    'Mustikajaya': ['Mustikajaya', 'Mustikasari', 'Pedurenan', 'Cimuning']
+};
+
+window.openEditMember = function(id, name, keahlian, organisasi, kec, kel) {
+    document.getElementById('em_user_id').value = id;
+    document.getElementById('em_name').textContent = name;
+    document.getElementById('em_current_team').textContent = kec ? 'Tim ' + kec : 'Tim Reguler';
+    document.getElementById('em_keahlian').value = keahlian;
+    document.getElementById('em_organisasi').value = organisasi;
+    document.getElementById('em_kecamatan').value = kec;
+    document.getElementById('editMemberForm').action = '/relawan/member/' + id + '/update';
+    
+    var kelSelect = document.getElementById('em_kelurahan');
+    kelSelect.innerHTML = '<option value="">Pilih Kelurahan</option>';
+    if (kec && editKelurahanDb[kec]) {
+        editKelurahanDb[kec].forEach(function(k) {
+            var opt = document.createElement('option');
+            opt.value = k;
+            opt.textContent = k;
+            if (k === kel) opt.selected = true;
+            kelSelect.appendChild(opt);
+        });
+    }
+    
+    window.openModal('editMemberModal');
+};
+
+window.updateKelurahanEdit = function() {
+    var kec = document.getElementById('em_kecamatan').value;
+    var kelSelect = document.getElementById('em_kelurahan');
+    kelSelect.innerHTML = '<option value="">Pilih Kelurahan</option>';
+    if (kec && editKelurahanDb[kec]) {
+        editKelurahanDb[kec].forEach(function(k) {
+            var opt = document.createElement('option');
+            opt.value = k;
+            opt.textContent = k;
+            kelSelect.appendChild(opt);
+        });
+    }
+};
+
+window.closeEditMemberModal = function() {
+    window.closeModal('editMemberModal');
 };
 </script>
 @endsection

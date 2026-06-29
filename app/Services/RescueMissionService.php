@@ -39,21 +39,18 @@ class RescueMissionService
                 throw new Exception("Sinyal SOS tidak ditemukan.");
             }
 
-            if ($sos->status !== 'waiting') {
-                throw new Exception("Sinyal SOS ini sudah ditangani oleh relawan lain.");
+            // Allow both waiting (new) and assigned (backup) SOS
+            if (!in_array($sos->status, ['waiting', 'assigned'])) {
+                throw new Exception("Sinyal SOS ini sudah selesai ditangani.");
             }
 
-            // Check if volunteer already has an active mission
-            $activeMission = $this->rescueMissionRepository->getActiveMissionByVolunteerId($volunteerId);
-            if ($activeMission) {
-                throw new Exception("Anda masih memiliki misi penyelamatan aktif yang belum selesai.");
+            // Update SOS status to assigned only if it's still waiting
+            if ($sos->status === 'waiting') {
+                $sos->status = 'assigned';
+                $sos->save();
             }
 
-            // Update SOS status
-            $sos->status = 'assigned';
-            $sos->save();
-
-            // Create mission
+            // Create mission (multiple missions per SOS allowed now)
             return $this->rescueMissionRepository->create([
                 'sos_id' => $sosId,
                 'volunteer_id' => $volunteerId,

@@ -104,6 +104,9 @@ Route::middleware(['auth', 'approved'])->group(function () {
         
         Route::post('/relawan/member/{id}/approve', [RelawanController::class, 'approveMember'])->name('relawan.member.approve');
         Route::post('/relawan/member/{id}/reject', [RelawanController::class, 'rejectMember'])->name('relawan.member.reject');
+        Route::post('/relawan/member/{id}/update', [RelawanController::class, 'updateMember'])->name('relawan.member.update');
+        Route::post('/relawan/member/{id}/move', [RelawanController::class, 'moveMember'])->name('relawan.member.move');
+        Route::post('/relawan/member/{id}/remove', [RelawanController::class, 'removeMember'])->name('relawan.member.remove');
     });
 
     // Pengelola Posko Portal Routes

@@ -51,6 +51,79 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // Team Leads (Ketua Tim per Kecamatan)
+        User::updateOrCreate(
+            ['email' => 'lead.bekasitimur@example.com'],
+            [
+                'fullname' => 'Budi Santoso',
+                'phone' => '081311111111',
+                'password' => Hash::make('password'),
+                'role' => 'Admin_Relawan',
+                'kecamatan' => 'Bekasi Timur',
+                'kelurahan' => 'Margahayu',
+            ]
+        );
+        User::updateOrCreate(
+            ['email' => 'lead.jatiasih@example.com'],
+            [
+                'fullname' => 'Ani Wijaya',
+                'phone' => '081322222222',
+                'password' => Hash::make('password'),
+                'role' => 'Admin_Relawan',
+                'kecamatan' => 'Jatiasih',
+                'kelurahan' => 'Jatiasih',
+            ]
+        );
+        User::updateOrCreate(
+            ['email' => 'lead.rawalumbu@example.com'],
+            [
+                'fullname' => 'Dodi Pratama',
+                'phone' => '081333333333',
+                'password' => Hash::make('password'),
+                'role' => 'Admin_Relawan',
+                'kecamatan' => 'Rawalumbu',
+                'kelurahan' => 'Bojong Rawalumbu',
+            ]
+        );
+
+        // Anggota Tim Reguler (Relawan Lapangan per Kecamatan)
+        // Tim Bekasi Timur
+        User::updateOrCreate(['email' => 'anggota.bekasitimur1@example.com'], [
+            'fullname' => 'Siti Rahmawati', 'phone' => '081341111111', 'password' => Hash::make('password'),
+            'role' => 'Relawan', 'kecamatan' => 'Bekasi Timur', 'kelurahan' => 'Duren Jaya', 'status' => 'approved', 'keahlian' => 'Evakuasi, Medis',
+        ]);
+        User::updateOrCreate(['email' => 'anggota.bekasitimur2@example.com'], [
+            'fullname' => 'Ahmad Fauzi', 'phone' => '081342222222', 'password' => Hash::make('password'),
+            'role' => 'Relawan', 'kecamatan' => 'Bekasi Timur', 'kelurahan' => 'Aren Jaya', 'status' => 'approved', 'keahlian' => 'Logistik, Dapur Umum',
+        ]);
+        // Tim Jatiasih
+        User::updateOrCreate(['email' => 'anggota.jatiasih1@example.com'], [
+            'fullname' => 'Rina Marlina', 'phone' => '081351111111', 'password' => Hash::make('password'),
+            'role' => 'Relawan', 'kecamatan' => 'Jatiasih', 'kelurahan' => 'Jatiluhur', 'status' => 'approved', 'keahlian' => 'Medis',
+        ]);
+        User::updateOrCreate(['email' => 'anggota.jatiasih2@example.com'], [
+            'fullname' => 'Hendra Gunawan', 'phone' => '081352222222', 'password' => Hash::make('password'),
+            'role' => 'Relawan', 'kecamatan' => 'Jatiasih', 'kelurahan' => 'Jatikramat', 'status' => 'approved', 'keahlian' => 'Evakuasi, Komunikasi',
+        ]);
+        // Tim Rawalumbu
+        User::updateOrCreate(['email' => 'anggota.rawalumbu1@example.com'], [
+            'fullname' => 'Fitri Handayani', 'phone' => '081361111111', 'password' => Hash::make('password'),
+            'role' => 'Relawan', 'kecamatan' => 'Rawalumbu', 'kelurahan' => 'Bojong Menteng', 'status' => 'approved', 'keahlian' => 'Dapur Umum, Logistik',
+        ]);
+        User::updateOrCreate(['email' => 'anggota.rawalumbu2@example.com'], [
+            'fullname' => 'Agus Permadi', 'phone' => '081362222222', 'password' => Hash::make('password'),
+            'role' => 'Relawan', 'kecamatan' => 'Rawalumbu', 'kelurahan' => 'Pengasinan', 'status' => 'approved', 'keahlian' => 'Evakuasi',
+        ]);
+        // Tim Bekasi Utara
+        User::updateOrCreate(['email' => 'lead.bekasiutara@example.com'], [
+            'fullname' => 'Rudi Hermawan', 'phone' => '081371111111', 'password' => Hash::make('password'),
+            'role' => 'Admin_Relawan', 'kecamatan' => 'Bekasi Utara', 'kelurahan' => 'Harapan Jaya',
+        ]);
+        User::updateOrCreate(['email' => 'anggota.bekasiutara1@example.com'], [
+            'fullname' => 'Dewi Sartika', 'phone' => '081372222222', 'password' => Hash::make('password'),
+            'role' => 'Relawan', 'kecamatan' => 'Bekasi Utara', 'kelurahan' => 'Kaliabang Tengah', 'status' => 'approved', 'keahlian' => 'Medis, Evakuasi',
+        ]);
+
         $pengelola = User::updateOrCreate(
             ['email' => 'pengelola@example.com'],
             [

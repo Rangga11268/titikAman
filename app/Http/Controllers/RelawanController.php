@@ -52,6 +52,8 @@ class RelawanController extends Controller
 
         // All missions for history table (all time, ordered by most recent)
         $completedMissions = $this->rescueMissionRepository->getAllMissions();
+        $completedMissionsDisplay = $completedMissions->take(10);
+        $totalMissionsCount = $completedMissions->count();
 
         // Average response time (minutes) — computed in PHP, not in Blade
         $avgResponseMinutes = 0;
@@ -79,6 +81,18 @@ class RelawanController extends Controller
         // Get array of active volunteer IDs (busy teams)
         $activeVolunteerIds = $activeMissions->pluck('volunteer_id')->toArray();
 
+        // Teams (Ketua Tim / Lead berdasarkan kecamatan)
+        $teams = \App\Models\User::where('role', 'Admin_Relawan')
+            ->where('user_id', '!=', auth()->id())
+            ->get()
+            ->map(fn($u) => [
+                'id' => $u->user_id,
+                'name' => $u->fullname,
+                'kecamatan' => $u->kecamatan,
+                'phone' => $u->phone,
+                'label' => 'Tim ' . ($u->kecamatan ?? 'Reguler') . ' (Lead: ' . $u->fullname . ')',
+            ]);
+
         // Fetch active shelters and flood reports for map
         $activeShelters = \App\Models\Shelter::whereIn('status', ['active', 'full'])->get();
         $verifiedReports = \App\Models\FloodReport::where('verification_status', 'verified')
@@ -96,9 +110,12 @@ class RelawanController extends Controller
             'avgResponseMinutes',
             'totalSosHariIni',
             'completedMissions',
+            'completedMissionsDisplay',
+            'totalMissionsCount',
             'pendaftarTim',
             'anggotaTim',
             'activeVolunteerIds',
+            'teams',
             'activeShelters',
             'verifiedReports'
         ));
@@ -300,5 +317,53 @@ class RelawanController extends Controller
     {
         session()->forget(['wa_url', 'wa_name', 'wa_pelapor', 'wa_lokasi', 'wa_maps']);
         return redirect()->route('relawan.dashboard');
+    }
+
+    /**
+     * Update anggota tim (keahlian, organisasi, kecamatan/kelurahan).
+     */
+    public function updateMember(Request $request, $id)
+    {
+        $member = \App\Models\User::where('role', 'Relawan')->where('status', 'approved')->findOrFail($id);
+
+        $request->validate([
+            'keahlian' => 'nullable|string|max:255',
+            'organisasi' => 'nullable|string|max:100',
+            'kecamatan' => 'nullable|string|max:100',
+            'kelurahan' => 'nullable|string|max:100',
+        ]);
+
+        $member->update($request->only(['keahlian', 'organisasi', 'kecamatan', 'kelurahan']));
+
+        return redirect()->route('relawan.dashboard')->with('success', 'Data anggota tim berhasil diperbarui.');
+    }
+
+    /**
+     * Pindahkan anggota ke tim lain (ubah kecamatan/kelurahan).
+     */
+    public function moveMember(Request $request, $id)
+    {
+        $member = \App\Models\User::where('role', 'Relawan')->where('status', 'approved')->findOrFail($id);
+
+        $request->validate([
+            'kecamatan' => 'required|string|max:100',
+            'kelurahan' => 'required|string|max:100',
+        ]);
+
+        $member->update($request->only(['kecamatan', 'kelurahan']));
+
+        return redirect()->route('relawan.dashboard')->with('success', 'Anggota berhasil dipindahkan ke tim ' . $request->kecamatan . '.');
+    }
+
+    /**
+     * Hapus (nonaktifkan) anggota dari tim.
+     */
+    public function removeMember($id)
+    {
+        $member = \App\Models\User::where('role', 'Relawan')->where('status', 'approved')->findOrFail($id);
+        $member->status = 'rejected';
+        $member->save();
+
+        return redirect()->route('relawan.dashboard')->with('success', 'Anggota berhasil dihapus dari tim.');
     }
 }
