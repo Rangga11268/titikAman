@@ -17,7 +17,7 @@ Aplikasi ini dibangun menggunakan **Laravel 12** secara bersih (*from scratch*) 
 | **Peta** | Leaflet.js + OpenStreetMap / CartoDB |
 | **Icons** | Lucide Icons |
 | **Font** | Inter, Plus Jakarta Sans |
-| **Webhook** | SMS Gateway (n8n integration) |
+
 
 ---
 

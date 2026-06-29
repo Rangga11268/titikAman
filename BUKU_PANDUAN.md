@@ -55,7 +55,7 @@ Dalam mengembangkan website TitikAman, kami menggunakan beberapa tech stack dian
 | **Peta Interaktif** | Leaflet.js + OpenStreetMap / CartoDB |
 | **Ikon** | Lucide Icons |
 | **Font** | Inter, Plus Jakarta Sans |
-| **Webhook** | SMS Gateway (n8n integration) |
+
 
 ---
 
