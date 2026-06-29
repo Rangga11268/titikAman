@@ -43,7 +43,7 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 | **Actor** | Calon Relawan |
 | **Description** | Proses pendaftaran akun bagi calon relawan. Calon relawan hanya mengisi data dan mengunggah dokumen. Seluruh akses sistem dan penugasan dikelola oleh Admin Relawan. |
 | **Precondition** | Calon relawan belum memiliki akun. |
-| **Normal Flow** | 1. Calon relawan memilih menu Register.<br>2. Calon relawan memilih peran **Relawan / SAR**.<br>3. Calon relawan mengisi form lengkap (Nama, NIK, No HP, Email, Kecamatan, Kelurahan, Keahlian, Organisasi, Password).<br>4. Calon relawan mengunggah dokumen KTP/Sertifikat.<br>5. Sistem menyimpan data dengan role `Relawan` dan status **pending**.<br>6. Sistem mengarahkan ke halaman Login.<br>7. Admin Relawan meninjau dokumen melalui dashboard → memilih **Terima** atau **Tolak**.<br>8. Jika diterima → status berubah menjadi **approved**, relawan dapat login melihat dashboard umum.<br>9. Jika ditolak → status berubah menjadi **rejected**.<br>10. **Pencatatan penting**: Relawan tidak memiliki akses ke halaman dashboard operasional. Seluruh penugasan misi dikirimkan melalui **WhatsApp** oleh Admin Relawan. |
+| **Normal Flow** | 1. Calon relawan memilih menu Register.<br>2. Calon relawan memilih peran **Relawan / SAR**.<br>3. Calon relawan mengisi form lengkap (Nama, NIK, No HP, Email, Kecamatan, Kelurahan, Keahlian, Organisasi, Password).<br>4. Calon relawan mengunggah dokumen KTP/Sertifikat.<br>5. Sistem menyimpan data dengan role `Relawan` dan status **pending**.<br>6. Sistem mengarahkan ke halaman Login.<br>7. Admin Relawan meninjau dokumen melalui dashboard → memilih **Terima** atau **Tolak**.<br>8. Jika diterima → session approval tersimpan di dashboard Admin Relawan, menampilkan banner dengan tombol **Kirim Info via WA ke [Nama]** (mengirim link grup WA Tim ke nomor anggota baru). Status berubah menjadi **approved**.<br>9. Relawan login → sistem deteksi status approved + role Relawan → redirect ke `/status-verifikasi` dengan halaman approved yang menampilkan: nama tim, **Gabung Grup WhatsApp [Tim]**, **Kirim Info ke WhatsApp Saya**, dan **Lanjut ke Dashboard**.<br>10. Jika ditolak → status berubah menjadi **rejected**.<br>11. **Pencatatan penting**: Relawan tidak memiliki akses ke halaman dashboard operasional. Seluruh penugasan misi dikirimkan melalui **Grup WhatsApp** oleh Admin Relawan. |
 | **Exception** | Dokumen tidak diunggah atau NIK tidak valid → pendaftaran ditolak sistem. |
 
 ---
@@ -171,33 +171,47 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 | **Use Case Name** | Dashboard Mission Control |
 | **Use Case ID** | UC-09 |
 | **Actor** | Admin Relawan |
-| **Description** | Admin Relawan memantau antrian SOS, menugaskan misi ke anggota tim, dan melihat riwayat seluruh misi. |
+| **Description** | Admin Relawan memantau antrian SOS, menugaskan misi ke tim, mengirim info ke grup WA, dan melihat riwayat seluruh misi. |
 | **Precondition** | Admin Relawan login dengan role **Admin_Relawan**. |
-| **Normal Flow** | 1. Admin membuka Dashboard Relawan.<br>2. Sistem menampilkan statistik dan antrian SOS.<br>3. Admin menekan **TUGASKAN KE TIM** pada SOS.<br>4. Sistem menampilkan modal berisi daftar anggota tim yang tersedia.<br>5. Admin memilih anggota → **Tugaskan Misi**.<br>6. Sistem membuat misi + menampilkan link WhatsApp untuk kirim detail ke relawan. |
-| **Exception** | Semua anggota sedang sibuk → opsi dinonaktifkan. |
+| **Normal Flow** | 1. Admin membuka Dashboard Relawan.<br>2. Sistem menampilkan statistik dan antrian SOS.<br>3. Admin menekan **TUGASKAN KE TIM** pada SOS (status waiting).<br>4. Sistem menampilkan dropdown berisi daftar tim (Lead per kecamatan).<br>5. Admin memilih tim → **Tugaskan Misi**.<br>6. Sistem membuat misi + menampilkan banner permanen dengan 4 tombol: **Kirim ke WhatsApp (Relawan)**, **Share Grup [Tim]**, **Minta Bantuan (Grup Gabungan)**, **Buka Google Maps**.<br>7. Admin bisa klik **Share Grup [Tim]** untuk mengirim info misi ke grup WA tim.<br>8. Admin bisa klik **Minta Bantuan** untuk meminta backup dari grup gabungan. |
+| **Exception** | Semua tim sedang sibuk, tapi tetap bisa dipilih sebagai backup (label "(Dalam Misi — Kirim Bantuan)"). |
 
 ---
 
-### Tabel 3.2 Skenario Use Case – Review Anggota Tim Baru (UC-10)
+### Tabel 3.2 Skenario Use Case – Kirim Bantuan Tim (UC-10)
 
 | Elemen | Deskripsi |
 |--------|-----------|
-| **Use Case Name** | Review Anggota Tim Baru |
+| **Use Case Name** | Kirim Bantuan Tim |
 | **Use Case ID** | UC-10 |
 | **Actor** | Admin Relawan |
-| **Description** | Admin Relawan meninjau dokumen calon anggota yang mendaftar sebagai Relawan. |
-| **Precondition** | Terdapat pendaftar baru dengan status **pending**. |
-| **Normal Flow** | 1. Admin melihat daftar pendaftar di dashboard.<br>2. Admin mengklik **Review**.<br>3. Sistem menampilkan modal berisi data diri + pratinjau dokumen KTP.<br>4. Admin memilih **Terima** atau **Tolak**. |
+| **Description** | Admin Relawan mengirim tim tambahan (backup) untuk membantu SOS yang sudah ditangani. |
+| **Precondition** | Terdapat SOS dengan status **assigned** (sedang ditangani tim lain). |
+| **Normal Flow** | 1. SOS berlabel **"BANTUAN"** muncul di antrian.<br>2. Admin menekan tombol **KIRIM BANTUAN TIM** (warna oranye).<br>3. Sistem menampilkan dropdown tim (termasuk tim yang sedang dalam misi).<br>4. Admin memilih tim backup → **Tugaskan Misi**.<br>5. Mission baru tercatat untuk tim backup (1 SOS = multiple missions allowed).<br>6. Banner muncul dengan tombol **Share Grup [Tim]** dan **Minta Bantuan (Grup Gabungan)**. |
 | **Exception** | - |
 
 ---
 
-### Tabel 3.3 Skenario Use Case – Selesaikan Misi & Riwayat (UC-11)
+### Tabel 3.3 Skenario Use Case – Review & Approve Anggota Baru (UC-11)
+
+| Elemen | Deskripsi |
+|--------|-----------|
+| **Use Case Name** | Review & Approve Anggota Baru |
+| **Use Case ID** | UC-11 |
+| **Actor** | Admin Relawan |
+| **Description** | Admin Relawan meninjau dokumen calon anggota dan mengirim link grup WA ke anggota yang disetujui. |
+| **Precondition** | Terdapat pendaftar baru dengan status **pending**. |
+| **Normal Flow** | 1. Admin melihat card **Pendaftar Baru** di dashboard.<br>2. Admin mengklik **Review** pada pendaftar di tabel.<br>3. Sistem menampilkan modal berisi data diri + pratinjau dokumen KTP.<br>4. Admin memilih **Terima & Masukkan Tim** atau **Tolak**.<br>5. Jika diterima, session approval tersimpan dan banner biru muncul dengan 2 tombol:<br>&nbsp;&nbsp;- **Kirim Info via WA ke [Nama]**: Kirim pesan berisi link grup WA tim ke nomor anggota baru.<br>&nbsp;&nbsp;- **Link Grup [Tim]**: Buka link undangan grup WA tim.<br>6. Relawan login → lihat halaman `/status-verifikasi` dengan status approved → bisa gabung grup WA. |
+| **Exception** | - |
+
+---
+
+### Tabel 3.4 Skenario Use Case – Selesaikan Misi & Riwayat (UC-12)
 
 | Elemen | Deskripsi |
 |--------|-----------|
 | **Use Case Name** | Selesaikan Misi & Lihat Riwayat |
-| **Use Case ID** | UC-11 |
+| **Use Case ID** | UC-12 |
 | **Actor** | Admin Relawan |
 | **Description** | Admin Relawan menyelesaikan misi dan melihat riwayat lengkap. |
 | **Precondition** | Terdapat misi aktif. |
