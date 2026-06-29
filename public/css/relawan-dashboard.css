@@ -1066,3 +1066,112 @@
     background: #f8f9fa;
     border-bottom: 1px solid #c4c6cf;
 }
+
+/* =========================================================
+   Interactive Team Cards
+   ========================================================= */
+.team-cards-row {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 4px 4px 16px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    scrollbar-width: thin;
+    scrollbar-color: #c4c6cf transparent;
+}
+
+.team-cards-row::-webkit-scrollbar {
+    height: 6px;
+}
+
+.team-cards-row::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.team-cards-row::-webkit-scrollbar-thumb {
+    background: #c4c6cf;
+    border-radius: 10px;
+}
+
+.team-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 200px;
+    flex: 1 0 calc(20% - 16px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-left: 4px solid var(--brand-teal);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.team-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+.team-card.pending {
+    border-left-color: #ca8a04;
+}
+
+.team-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.team-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #44474e;
+}
+
+.team-card-icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.6;
+    color: inherit;
+}
+
+.team-card.pending .team-card-icon {
+    color: #ca8a04;
+}
+
+.team-card-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #031f41;
+    line-height: 1.2;
+}
+
+.team-card-sub {
+    font-size: 11px;
+    color: #8c8d99;
+    font-style: italic;
+}
+
+/* =========================================================
+   Team Management Grid Layout
+   ========================================================= */
+.team-management-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+    .team-management-grid {
+        grid-template-columns: 1fr;
+    }
+}

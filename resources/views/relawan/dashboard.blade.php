@@ -363,16 +363,17 @@
                 </div>
             </div>
 
-            {{-- ============ ROW 2.5: PENDAFTAR TIM ============ --}}
+            {{-- ============ ROW 2.5: TEAM MANAGEMENT PANEL (TABLE + CARDS) ============ --}}
             <div class="history-panel" style="margin-top: 24px; margin-bottom: 24px;">
+                <!-- Section A: Pendaftar Anggota Tim Baru (Table) -->
                 <div class="history-panel-header">
                     <div class="history-panel-header-left">
-                        <i data-lucide="users"></i>
+                        <i data-lucide="user-plus"></i>
                         <span>Pendaftar Anggota Tim Baru</span>
                     </div>
-                    <span style="font-size: 11px; font-weight: 700; color: #031f41; cursor: pointer;">KELOLA ANGGOTA</span>
+                    <span class="panel-count-badge" style="background: #ca8a04; color: white; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 2px 8px;">{{ $pendaftarTim->count() }} PENDING</span>
                 </div>
-                <div style="overflow-x: auto; max-height: 280px; overflow-y: auto;">
+                <div style="overflow-x: auto; max-height: 220px; overflow-y: auto;">
                     <table class="history-table">
                         <thead>
                             <tr>
@@ -406,69 +407,44 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            {{-- ============ ROW 2.6: ANGGOTA TIM AKTIF ============ --}}
-            <div class="history-panel" style="margin-bottom: 24px;">
-                <div class="history-panel-header">
-                    <span>Anggota Tim Aktif (Berdasarkan Wilayah)</span>
-                </div>
-                
-                @forelse($anggotaTim as $teamName => $members)
-                <div style="margin: 16px 24px;">
-                    <h3 style="font-size: 15px; color: var(--navy-dark); margin-bottom: 8px; font-weight: 700; border-bottom: 2px solid #e5e7eb; padding-bottom: 4px;">{{ $teamName }} <span style="font-size: 11px; font-weight: 500; color: #6b7280;">({{ $members->count() }} anggota)</span></h3>
-                    <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
-                        <table class="history-table">
-                            <thead>
-                                <tr>
-                                    <th>Nama Lengkap</th>
-                                    <th>No. HP</th>
-                                    <th>Keahlian</th>
-                                    <th>Organisasi</th>
-                                    <th>Status</th>
-                                    <th style="text-align: right;">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($members->take(10) as $anggota)
-                                    <tr>
-                                        <td class="td-regular" style="font-weight: 600; color: #111827;">{{ $anggota->fullname }}</td>
-                                        <td class="td-regular">{{ $anggota->phone }}</td>
-                                        <td class="td-regular">{{ $anggota->keahlian ?? '-' }}</td>
-                                        <td class="td-regular">{{ $anggota->organisasi ?? '-' }}</td>
-                                        <td>
-                                            @if(in_array($anggota->user_id, $activeVolunteerIds))
-                                                <span class="badge-terkonsepsi" style="background: #fef08a; color: #b45309;">DALAM MISI</span>
-                                            @else
-                                                <span class="badge-terkonsepsi" style="background: #d1f4e0; color: #006a60;">TERSEDIA</span>
-                                            @endif
-                                        </td>
-                                        <td style="text-align: right; white-space: nowrap;">
-                                            <div style="display: flex; gap: 4px; justify-content: flex-end;">
-                                                <button type="button" class="btn-tinjau" style="padding: 3px 8px; font-size: 10px;" onclick="openEditMember({{ $anggota->user_id }}, '{{ addslashes($anggota->fullname) }}', '{{ addslashes($anggota->keahlian ?? '') }}', '{{ addslashes($anggota->organisasi ?? '') }}', '{{ addslashes($anggota->kecamatan ?? '') }}', '{{ addslashes($anggota->kelurahan ?? '') }}')">Edit</button>
-                                                <form action="{{ route('relawan.member.remove', $anggota->user_id) }}" method="POST" onsubmit="return confirm('Hapus {{ $anggota->fullname }} dari tim?')" style="margin: 0;">
-                                                    @csrf
-                                                    <button type="submit" class="btn-tinjau" style="padding: 3px 8px; font-size: 10px; border-color: #ef4444; color: #dc2626;">Hapus</button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                <!-- Section B: Anggota Tim Aktif (Cards) -->
+                <div class="history-panel-header" style="border-top: 1px solid #c4c6cf;">
+                    <div class="history-panel-header-left">
+                        <i data-lucide="users"></i>
+                        <span>Anggota Tim Aktif (Berdasarkan Wilayah)</span>
                     </div>
                 </div>
-                @empty
-                <div class="table-responsive">
-                    <table class="history-table">
-                        <tbody>
-                            <tr class="empty-history-row">
-                                    <td colspan="6">Belum ada anggota di tim ini.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; background: #f8f9fa; max-height: 280px; overflow-y: auto;">
+                    @forelse($anggotaTim as $teamName => $members)
+                        <div class="team-card" 
+                             data-team-name="{{ $teamName }}" 
+                             data-members="{{ htmlspecialchars(json_encode($members->map(fn($m) => [
+                                 'id' => $m->user_id,
+                                 'name' => $m->fullname,
+                                 'phone' => $m->phone,
+                                 'keahlian' => $m->keahlian ?? '',
+                                 'organisasi' => $m->organisasi ?? '',
+                                 'kecamatan' => $m->kecamatan ?? '',
+                                 'kelurahan' => $m->kelurahan ?? '',
+                                 'in_mission' => in_array($m->user_id, $activeVolunteerIds)
+                             ])->values()->all()), ENT_QUOTES, 'UTF-8') }}"
+                             onclick="openTeamMembersModal(this)"
+                             style="min-width: 0; flex: none; border-left-color: var(--brand-teal); margin: 0; padding: 16px;">
+                            <div class="team-card-header">
+                                <span class="team-card-title">{{ $teamName }}</span>
+                                <i data-lucide="users" class="team-card-icon" style="color: var(--brand-teal);"></i>
+                            </div>
+                            <div class="team-card-value">{{ str_pad($members->count(), 2, '0', STR_PAD_LEFT) }}</div>
+                            <div class="team-card-sub">Anggota aktif terdaftar</div>
+                        </div>
+                    @empty
+                        <div style="grid-column: 1 / -1; text-align: center; color: #6b7280; font-size: 13px; padding: 24px 0;">
+                            <i data-lucide="users" style="width: 32px; height: 32px; margin: 0 auto 8px; color: #9ca3af;"></i>
+                            <span>Belum ada anggota tim aktif.</span>
+                        </div>
+                    @endforelse
                 </div>
-                @endforelse
             </div>
 
             {{-- ============ ROW 3: RIWAYAT MISI TABLE ============ --}}
@@ -767,6 +743,37 @@
                     <button type="submit" style="padding: 8px 16px; border-radius: 6px; border: none; background: #006a60; color: white; font-weight: 600; cursor: pointer; font-size: 13px;">Simpan Perubahan</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Team Members Modal -->
+    <div id="teamMembersModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: 12px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 16px; font-weight: 700; color: var(--navy-dark); margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="users" style="width: 20px; height: 20px;"></i>
+                    <span id="tmm_title">Anggota Tim</span>
+                </h2>
+                <button type="button" onclick="closeModal('teamMembersModal')" style="background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px;">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            
+            <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Nama Lengkap</th>
+                            <th>No. HP</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tmm_body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -1132,6 +1139,49 @@ window.updateKelurahanEdit = function() {
             kelSelect.appendChild(opt);
         });
     }
+};
+
+window.openPendaftarListModal = function() {
+    window.openModal('pendaftarListModal');
+};
+
+window.openTeamMembersModal = function(element) {
+    const teamName = element.getAttribute('data-team-name');
+    const membersJson = element.getAttribute('data-members');
+    
+    document.getElementById('tmm_title').textContent = 'Anggota ' + teamName;
+    const members = JSON.parse(membersJson);
+    const tbody = document.getElementById('tmm_body');
+    tbody.innerHTML = '';
+
+    if (members.length === 0) {
+        tbody.innerHTML = '<tr class="empty-history-row"><td colspan="4">Belum ada anggota di tim ini.</td></tr>';
+    } else {
+        members.forEach(function(m) {
+            const statusHtml = m.in_mission 
+                ? '<span class="badge-terkonsepsi" style="background: #fef08a; color: #b45309;">DALAM MISI</span>' 
+                : '<span class="badge-terkonsepsi" style="background: #d1f4e0; color: #006a60;">TERSEDIA</span>';
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="td-regular" style="font-weight: 600; color: #111827;">${m.name}</td>
+                <td class="td-regular">${m.phone}</td>
+                <td>${statusHtml}</td>
+                <td style="text-align: right; white-space: nowrap;">
+                    <div style="display: flex; gap: 4px; justify-content: flex-end;">
+                        <button type="button" class="btn-tinjau" style="padding: 3px 8px; font-size: 10px;" onclick="closeModal('teamMembersModal'); openEditMember(${m.id}, '${m.name.replace(/'/g, "\\'")}', '${m.keahlian.replace(/'/g, "\\'")}', '${m.organisasi.replace(/'/g, "\\'")}', '${m.kecamatan}', '${m.kelurahan}')">Edit</button>
+                        <form action="/relawan/member/${m.id}/remove" method="POST" onsubmit="return confirm('Hapus ${m.name} dari tim?')" style="margin: 0;">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn-tinjau" style="padding: 3px 8px; font-size: 10px; border-color: #ef4444; color: #dc2626;">Hapus</button>
+                        </form>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    window.openModal('teamMembersModal');
 };
 
 window.closeEditMemberModal = function() {
