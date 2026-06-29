@@ -580,20 +580,6 @@ body {
     gap: 16px;
 }
 
-.shelter-cards-list {
-    max-height: calc(100vh - 300px);
-    overflow-y: auto;
-    padding-right: 6px;
-}
-
-@media (max-width: 1024px) {
-    .shelter-cards-list {
-        max-height: none;
-        overflow-y: visible;
-        padding-right: 0;
-    }
-}
-
 .shelter-horizontal-card {
     display: flex;
     background: white;
@@ -997,6 +983,42 @@ body {
 .legend-dot.green { background-color: var(--brand-teal); }
 .legend-dot.orange { background-color: var(--accent-orange); }
 .legend-dot.red { background-color: var(--accent-red); }
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+}
+
+.page-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy-dark);
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+    border-color: var(--brand-teal);
+    color: var(--brand-teal);
+}
+
+.page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-info {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
 
 @media (max-width: 640px) {
     .shelter-horizontal-card {

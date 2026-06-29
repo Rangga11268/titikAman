@@ -66,7 +66,7 @@
                     </h2>
                     <span class="page-subtitle">Data diperbarui real-time oleh relawan & pengelola posko di lapangan</span>
                 </div>
-                <button class="btn-outline">Pilih Kecamatan ▼</button>
+
             </div>
 
             <!-- Stats -->
@@ -170,6 +170,11 @@
                             Tidak ada posko pengungsian yang memenuhi kriteria filter.
                         </div>
                     @endforelse
+                    <div class="pagination-controls" id="paginationControls" style="display:none;">
+                        <button class="page-btn" id="prevPage" onclick="changePage(-1)">← Sebelumnya</button>
+                        <span class="page-info" id="pageInfo">Halaman 1</span>
+                        <button class="page-btn" id="nextPage" onclick="changePage(1)">Selanjutnya →</button>
+                    </div>
                 </div>
 
                 <!-- Right: Map -->
@@ -305,38 +310,76 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
     let miniMap;
+    const PER_PAGE = 5;
+    let currentPage = 1;
+    let allCards = [];
+
+    function applyPagination() {
+        const q = (document.querySelector('.search-input')?.value || '').toLowerCase().trim();
+        let visible = [];
+        allCards.forEach(function(card) {
+            const name = card.querySelector('.shelter-h3').textContent.toLowerCase();
+            const match = !q || name.includes(q);
+            card.dataset._visible = match ? '1' : '0';
+            if (match) visible.push(card);
+        });
+
+        const totalPages = Math.max(1, Math.ceil(visible.length / PER_PAGE));
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * PER_PAGE;
+        const end = start + PER_PAGE;
+        const pageItems = visible.slice(start, end);
+
+        allCards.forEach(function(card) {
+            card.style.display = card.dataset._visible === '1' && pageItems.includes(card) ? '' : 'none';
+        });
+
+        const controls = document.getElementById('paginationControls');
+        const info = document.getElementById('pageInfo');
+        const prev = document.getElementById('prevPage');
+        const next = document.getElementById('nextPage');
+        if (totalPages <= 1) {
+            controls.style.display = 'none';
+        } else {
+            controls.style.display = 'flex';
+            info.textContent = 'Halaman ' + currentPage + ' dari ' + totalPages;
+            prev.disabled = currentPage <= 1;
+            next.disabled = currentPage >= totalPages;
+        }
+    }
+
+    function changePage(delta) {
+        currentPage += delta;
+        applyPagination();
+    }
 
     document.addEventListener("DOMContentLoaded", function() {
 
         lucide.createIcons();
 
-        // --- Search filter ---
+        allCards = Array.from(document.querySelectorAll('.shelter-horizontal-card'));
+
         const searchInput = document.querySelector('.search-input');
-        const shelterCards = document.querySelectorAll('.shelter-horizontal-card');
         if (searchInput) {
             searchInput.addEventListener('keyup', function() {
-                const q = this.value.toLowerCase().trim();
-                shelterCards.forEach(function(card) {
-                    const name = card.querySelector('.shelter-h3').textContent.toLowerCase();
-                    card.style.display = !q || name.includes(q) ? '' : 'none';
-                });
+                currentPage = 1;
+                applyPagination();
             });
         }
+
+        applyPagination();
 
         // Initialize Map
         miniMap = L.map('shelter-mini-map').setView([-6.241586, 106.992416], 12); // Bekasi center
         
-        // Fix map not rendering tiles properly when initialized in hidden or resizing containers on mobile
         setTimeout(() => { if(miniMap) miniMap.invalidateSize(); }, 500);
         
-        // CartoDB Voyager tiles (light theme suited for maps)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
             subdomains: 'abcd',
             maxZoom: 20
         }).addTo(miniMap);
 
-        // Precomputed shelter coordinates
         @php
             $shelterMapData = $shelters->map(function($shelter) {
                 $pct = $shelter->max_capacity > 0 ? ($shelter->current_occupants / $shelter->max_capacity) : 0;
