@@ -76,7 +76,7 @@ class AdminService
     public function getPendingUsers()
     {
         return \App\Models\User::where("status", "pending")
-            ->whereIn("role", ["Relawan", "Pengelola_Posko"])
+            ->where("role", "Pengelola_Posko")
             ->orderBy("created_at", "asc")
             ->get();
     }

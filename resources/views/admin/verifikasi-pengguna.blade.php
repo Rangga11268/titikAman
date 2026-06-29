@@ -29,20 +29,11 @@
                     <span class="queue-badge">{{ $pendingUsers->count() }} Pending</span>
                 </div>
 
-                <!-- Tabs to filter Relawan / Pengelola -->
-                <div class="tab-container">
-                    <button class="tab-btn active" onclick="filterQueue('all')">Semua</button>
-                    <button class="tab-btn" onclick="filterQueue('relawan')">Relawan</button>
-                    <button class="tab-btn" onclick="filterQueue('pengelola')">Posko</button>
-                </div>
-
                 <div class="queue-list" id="queueList">
                     @forelse($pendingUsers as $user)
-                        <a href="?user_id={{ $user->user_id }}" class="queue-item {{ $selectedUser && $selectedUser->user_id == $user->user_id ? 'active' : '' }}" data-role="{{ strtolower($user->role) }}">
+                        <a href="?user_id={{ $user->user_id }}" class="queue-item {{ $selectedUser && $selectedUser->user_id == $user->user_id ? 'active' : '' }}">
                             <div class="item-meta">
-                                <span class="item-role-tag {{ $user->role == 'Relawan' ? 'tag-relawan' : 'tag-pengelola' }}">
-                                    {{ $user->role == 'Relawan' ? 'Relawan' : 'Pengelola' }}
-                                </span>
+                                <span class="item-role-tag tag-pengelola">Pengelola Posko</span>
                                 <span class="item-time">{{ $user->created_at->diffForHumans() }}</span>
                             </div>
                             <h4 class="item-title">{{ $user->fullname }}</h4>
@@ -61,9 +52,7 @@
                 @if($selectedUser)
                     <div class="detail-card">
                         <div>
-                            <span class="item-role-tag {{ $selectedUser->role == 'Relawan' ? 'tag-relawan' : 'tag-pengelola' }}">
-                                {{ $selectedUser->role == 'Relawan' ? 'Relawan / SAR' : 'Pengelola Posko' }}
-                            </span>
+                            <span class="item-role-tag tag-pengelola">Pengelola Posko</span>
                             <h2 class="detail-user-name">{{ $selectedUser->fullname }}</h2>
                             <p class="detail-user-date">Mendaftar sejak {{ $selectedUser->created_at->format('d M Y, H:i') }}</p>
                         </div>
@@ -86,48 +75,7 @@
                             </div>
                         </div>
 
-                        @if($selectedUser->role == 'Relawan')
-                            <!-- Relawan Details Section -->
-                            <div>
-                                <h3 class="detail-section-title">
-                                    <i data-lucide="award"></i>
-                                    <span>Informasi Kualifikasi Relawan</span>
-                                </h3>
-                                <div class="detail-grid">
-                                    <div class="detail-group">
-                                        <span class="detail-label">Nomor Induk Kependudukan (NIK)</span>
-                                        <span class="detail-value">{{ $selectedUser->nik }}</span>
-                                    </div>
-                                    <div class="detail-group">
-                                        <span class="detail-label">Organisasi / Komunitas</span>
-                                        <span class="detail-value">{{ $selectedUser->organisasi ?? 'Mandiri / Tanpa Organisasi' }}</span>
-                                    </div>
-                                </div>
-                                <div class="detail-group">
-                                    <span class="detail-label">Spesialisasi Keahlian</span>
-                                    <span class="detail-value detail-highlight">{{ $selectedUser->keahlian }}</span>
-                                </div>
-                                <div class="detail-group">
-                                    <span class="detail-label">Dokumen Identitas (KTP / Sertifikat)</span>
-                                    <div class="detail-document">
-                                        @if($selectedUser->document_path)
-                                            @php $isImage = preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $selectedUser->document_path); @endphp
-                                            @if($isImage)
-                                                <div style="margin-bottom: 10px;">
-                                                    <img src="{{ asset('storage/' . $selectedUser->document_path) }}" alt="Dokumen Verifikasi" style="max-width: 100%; max-height: 260px; border-radius: 8px; border: 1px solid rgba(196,198,207,0.4); object-fit: contain; background: #f8f9fa;">
-                                                </div>
-                                            @endif
-                                            <a href="{{ asset('storage/' . $selectedUser->document_path) }}" target="_blank" class="btn-view-document">
-                                                <i data-lucide="file-text"></i>
-                                                <span>{{ $isImage ? 'Buka Gambar di Tab Baru' : 'Lihat Dokumen Verifikasi' }}</span>
-                                            </a>
-                                        @else
-                                            <span class="detail-error">Dokumen tidak tersedia</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        @elseif($selectedUser->role == 'Pengelola_Posko' && $selectedUser->shelter_id)
+                        @if($selectedUser->role == 'Pengelola_Posko' && $selectedUser->shelter_id)
                             @php
                                 $shelter = \App\Models\Shelter::find($selectedUser->shelter_id);
                             @endphp
@@ -211,22 +159,6 @@
     document.addEventListener("DOMContentLoaded", function() {
         // Initialize Lucide icons
         lucide.createIcons();
-
-        // --- Queue Filtering ---
-        window.filterQueue = function(role) {
-            const tabs = document.querySelectorAll('.tab-btn');
-            tabs.forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-
-            const items = document.querySelectorAll('.queue-item');
-            items.forEach(item => {
-                if (role === 'all' || item.getAttribute('data-role') === role) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        };
 
         // --- Detail Map for Shelter ---
         @if($selectedUser && $selectedUser->role == 'Pengelola_Posko' && $selectedUser->shelter_id)

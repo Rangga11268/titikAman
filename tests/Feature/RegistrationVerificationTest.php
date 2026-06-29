@@ -116,12 +116,11 @@ class RegistrationVerificationTest extends TestCase
     public function test_pending_user_is_redirected_to_verification(): void
     {
         User::create([
-            'fullname' => 'Relawan Pending',
+            'fullname' => 'Pengelola Pending',
             'email' => 'pending@example.com',
             'phone' => '084444444444',
             'password' => Hash::make('password123'),
-            'role' => 'Relawan',
-            'nik' => '3201234567890002',
+            'role' => 'Pengelola_Posko',
             'status' => 'pending',
         ]);
 
@@ -137,12 +136,11 @@ class RegistrationVerificationTest extends TestCase
     public function test_rejected_user_is_redirected_to_verification(): void
     {
         User::create([
-            'fullname' => 'Relawan Rejected',
+            'fullname' => 'Pengelola Rejected',
             'email' => 'rejected@example.com',
             'phone' => '085555555555',
             'password' => Hash::make('password123'),
-            'role' => 'Relawan',
-            'nik' => '3201234567890003',
+            'role' => 'Pengelola_Posko',
             'status' => 'rejected',
         ]);
 
@@ -158,12 +156,11 @@ class RegistrationVerificationTest extends TestCase
     public function test_approved_user_can_login_after_verification(): void
     {
         User::create([
-            'fullname' => 'Relawan Approved',
+            'fullname' => 'Pengelola Approved',
             'email' => 'approved@example.com',
             'phone' => '086666666666',
             'password' => Hash::make('password123'),
-            'role' => 'Relawan',
-            'nik' => '3201234567890004',
+            'role' => 'Pengelola_Posko',
             'status' => 'approved',
         ]);
 
@@ -196,13 +193,25 @@ class RegistrationVerificationTest extends TestCase
 
     public function test_admin_can_view_user_verification_page(): void
     {
+        $shelter = Shelter::create([
+            'shelter_name' => 'Posko Verify',
+            'address' => 'Jl. Test',
+            'max_capacity' => 100,
+            'current_occupants' => 0,
+            'has_toilet_facilities' => 'No',
+            'status' => 'active',
+            'latitude' => -6.28,
+            'longitude' => 107.0,
+            'facilities' => ['Dapur Umum'],
+        ]);
+
         User::create([
-            'fullname' => 'Relawan Pending',
+            'fullname' => 'Pengelola Pending',
             'email' => 'verify@example.com',
             'phone' => '087777777777',
             'password' => Hash::make('password123'),
-            'role' => 'Relawan',
-            'nik' => '3201234567890005',
+            'role' => 'Pengelola_Posko',
+            'shelter_id' => $shelter->shelter_id,
             'status' => 'pending',
         ]);
 
@@ -210,30 +219,42 @@ class RegistrationVerificationTest extends TestCase
 
         $response->assertOk();
         $response->assertViewIs('admin.verifikasi-pengguna');
-        $response->assertSee('Relawan Pending');
+        $response->assertSee('Pengelola Pending');
     }
 
-    public function test_admin_can_approve_pending_relawan(): void
+    public function test_admin_can_approve_pending_pengelola(): void
     {
-        $relawan = User::create([
-            'fullname' => 'Relawan Approve',
+        $shelter = Shelter::create([
+            'shelter_name' => 'Posko Approve',
+            'address' => 'Jl. Test',
+            'max_capacity' => 100,
+            'current_occupants' => 0,
+            'has_toilet_facilities' => 'No',
+            'status' => 'active',
+            'latitude' => -6.28,
+            'longitude' => 107.0,
+            'facilities' => ['Dapur Umum'],
+        ]);
+
+        $pengelola = User::create([
+            'fullname' => 'Pengelola Approve',
             'email' => 'approve@example.com',
             'phone' => '088888888888',
             'password' => Hash::make('password123'),
-            'role' => 'Relawan',
-            'nik' => '3201234567890006',
+            'role' => 'Pengelola_Posko',
+            'shelter_id' => $shelter->shelter_id,
             'status' => 'pending',
         ]);
 
         $response = $this->actingAs($this->adminUser)->post(
-            route('admin.user.approve', $relawan->user_id)
+            route('admin.user.approve', $pengelola->user_id)
         );
 
         $response->assertRedirect(route('admin.user-verification'));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('users', [
-            'user_id' => $relawan->user_id,
+            'user_id' => $pengelola->user_id,
             'status' => 'approved',
         ]);
     }
