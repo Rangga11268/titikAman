@@ -1046,27 +1046,26 @@
         border: none;
         border-bottom: 1px dashed #e5e7eb; 
         position: relative;
-        padding-left: 45% !important; 
+        padding: 8px 12px 8px 45% !important; 
         text-align: left !important;
         white-space: normal;
         min-height: 32px;
-        display: flex;
-        align-items: center;
+        display: block;
         font-size: 12px;
-        padding: 8px 0 !important;
+        box-sizing: border-box;
     }
     
     .history-table td:last-child {
         border-bottom: 0;
+        display: flex;
         justify-content: flex-end;
-        padding-left: 0 !important;
+        padding: 8px 12px !important;
     }
     
     .history-table td::before { 
         position: absolute;
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
+        top: 8px;
+        left: 12px;
         width: 40%; 
         padding-right: 10px; 
         white-space: nowrap;
