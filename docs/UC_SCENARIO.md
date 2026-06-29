@@ -40,10 +40,10 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 |--------|-----------|
 | **Use Case Name** | Register Relawan / SAR |
 | **Use Case ID** | UC-02b |
-| **Actor** | Calon Relawan |
-| **Description** | Proses pendaftaran akun bagi calon relawan. Calon relawan hanya mengisi data dan mengunggah dokumen. Seluruh akses sistem dan penugasan dikelola oleh Admin Relawan. |
-| **Precondition** | Calon relawan belum memiliki akun. |
-| **Normal Flow** | 1. Calon relawan memilih menu Register.<br>2. Calon relawan memilih peran **Relawan / SAR**.<br>3. Calon relawan mengisi form lengkap (Nama, NIK, No HP, Email, Kecamatan, Kelurahan, Keahlian, Organisasi, Password).<br>4. Calon relawan mengunggah dokumen KTP/Sertifikat.<br>5. Sistem menyimpan data dengan role `Relawan` dan status **pending**.<br>6. Sistem mengarahkan ke halaman Login.<br>7. Admin Relawan meninjau dokumen melalui dashboard → memilih **Terima** atau **Tolak**.<br>8. Jika diterima → session approval tersimpan di dashboard Admin Relawan, menampilkan banner dengan tombol **Kirim Info via WA ke [Nama]** (mengirim link grup WA Tim ke nomor anggota baru). Status berubah menjadi **approved**.<br>9. Relawan login → sistem deteksi status approved + role Relawan → redirect ke `/status-verifikasi` dengan halaman approved yang menampilkan: nama tim, **Gabung Grup WhatsApp [Tim]**, **Kirim Info ke WhatsApp Saya**, dan **Lanjut ke Dashboard**.<br>10. Jika ditolak → status berubah menjadi **rejected**.<br>11. **Pencatatan penting**: Relawan tidak memiliki akses ke halaman dashboard operasional. Seluruh penugasan misi dikirimkan melalui **Grup WhatsApp** oleh Admin Relawan. |
+| **Actor** | Relawan |
+| **Description** | Proses pendaftaran akun bagi relawan. Relawan hanya mengisi data dan mengunggah dokumen. Seluruh akses sistem dan penugasan dikelola oleh Admin Relawan. |
+| **Precondition** | Relawan belum memiliki akun. |
+| **Normal Flow** | 1. Relawan memilih menu Register.<br>2. Relawan memilih peran **Relawan / SAR**.<br>3. Relawan mengisi form lengkap (Nama, NIK, No HP, Email, Kecamatan, Kelurahan, Keahlian, Organisasi, Password).<br>4. Relawan mengunggah dokumen KTP/Sertifikat.<br>5. Sistem menyimpan data dengan role `Relawan` dan status **pending**.<br>6. Sistem mengarahkan ke halaman Login.<br>7. Admin Relawan meninjau dokumen melalui dashboard → memilih **Terima** atau **Tolak**.<br>8. Jika diterima → session approval tersimpan di dashboard Admin Relawan, menampilkan banner dengan tombol **Kirim Info via WA ke [Nama]** (mengirim link grup WA Tim ke nomor anggota baru). Status berubah menjadi **approved**.<br>9. Relawan login → sistem deteksi status approved + role Relawan → redirect ke `/status-verifikasi` dengan halaman approved yang menampilkan: nama tim, **Gabung Grup WhatsApp [Tim]**, dan **Lanjut ke Dashboard**.<br>10. Jika ditolak → status berubah menjadi **rejected**.<br>11. **Pencatatan penting**: Relawan tidak memiliki akses ke halaman dashboard operasional. Seluruh penugasan misi dikirimkan melalui **Grup WhatsApp** oleh Admin Relawan. |
 | **Exception** | Dokumen tidak diunggah atau NIK tidak valid → pendaftaran ditolak sistem. |
 
 ---
@@ -54,10 +54,10 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 |--------|-----------|
 | **Use Case Name** | Register Pengelola Posko |
 | **Use Case ID** | UC-02c |
-| **Actor** | Calon Pengelola Posko |
+| **Actor** | Pengelola Posko |
 | **Description** | Proses pendaftaran akun baru bagi pengelola posko sekaligus mendaftarkan posko pengungsian baru. |
-| **Precondition** | Calon pengelola belum memiliki akun. |
-| **Normal Flow** | 1. Calon pengelola memilih menu Register.<br>2. Calon pengelola memilih peran **Pengelola Posko**.<br>3. Calon pengelola mengisi data diri (Nama, Email, No HP, Password).<br>4. Calon pengelola mengisi data posko (Nama Posko, Kapasitas, Alamat, Fasilitas, Foto Posko, Lokasi GPS).<br>5. Sistem membuat Shelter baru dan menghubungkan akun pengelola dengan posko tersebut.<br>6. Sistem menyimpan data dengan status **pending**.<br>7. Admin BPBD melakukan verifikasi akun pengelola melalui halaman `/admin/verifikasi-pengguna`. |
+| **Precondition** | Pengelola belum memiliki akun. |
+| **Normal Flow** | 1. Pengelola memilih menu Register.<br>2. Pengelola memilih peran **Pengelola Posko**.<br>3. Pengelola mengisi data diri (Nama, Email, No HP, Password).<br>4. Pengelola mengisi data posko (Nama Posko, Kapasitas, Alamat, Fasilitas, Foto Posko, Lokasi GPS).<br>5. Sistem membuat Shelter baru dan menghubungkan akun pengelola dengan posko tersebut.<br>6. Sistem menyimpan data dengan status **pending**.<br>7. Admin BPBD melakukan verifikasi akun pengelola melalui halaman `/admin/verifikasi-pengguna`. |
 | **Exception** | Data posko tidak lengkap atau lokasi GPS tidak dipilih → pendaftaran ditolak. |
 
 ---
@@ -68,7 +68,7 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 |--------|-----------|
 | **Use Case Name** | Status Verifikasi Akun |
 | **Use Case ID** | UC-03 |
-| **Actor** | Calon Relawan / Pengelola Posko (dengan status pending/rejected) |
+| **Actor** | Relawan / Pengelola Posko (dengan status pending/rejected) |
 | **Description** | Halaman khusus yang menampilkan status verifikasi akun bagi user yang belum disetujui. |
 | **Precondition** | User login dengan status **pending** atau **rejected**. |
 | **Normal Flow** | 1. Sistem mendeteksi status akun tidak **approved**.<br>2. Sistem mengarahkan ke halaman `/status-verifikasi`.<br>3a. Jika **pending**: menampilkan ikon jam pasir, info proses verifikasi, tombol Hubungi Admin BPBD via WA, dan tombol Keluar.<br>3b. Jika **rejected**: menampilkan ikon silang merah, info penolakan dokumen, tombol Hubungi Admin BPBD, dan tombol Keluar. |
