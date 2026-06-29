@@ -500,7 +500,7 @@
                             <tr>
                                 <th>Waktu Selesai</th>
                                 <th>Lokasi</th>
-                                <th>Relawan</th>
+                                <th>Tim / Lead</th>
                                 <th>Jumlah Orang</th>
                                 <th>Durasi</th>
                                 <th>Status</th>
@@ -515,7 +515,7 @@
                                         {{ $mission->sosRequest->user->kelurahan ?? 'Lokasi' }},
                                         {{ $mission->sosRequest->user->kecamatan ?? 'Bekasi' }}
                                     </td>
-                                    <td data-label="Relawan" class="td-regular">{{ $mission->volunteer->fullname ?? '-' }}</td>
+                                    <td data-label="Tim" class="td-regular">{{ $mission->volunteer ? ('Tim ' . ($mission->volunteer->kecamatan ?? 'Reguler') . ' (Lead: ' . $mission->volunteer->fullname . ')') : '-' }}</td>
                                     <td data-label="Jumlah Orang" class="td-regular">{{ $mission->sosRequest->people_trapped }} Orang</td>
                                     <td data-label="Durasi" class="td-duration">
                                         @if($mission->resolved_at)
@@ -822,7 +822,7 @@
             'lng'    => (float) $m->sosRequest->longitude,
             'name'   => $m->sosRequest->user->fullname,
             'people' => (int) $m->sosRequest->people_trapped,
-            'volunteer' => $m->volunteer->fullname ?? 'Relawan',
+            'volunteer' => $m->volunteer ? ('Tim ' . ($m->volunteer->kecamatan ?? 'Reguler') . ' (Lead: ' . $m->volunteer->fullname . ')') : 'Relawan',
         ];
     }
 
@@ -868,7 +868,7 @@
         'vulnerable' => $m->sosRequest?->vulnerable_groups_count ?? 0,
         'priority' => $m->sosRequest?->priority_level ?? '-',
         'description' => $m->sosRequest?->description ?? '-',
-        'volunteer' => $m->volunteer?->fullname ?? '-',
+        'volunteer' => $m->volunteer ? ('Tim ' . ($m->volunteer->kecamatan ?? 'Reguler') . ' (Lead: ' . $m->volunteer->fullname . ')') : '-',
         'volunteer_phone' => $m->volunteer?->phone ?? '-',
         'assigned_at' => $m->assigned_at ? $m->assigned_at->format('d M Y H:i') : '-',
         'resolved_at' => $m->resolved_at ? $m->resolved_at->format('d M Y H:i') : '-',
