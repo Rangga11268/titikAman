@@ -96,6 +96,11 @@ class RelawanController extends Controller
         // Get array of active volunteer IDs (busy teams)
         $activeVolunteerIds = $activeMissions->pluck('volunteer_id')->toArray();
 
+        // Total registered relawan (Admin_Relawan + approved Relawan)
+        $totalRelawan = \App\Models\User::whereIn('role', ['Admin_Relawan', 'Relawan'])
+            ->where('status', 'approved')
+            ->count();
+
         // Teams (Ketua Tim / Lead berdasarkan kecamatan)
         $teams = \App\Models\User::where('role', 'Admin_Relawan')
             ->where('user_id', '!=', auth()->id())
@@ -123,6 +128,7 @@ class RelawanController extends Controller
             'misiAktifku',
             'misiSelesaiCount',
             'avgResponseMinutes',
+            'totalRelawan',
             'totalSosHariIni',
             'completedMissions',
             'completedMissionsDisplay',

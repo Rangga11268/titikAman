@@ -166,11 +166,11 @@
                 </div>
                 <div class="stat-card navy">
                     <div class="stat-card-header">
-                        <span class="stat-card-label navy">Relawan Online</span>
+                        <span class="stat-card-label navy">Relawan Terdaftar</span>
                         <i data-lucide="users" class="stat-card-icon" style="color:#031f41;"></i>
                     </div>
-                    <div class="stat-card-value">—</div>
-                    <div class="stat-card-sub">Sekitar wilayah Bekasi</div>
+                    <div class="stat-card-value">{{ $totalRelawan }}</div>
+                    <div class="stat-card-sub">Total terverifikasi aktif</div>
                 </div>
             </div>
 
