@@ -12,10 +12,10 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 |--------|-----------|
 | **Use Case Name** | Login |
 | **Use Case ID** | UC-01 |
-| **Actor** | Warga, Admin BPBD, Pengelola Posko, Admin Relawan |
+| **Actor** | Guest |
 | **Description** | Proses masuk ke dalam sistem menggunakan Email atau Nomor HP untuk mengakses fitur sesuai hak akses (role). |
-| **Precondition** | Pengguna telah memiliki akun yang terdaftar di database dengan status **approved**. |
-| **Normal Flow** | 1. Pengguna membuka halaman Login.<br>2. Pengguna memasukkan **Email atau Nomor HP** dan password.<br>3. Sistem memverifikasi kecocokan kredensial.<br>4a. Jika status **approved**, sistem mengarahkan ke dashboard sesuai peran (Warga → dashboard umum, Admin BPBD → admin dashboard, Admin Relawan → dashboard relawan, Pengelola Posko → dashboard umum).<br>4b. Jika status **pending** atau **rejected**, sistem mengarahkan ke halaman `/status-verifikasi`. |
+| **Precondition** | Guest telah memiliki akun yang terdaftar di database dengan status **approved**. |
+| **Normal Flow** | 1. Guest membuka halaman Login.<br>2. Guest memasukkan **Email atau Nomor HP** dan password.<br>3. Sistem memverifikasi kecocokan kredensial.<br>4a. Jika status **approved**, sistem mengarahkan ke dashboard sesuai peran (Warga → dashboard umum, Admin BPBD → admin dashboard, Admin Relawan → dashboard relawan, Pengelola Posko → dashboard umum).<br>4b. Jika status **pending** atau **rejected**, sistem mengarahkan ke halaman `/status-verifikasi`. |
 | **Exception** | Email/HP atau password salah → sistem menampilkan pesan error. |
 
 ---
@@ -26,10 +26,10 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 |--------|-----------|
 | **Use Case Name** | Register Warga |
 | **Use Case ID** | UC-02a |
-| **Actor** | Warga (Masyarakat) |
+| **Actor** | Guest |
 | **Description** | Proses pendaftaran akun baru bagi masyarakat umum. |
-| **Precondition** | Warga belum memiliki akun di sistem TitikAman. |
-| **Normal Flow** | 1. Warga memilih menu Register di halaman awal.<br>2. Warga memilih peran **Warga**.<br>3. Warga mengisi form data diri (Nama, Email, Password, No HP, Kecamatan, Kelurahan).<br>4. Sistem memvalidasi dan menyimpan data ke tabel Users dengan status **approved** (auto-approve).<br>5. Sistem langsung login dan mengarahkan warga ke Dashboard. |
+| **Precondition** | Guest belum memiliki akun di sistem TitikAman. |
+| **Normal Flow** | 1. Guest memilih menu Register di halaman awal.<br>2. Guest memilih peran **Warga**.<br>3. Guest mengisi form data diri (Nama, Email, Password, No HP, Kecamatan, Kelurahan).<br>4. Sistem memvalidasi dan menyimpan data ke tabel Users dengan status **approved** (auto-approve).<br>5. Sistem langsung login dan mengarahkan warga ke Dashboard. |
 | **Exception** | Email/HP sudah terdaftar atau form tidak lengkap → pendaftaran ditolak dan ditampilkan pesan error. |
 
 ---
@@ -40,10 +40,10 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 |--------|-----------|
 | **Use Case Name** | Register Relawan / SAR |
 | **Use Case ID** | UC-02b |
-| **Actor** | Relawan |
-| **Description** | Proses pendaftaran akun bagi relawan. Relawan hanya mengisi data dan mengunggah dokumen. Seluruh akses sistem dan penugasan dikelola oleh Admin Relawan. |
-| **Precondition** | Relawan belum memiliki akun. |
-| **Normal Flow** | 1. Relawan memilih menu Register.<br>2. Relawan memilih peran **Relawan / SAR**.<br>3. Relawan mengisi form lengkap (Nama, NIK, No HP, Email, Kecamatan, Kelurahan, Keahlian, Organisasi, Password).<br>4. Relawan mengunggah dokumen KTP/Sertifikat.<br>5. Sistem menyimpan data dengan role `Relawan` dan status **pending**.<br>6. Sistem mengarahkan ke halaman Login.<br>7. Admin Relawan meninjau dokumen melalui dashboard → memilih **Terima** atau **Tolak**.<br>8. Jika diterima → session approval tersimpan di dashboard Admin Relawan, menampilkan banner dengan tombol **Kirim Info via WA ke [Nama]** (mengirim link grup WA Tim ke nomor anggota baru). Status berubah menjadi **approved**.<br>9. Relawan login → sistem deteksi status approved + role Relawan → redirect ke `/status-verifikasi` dengan halaman approved yang menampilkan: nama tim, **Gabung Grup WhatsApp [Tim]**, dan **Lanjut ke Dashboard**.<br>10. Jika ditolak → status berubah menjadi **rejected**.<br>11. **Pencatatan penting**: Relawan tidak memiliki akses ke halaman dashboard operasional. Seluruh penugasan misi dikirimkan melalui **Grup WhatsApp** oleh Admin Relawan. |
+| **Actor** | Guest |
+| **Description** | Proses pendaftaran akun bagi relawan. Guest hanya mengisi data dan mengunggah dokumen. Seluruh akses sistem dan penugasan dikelola oleh Admin Relawan. |
+| **Precondition** | Guest belum memiliki akun. |
+| **Normal Flow** | 1. Guest memilih menu Register.<br>2. Guest memilih peran **Relawan / SAR**.<br>3. Guest mengisi form lengkap (Nama, NIK, No HP, Email, Kecamatan, Kelurahan, Keahlian, Organisasi, Password).<br>4. Guest mengunggah dokumen KTP/Sertifikat.<br>5. Sistem menyimpan data dengan role `Relawan` dan status **pending**.<br>6. Sistem mengarahkan ke halaman Login.<br>7. Admin Relawan meninjau dokumen melalui dashboard → memilih **Terima** atau **Tolak**.<br>8. Jika diterima → session approval tersimpan di dashboard Admin Relawan, menampilkan banner dengan tombol **Kirim Info via WA ke [Nama]** (mengirim link grup WA Tim ke nomor anggota baru). Status berubah menjadi **approved**.<br>9. Relawan login → sistem deteksi status approved + role Relawan → redirect ke `/status-verifikasi` dengan halaman approved yang menampilkan: nama tim, **Gabung Grup WhatsApp [Tim]**, dan **Lanjut ke Dashboard**.<br>10. Jika ditolak → status berubah menjadi **rejected**.<br>11. **Pencatatan penting**: Relawan tidak memiliki akses ke halaman dashboard operasional. Seluruh penugasan misi dikirimkan melalui **Grup WhatsApp** oleh Admin Relawan. |
 | **Exception** | Dokumen tidak diunggah atau NIK tidak valid → pendaftaran ditolak sistem. |
 
 ---
@@ -54,10 +54,10 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 |--------|-----------|
 | **Use Case Name** | Register Pengelola Posko |
 | **Use Case ID** | UC-02c |
-| **Actor** | Pengelola Posko |
+| **Actor** | Guest |
 | **Description** | Proses pendaftaran akun baru bagi pengelola posko sekaligus mendaftarkan posko pengungsian baru. |
-| **Precondition** | Pengelola belum memiliki akun. |
-| **Normal Flow** | 1. Pengelola memilih menu Register.<br>2. Pengelola memilih peran **Pengelola Posko**.<br>3. Pengelola mengisi data diri (Nama, Email, No HP, Password).<br>4. Pengelola mengisi data posko (Nama Posko, Kapasitas, Alamat, Fasilitas, Foto Posko, Lokasi GPS).<br>5. Sistem membuat Shelter baru dan menghubungkan akun pengelola dengan posko tersebut.<br>6. Sistem menyimpan data dengan status **pending**.<br>7. Admin BPBD melakukan verifikasi akun pengelola melalui halaman `/admin/verifikasi-pengguna`. |
+| **Precondition** | Guest belum memiliki akun. |
+| **Normal Flow** | 1. Guest memilih menu Register.<br>2. Guest memilih peran **Pengelola Posko**.<br>3. Guest mengisi data diri (Nama, Email, No HP, Password).<br>4. Guest mengisi data posko (Nama Posko, Kapasitas, Alamat, Fasilitas, Foto Posko, Lokasi GPS).<br>5. Sistem membuat Shelter baru dan menghubungkan akun pengelola dengan posko tersebut.<br>6. Sistem menyimpan data dengan status **pending**.<br>7. Admin BPBD melakukan verifikasi akun pengelola melalui halaman `/admin/verifikasi-pengguna`. |
 | **Exception** | Data posko tidak lengkap atau lokasi GPS tidak dipilih → pendaftaran ditolak. |
 
 ---
