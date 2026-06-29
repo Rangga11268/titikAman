@@ -59,10 +59,36 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/status-verifikasi', function () {
-        if (auth()->user()->status === 'approved') {
+        $user = auth()->user();
+
+        // Approved Relawan: show success page with WA group link
+        if ($user->status === 'approved' && $user->role === 'Relawan') {
+            $waGroupLinks = [
+                'Bekasi Timur'    => 'https://chat.whatsapp.com/INVITE_TIM_BEKASTIMUR',
+                'Bekasi Selatan'  => 'https://chat.whatsapp.com/INVITE_TIM_BEKASISELATAN',
+                'Bekasi Barat'    => 'https://chat.whatsapp.com/INVITE_TIM_BEKASIBARAT',
+                'Bekasi Utara'    => 'https://chat.whatsapp.com/INVITE_TIM_BEKASIUTARA',
+                'Jatiasih'        => 'https://chat.whatsapp.com/INVITE_TIM_JATIASIH',
+                'Rawalumbu'       => 'https://chat.whatsapp.com/INVITE_TIM_RAWALUMBU',
+                'Pondok Gede'     => 'https://chat.whatsapp.com/INVITE_TIM_PONDOKGEDE',
+                'Mustikajaya'     => 'https://chat.whatsapp.com/INVITE_TIM_MUSTIKAJAYA',
+            ];
+
+            $kec = $user->kecamatan;
+            $teamName = $kec ? 'Tim ' . $kec : 'Tim Reguler';
+            $groupLink = $waGroupLinks[$kec] ?? 'https://chat.whatsapp.com/INVITE_GRUP_GABUNGAN';
+
+            return view('auth.verification-status', [
+                'status' => 'approved',
+                'team_name' => $teamName,
+                'group_link' => $groupLink,
+            ]);
+        }
+
+        if ($user->status === 'approved') {
             return redirect()->route('dashboard');
         }
-        return view('auth.verification-status');
+        return view('auth.verification-status', ['status' => $user->status ?? 'pending']);
     })->name('verification.status');
 });
 
@@ -101,6 +127,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::post('/relawan/mission/complete/{id}', [RelawanController::class, 'completeMission'])->name('relawan.mission.complete');
         Route::get('/relawan/mission/export', [RelawanController::class, 'exportMissions'])->name('relawan.mission.export');
         Route::get('/relawan/dismiss-wa', [RelawanController::class, 'dismissWa'])->name('relawan.dismiss.wa');
+        Route::get('/relawan/dismiss-approval', [RelawanController::class, 'dismissApproval'])->name('relawan.dismiss.approval');
         
         Route::post('/relawan/member/{id}/approve', [RelawanController::class, 'approveMember'])->name('relawan.member.approve');
         Route::post('/relawan/member/{id}/reject', [RelawanController::class, 'rejectMember'])->name('relawan.member.reject');

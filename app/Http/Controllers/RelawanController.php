@@ -15,6 +15,21 @@ class RelawanController extends Controller
     protected $rescueMissionRepository;
     protected $rescueMissionService;
 
+    // WhatsApp Group Links per Team
+    private $waGroupLinks = [
+        'teams' => [
+            'Bekasi Timur'    => 'https://chat.whatsapp.com/INVITE_TIM_BEKASTIMUR',
+            'Bekasi Selatan'  => 'https://chat.whatsapp.com/INVITE_TIM_BEKASISELATAN',
+            'Bekasi Barat'    => 'https://chat.whatsapp.com/INVITE_TIM_BEKASIBARAT',
+            'Bekasi Utara'    => 'https://chat.whatsapp.com/INVITE_TIM_BEKASIUTARA',
+            'Jatiasih'        => 'https://chat.whatsapp.com/INVITE_TIM_JATIASIH',
+            'Rawalumbu'       => 'https://chat.whatsapp.com/INVITE_TIM_RAWALUMBU',
+            'Pondok Gede'     => 'https://chat.whatsapp.com/INVITE_TIM_PONDOKGEDE',
+            'Mustikajaya'     => 'https://chat.whatsapp.com/INVITE_TIM_MUSTIKAJAYA',
+        ],
+        'backup' => 'https://chat.whatsapp.com/INVITE_GRUP_GABUNGAN',
+    ];
+
     public function __construct(
         SosRepository $sosRepository,
         RescueMissionRepository $rescueMissionRepository,
@@ -160,12 +175,21 @@ class RelawanController extends Controller
                 ]);
             }
 
+            $kec = $volunteer->kecamatan;
+            $teamInfo = $kec ? 'Tim ' . $kec : 'Tim Reguler';
+
+            $shareTeamText = "🚨 *MISI EVAKUASI BARU - {$teamInfo}*\nPelapor: {$pelapor}\nLokasi: {$lokasi}\nPrioritas: " . strtoupper($sos->priority_level) . "\nGoogle Maps: {$mapsLink}";
+            $shareBackupText = "⚠️ *BUTUH BANTUAN BACKUP TIM!*\n{$teamInfo} sedang menangani SOS di {$lokasi}.\nPelapor: {$pelapor}\nGoogle Maps: {$mapsLink}";
+
             session([
                 'wa_url' => $waUrl,
                 'wa_name' => $volunteer->fullname,
                 'wa_pelapor' => $pelapor,
                 'wa_lokasi' => $lokasi,
                 'wa_maps' => $mapsLink,
+                'wa_share_team_url' => 'https://api.whatsapp.com/send?text=' . urlencode($shareTeamText),
+                'wa_share_backup_url' => 'https://api.whatsapp.com/send?text=' . urlencode($shareBackupText),
+                'wa_team_info' => $teamInfo,
             ]);
 
             return redirect()
@@ -241,6 +265,22 @@ class RelawanController extends Controller
         $user->status = 'approved';
         $user->save();
 
+        $kec = $user->kecamatan;
+        $teamName = $kec ? 'Tim ' . $kec : 'Tim Reguler';
+        $groupLink = $this->waGroupLinks['teams'][$kec] ?? $this->waGroupLinks['backup'];
+
+        // WhatsApp link to send group invite to the new member
+        $waNumber = preg_replace('/[^0-9]/', '', $user->phone);
+        $waText = "Halo *{$user->fullname}*, akun Relawan Anda telah disetujui! 🎉\n\nAnda terdaftar sebagai anggota *{$teamName}*.\n\nBergabung ke grup tim melalui link berikut:\n{$groupLink}\n\nSalam,\nTim Admin Relawan TitikAman";
+        $waUrl = $waNumber ? "https://wa.me/{$waNumber}?text=" . urlencode($waText) : '#';
+
+        session([
+            'approved_member_name' => $user->fullname,
+            'approved_member_team' => $teamName,
+            'approved_wa_group_link' => $groupLink,
+            'approved_wa_send_url' => $waUrl,
+        ]);
+
         return redirect()->route('relawan.dashboard')->with('success', 'Anggota tim berhasil disetujui.');
     }
 
@@ -315,7 +355,16 @@ class RelawanController extends Controller
      */
     public function dismissWa()
     {
-        session()->forget(['wa_url', 'wa_name', 'wa_pelapor', 'wa_lokasi', 'wa_maps']);
+        session()->forget(['wa_url', 'wa_name', 'wa_pelapor', 'wa_lokasi', 'wa_maps', 'wa_share_team_url', 'wa_share_backup_url', 'wa_team_info']);
+        return redirect()->route('relawan.dashboard');
+    }
+
+    /**
+     * Dismiss the approval notification banner.
+     */
+    public function dismissApproval()
+    {
+        session()->forget(['approved_member_name', 'approved_member_team', 'approved_wa_group_link']);
         return redirect()->route('relawan.dashboard');
     }
 
