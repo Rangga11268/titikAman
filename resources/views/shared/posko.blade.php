@@ -310,6 +310,35 @@
 
         lucide.createIcons();
 
+        // --- Search filter ---
+        const searchInput = document.querySelector('.search-input');
+        const shelterCards = document.querySelectorAll('.shelter-horizontal-card');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const q = this.value.toLowerCase().trim();
+                shelterCards.forEach(function(card) {
+                    const name = card.querySelector('.shelter-h3').textContent.toLowerCase();
+                    card.style.display = !q || name.includes(q) ? '' : 'none';
+                });
+            });
+        }
+
+        // --- Constrain list height so it scrolls instead of pushing map down ---
+        function constrainListHeight() {
+            const list = document.querySelector('.shelter-cards-list');
+            const splitLayout = document.querySelector('.split-layout');
+            if (!list || !splitLayout) return;
+            const rect = splitLayout.getBoundingClientRect();
+            const offsetFromTop = rect.top;
+            const viewportHeight = window.innerHeight;
+            const bottomPadding = 24;
+            const availableHeight = viewportHeight - offsetFromTop - bottomPadding;
+            list.style.maxHeight = Math.max(300, availableHeight) + 'px';
+            list.style.overflowY = 'auto';
+        }
+        constrainListHeight();
+        window.addEventListener('resize', constrainListHeight);
+
         // Initialize Map
         miniMap = L.map('shelter-mini-map').setView([-6.241586, 106.992416], 12); // Bekasi center
         
@@ -340,17 +369,25 @@
         @endphp
         const shelters = @json($shelterMapData);
 
+        function createPoskoIcon(color) {
+            return L.divIcon({
+                html: `<div style="width:28px;height:28px;position:relative;">
+                    <div style="position:absolute;top:0;left:0;width:28px;height:28px;border-radius:6px;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                </div>`,
+                className: '',
+                iconSize: [28, 28],
+                iconAnchor: [14, 14],
+            });
+        }
+
         shelters.forEach(function(s) {
             if (s.lat && s.lng) {
                 let color = s.status === 'full' ? '#ba1a1a' : (s.status === 'almost_full' ? '#f59e0b' : '#006a60');
-                L.circleMarker([s.lat, s.lng], {
-                    radius: 7,
-                    fillColor: color,
-                    color: '#fff',
-                    weight: 1.5,
-                    fillOpacity: 0.85
-                }).addTo(miniMap)
-                .bindPopup(`<strong>${s.name}</strong><br>Kapasitas: ${s.occupants}/${s.max}`);
+                L.marker([s.lat, s.lng], { icon: createPoskoIcon(color) })
+                    .addTo(miniMap)
+                    .bindPopup(`<strong>${s.name}</strong><br>Kapasitas: ${s.occupants}/${s.max}`);
             }
         });
     });
