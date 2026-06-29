@@ -164,7 +164,9 @@ class RelawanController extends Controller
             $mapsLink = "https://maps.google.com/maps?q={$sos->latitude},{$sos->longitude}";
             
             $waMessage = "🚨 *DARURAT SOS!* Segera meluncur ke lokasi.\nPelapor: {$pelapor}\nLokasi: {$lokasi}\nPrioritas: " . strtoupper($sos->priority_level) . "\nGoogle Maps: {$mapsLink}";
-            $waUrl = "https://wa.me/" . preg_replace('/[^0-9]/', '', $volunteer->phone) . "?text=" . urlencode($waMessage);
+            $rawPhone = preg_replace('/[^0-9]/', '', $volunteer->phone);
+            $volWaNumber = substr($rawPhone, 0, 1) === '0' ? '62' . substr($rawPhone, 1) : (substr($rawPhone, 0, 2) !== '62' ? '62' . $rawPhone : $rawPhone);
+            $waUrl = $volWaNumber ? "https://wa.me/{$volWaNumber}?text=" . urlencode($waMessage) : '#';
 
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
@@ -270,7 +272,15 @@ class RelawanController extends Controller
         $groupLink = $this->waGroupLinks['teams'][$kec] ?? $this->waGroupLinks['backup'];
 
         // WhatsApp link to send group invite to the new member
-        $waNumber = preg_replace('/[^0-9]/', '', $user->phone);
+        $raw = preg_replace('/[^0-9]/', '', $user->phone);
+        // Convert to international format for wa.me
+        if (substr($raw, 0, 1) === '0') {
+            $waNumber = '62' . substr($raw, 1);
+        } elseif (substr($raw, 0, 2) !== '62') {
+            $waNumber = '62' . $raw;
+        } else {
+            $waNumber = $raw;
+        }
         $waText = "Halo *{$user->fullname}*, akun Relawan Anda telah disetujui! 🎉\n\nAnda terdaftar sebagai anggota *{$teamName}*.\n\nBergabung ke grup tim melalui link berikut:\n{$groupLink}\n\nSalam,\nTim Admin Relawan TitikAman";
         $waUrl = $waNumber ? "https://wa.me/{$waNumber}?text=" . urlencode($waText) : '#';
 
