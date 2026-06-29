@@ -98,8 +98,7 @@
                 <a href="{{ route('posko', ['filter' => 'all']) }}" class="chip {{ $filter == 'all' ? 'active' : '' }}">Semua</a>
                 <a href="{{ route('posko', ['filter' => 'available']) }}" class="chip {{ $filter == 'available' ? 'active' : '' }}">Tersedia</a>
                 <a href="{{ route('posko', ['filter' => 'mck']) }}" class="chip {{ $filter == 'mck' ? 'active' : '' }}">Ada MCK</a>
-                <a href="#" class="chip">Ramah Lansia</a>
-                <a href="#" class="chip">Dapur Umum</a>
+
             </div>
 
             <!-- Main Layout Split -->

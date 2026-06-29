@@ -6,6 +6,7 @@
     <title>TitikAman - Sistem Mitigasi & Peringatan Dini Banjir</title>
     
     <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="icon" type="image/png" href="{{ asset('assets/logo-titikaman.png') }}">
     
     <!-- Google Fonts -->

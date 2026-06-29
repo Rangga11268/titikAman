@@ -51,6 +51,25 @@ Semua berkas rancangan, riset, dan kebutuhan sistem diletakkan di dalam folder `
 
 ---
 
+## 👥 Akun Demo
+
+Semua akun seeder memiliki password: **`password`**
+
+| Email | Role | Kecamatan | Keterangan |
+|---|---|---|---|
+| `admin@example.com` | Admin_BPBD | — | Super admin, akses penuh |
+| `relawan@example.com` | Admin_Relawan | Bekasi Selatan | Koordinator tim relawan |
+| `lead.bekasitimur@example.com` | Admin_Relawan | Bekasi Timur | Ketua Tim Bekasi Timur |
+| `lead.jatiasih@example.com` | Admin_Relawan | Jatiasih | Ketua Tim Jatiasih |
+| `lead.rawalumbu@example.com` | Admin_Relawan | Rawalumbu | Ketua Tim Rawalumbu |
+| `lead.bekasiutara@example.com` | Admin_Relawan | Bekasi Utara | Ketua Tim Bekasi Utara |
+| `pengelola@example.com` | Pengelola_Posko | — | Mengelola Posko Masjid Agung Al-Barkah |
+| `warga@example.com` | Warga | Bekasi Timur | Warga biasa, akses lapor & SOS |
+
+> **Catatan:** Jalankan `php artisan db:seed` setelah migrasi untuk mengisi data demo.
+
+---
+
 ## ⚙️ Persyaratan Sistem
 
 - **PHP** >= 8.2
