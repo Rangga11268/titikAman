@@ -222,12 +222,12 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 
 ## 4. Skenario Aktor: Pengelola Posko
 
-### Tabel 4.1 Skenario Use Case – Kelola Kapasitas & Status Posko (UC-12)
+### Tabel 4.1 Skenario Use Case – Kelola Kapasitas & Status Posko (UC-13)
 
 | Elemen | Deskripsi |
 |--------|-----------|
 | **Use Case Name** | Kelola Kapasitas & Status Posko |
-| **Use Case ID** | UC-12 |
+| **Use Case ID** | UC-13 |
 | **Actor** | Pengelola Posko / Admin BPBD |
 | **Description** | Memperbarui daya tampung dan status operasional posko. |
 | **Precondition** | Pengelola telah login. |
@@ -236,7 +236,7 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 
 ---
 
-### Tabel 4.2 Skenario Use Case – Verifikasi Donasi (UC-13)
+### Tabel 4.2 Skenario Use Case – Verifikasi Donasi (UC-14)
 
 | Elemen | Deskripsi |
 |--------|-----------|
@@ -252,12 +252,12 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 
 ## 5. Skenario Aktor: Admin BPBD
 
-### Tabel 5.1 Skenario Use Case – Dashboard & Verifikasi Laporan (UC-14)
+### Tabel 5.1 Skenario Use Case – Dashboard & Verifikasi Laporan (UC-15)
 
 | Elemen | Deskripsi |
 |--------|-----------|
 | **Use Case Name** | Dashboard & Verifikasi Laporan |
-| **Use Case ID** | UC-14 |
+| **Use Case ID** | UC-15 |
 | **Actor** | Admin BPBD |
 | **Description** | Memantau dashboard dan memverifikasi laporan banjir dari warga. |
 | **Precondition** | Admin login (diarahkan ke admin dashboard). |
@@ -266,12 +266,12 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 
 ---
 
-### Tabel 5.2 Skenario Use Case – Kelola TMA & Peringatan Dini (UC-15)
+### Tabel 5.2 Skenario Use Case – Kelola TMA & Peringatan Dini (UC-16)
 
 | Elemen | Deskripsi |
 |--------|-----------|
 | **Use Case Name** | Kelola TMA & Peringatan Dini |
-| **Use Case ID** | UC-15 |
+| **Use Case ID** | UC-16 |
 | **Actor** | Admin BPBD |
 | **Description** | Memperbarui data TMA untuk peringatan dini. |
 | **Precondition** | Admin login ke halaman Kelola TMA. |
@@ -280,12 +280,12 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 
 ---
 
-### Tabel 5.3 Skenario Use Case – Verifikasi Pengguna (UC-16)
+### Tabel 5.3 Skenario Use Case – Verifikasi Pengguna (UC-17)
 
 | Elemen | Deskripsi |
 |--------|-----------|
 | **Use Case Name** | Verifikasi Pengguna |
-| **Use Case ID** | UC-16 |
+| **Use Case ID** | UC-17 |
 | **Actor** | Admin BPBD |
 | **Description** | Menyetujui atau menolak pendaftaran akun baru (Relawan & Pengelola Posko). |
 | **Precondition** | Terdapat pengguna baru dengan status **pending**. |
