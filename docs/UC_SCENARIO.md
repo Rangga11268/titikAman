@@ -12,10 +12,10 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 |--------|-----------|
 | **Use Case Name** | Login |
 | **Use Case ID** | UC-01 |
-| **Actor** | Guest |
+| **Actor** | Warga, Admin BPBD, Pengelola Posko, Admin Relawan |
 | **Description** | Proses masuk ke dalam sistem menggunakan Email atau Nomor HP untuk mengakses fitur sesuai hak akses (role). |
-| **Precondition** | Guest telah memiliki akun yang terdaftar di database dengan status **approved**. |
-| **Normal Flow** | 1. Guest membuka halaman Login.<br>2. Guest memasukkan **Email atau Nomor HP** dan password.<br>3. Sistem memverifikasi kecocokan kredensial.<br>4a. Jika status **approved**, sistem mengarahkan ke dashboard sesuai peran (Warga → dashboard umum, Admin BPBD → admin dashboard, Admin Relawan → dashboard relawan, Pengelola Posko → dashboard umum).<br>4b. Jika status **pending** atau **rejected**, sistem mengarahkan ke halaman `/status-verifikasi`. |
+| **Precondition** | Pengguna telah memiliki akun yang terdaftar di database dengan status **approved**. |
+| **Normal Flow** | 1. Pengguna membuka halaman Login.<br>2. Pengguna memasukkan **Email atau Nomor HP** dan password.<br>3. Sistem memverifikasi kecocokan kredensial.<br>4a. Jika status **approved**, sistem mengarahkan ke dashboard sesuai peran (Warga → dashboard umum, Admin BPBD → admin dashboard, Admin Relawan → dashboard relawan, Pengelola Posko → dashboard umum).<br>4b. Jika status **pending** atau **rejected**, sistem mengarahkan ke halaman `/status-verifikasi`. |
 | **Exception** | Email/HP atau password salah → sistem menampilkan pesan error. |
 
 ---
