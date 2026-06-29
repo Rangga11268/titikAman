@@ -580,6 +580,20 @@ body {
     gap: 16px;
 }
 
+.shelter-cards-list {
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+@media (max-width: 1024px) {
+    .shelter-cards-list {
+        max-height: none;
+        overflow-y: visible;
+        padding-right: 0;
+    }
+}
+
 .shelter-horizontal-card {
     display: flex;
     background: white;

@@ -323,22 +323,6 @@
             });
         }
 
-        // --- Constrain list height so it scrolls instead of pushing map down ---
-        function constrainListHeight() {
-            const list = document.querySelector('.shelter-cards-list');
-            const splitLayout = document.querySelector('.split-layout');
-            if (!list || !splitLayout) return;
-            const rect = splitLayout.getBoundingClientRect();
-            const offsetFromTop = rect.top;
-            const viewportHeight = window.innerHeight;
-            const bottomPadding = 24;
-            const availableHeight = viewportHeight - offsetFromTop - bottomPadding;
-            list.style.maxHeight = Math.max(300, availableHeight) + 'px';
-            list.style.overflowY = 'auto';
-        }
-        constrainListHeight();
-        window.addEventListener('resize', constrainListHeight);
-
         // Initialize Map
         miniMap = L.map('shelter-mini-map').setView([-6.241586, 106.992416], 12); // Bekasi center
         
