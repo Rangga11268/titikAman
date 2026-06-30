@@ -18,7 +18,11 @@ class AdminService
         $report->verification_status = "verified";
         $report->save();
 
-        event(new FloodReportVerified($report));
+        try {
+            event(new FloodReportVerified($report));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Gagal broadcast FloodReportVerified event: ' . $e->getMessage());
+        }
 
         return $report;
     }

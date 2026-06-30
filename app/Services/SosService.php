@@ -51,8 +51,12 @@ class SosService
 
         $sos = $this->sosRepository->create($data);
 
-        // Broadcast the event
-        event(new \App\Events\SosDispatched($sos));
+        // Broadcast the event (gracefully handle if Reverb is down)
+        try {
+            event(new \App\Events\SosDispatched($sos));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Gagal broadcast SOS event: ' . $e->getMessage());
+        }
 
         return $sos;
     }
