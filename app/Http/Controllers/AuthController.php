@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -113,7 +114,16 @@ class AuthController extends Controller
             'nik' => 'required|string|size:16|unique:users,nik',
             'keahlian' => 'required|array',
             'organisasi' => 'nullable|string|max:100',
-            'kecamatan' => 'required|string|max:100',
+            'kecamatan' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::in([
+                    'Pondok Gede', 'Jatiasih', 'Bekasi Timur', 'Bekasi Selatan',
+                    'Bekasi Barat', 'Bekasi Utara', 'Rawalumbu', 'Mustikajaya',
+                    'Bantargebang', 'Medansatria', 'Jatisampurna',
+                ]),
+            ],
             'kelurahan' => 'required|string|max:100',
             'password' => 'required|string|min:8|confirmed',
             'document' => 'required|file|mimes:jpeg,png,pdf|max:5120',
@@ -128,6 +138,7 @@ class AuthController extends Controller
             'nik.unique' => 'NIK sudah terdaftar.',
             'keahlian.required' => 'Pilih minimal satu keahlian.',
             'kecamatan.required' => 'Kecamatan domisili wajib dipilih.',
+            'kecamatan.in' => 'Kecamatan domisili harus berada di wilayah Kota Bekasi.',
             'kelurahan.required' => 'Kelurahan domisili wajib dipilih.',
             'password.required' => 'Kata sandi wajib diisi.',
             'password.min' => 'Kata sandi minimal 8 karakter.',
@@ -175,7 +186,7 @@ class AuthController extends Controller
      */
     public function registerPengelola(Request $request)
     {
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'fullname' => 'required|string|max:100',
             'email' => 'required|email|max:100|unique:users,email',
             'phone' => 'required|string|max:20|unique:users,phone',
@@ -205,6 +216,24 @@ class AuthController extends Controller
             'photo.image' => 'Foto posko harus berupa file gambar.',
             'photo.max' => 'Ukuran foto posko maksimal 5MB.',
         ]);
+
+        $validator->after(function ($validator) use ($request) {
+            $lat = $request->input('latitude');
+            $lng = $request->input('longitude');
+
+            $minLat = -6.350;
+            $maxLat = -6.100;
+            $minLng = 106.800;
+            $maxLng = 107.100;
+
+            if ($lat && $lng) {
+                if ($lat < $minLat || $lat > $maxLat || $lng < $minLng || $lng > $maxLng) {
+                    $validator->errors()->add('latitude', 'Lokasi posko berada di luar wilayah Kota Bekasi. TitikAman hanya melayani wilayah Kota Bekasi dan sekitarnya.');
+                }
+            }
+        });
+
+        $validator->validate();
 
         // Handle photo upload
         $photoPath = null;

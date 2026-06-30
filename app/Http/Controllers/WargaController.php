@@ -85,10 +85,33 @@ class WargaController extends Controller
      */
     public function updateSosLocation(\Illuminate\Http\Request $request): JsonResponse
     {
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
         ]);
+
+        $validator->after(function ($validator) use ($request) {
+            $lat = $request->input('latitude');
+            $lng = $request->input('longitude');
+
+            $minLat = -6.350;
+            $maxLat = -6.100;
+            $minLng = 106.800;
+            $maxLng = 107.100;
+
+            if ($lat && $lng) {
+                if ($lat < $minLat || $lat > $maxLat || $lng < $minLng || $lng > $maxLng) {
+                    $validator->errors()->add('latitude', 'Lokasi berada di luar wilayah Kota Bekasi. Sistem TitikAman hanya melayani wilayah Kota Bekasi dan sekitarnya.');
+                }
+            }
+        });
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first('latitude') ?: 'Lokasi tidak valid.',
+            ], 422);
+        }
 
         $activeSos = $this->sosService->getActiveRequestByUserId(auth()->id());
         

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest
 {
@@ -26,7 +27,16 @@ class RegisterRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20', 'unique:users,phone'],
             'email' => ['nullable', 'email', 'max:100', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'kecamatan' => ['required', 'string', 'max:100'],
+            'kecamatan' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::in([
+                    'Pondok Gede', 'Jatiasih', 'Bekasi Timur', 'Bekasi Selatan',
+                    'Bekasi Barat', 'Bekasi Utara', 'Rawalumbu', 'Mustikajaya',
+                    'Bantargebang', 'Medansatria', 'Jatisampurna',
+                ]),
+            ],
             'kelurahan' => ['required', 'string', 'max:100'],
             'terms' => ['required', 'accepted'],
         ];
@@ -48,6 +58,7 @@ class RegisterRequest extends FormRequest
             'password.min' => 'Kata sandi minimal harus 8 karakter.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
             'kecamatan.required' => 'Kecamatan domisili wajib dipilih.',
+            'kecamatan.in' => 'Kecamatan domisili harus berada di wilayah Kota Bekasi.',
             'kelurahan.required' => 'Kelurahan domisili wajib dipilih.',
             'terms.required' => 'Anda harus menyetujui Syarat & Ketentuan.',
             'terms.accepted' => 'Anda harus menyetujui Syarat & Ketentuan.',

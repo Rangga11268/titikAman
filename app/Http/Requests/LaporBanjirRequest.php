@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class LaporBanjirRequest extends FormRequest
 {
@@ -22,7 +23,16 @@ class LaporBanjirRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kecamatan' => ['required', 'string', 'max:100'],
+            'kecamatan' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::in([
+                    'Pondok Gede', 'Jatiasih', 'Bekasi Timur', 'Bekasi Selatan',
+                    'Bekasi Barat', 'Bekasi Utara', 'Rawalumbu', 'Mustikajaya',
+                    'Bantargebang', 'Medansatria', 'Jatisampurna',
+                ]),
+            ],
             'kelurahan' => ['required', 'string', 'max:100'],
             'water_height_cm' => ['required', 'integer', 'min:1'],
             'street_name' => ['required', 'string', 'max:255'],
@@ -68,6 +78,7 @@ class LaporBanjirRequest extends FormRequest
     {
         return [
             'kecamatan.required' => 'Kecamatan wajib dipilih.',
+            'kecamatan.in' => 'Kecamatan pelaporan harus berada di wilayah Kota Bekasi.',
             'kelurahan.required' => 'Kelurahan wajib dipilih.',
             'water_height_cm.required' => 'Tinggi air wajib diisi.',
             'water_height_cm.integer' => 'Tinggi air harus berupa angka bulat.',
