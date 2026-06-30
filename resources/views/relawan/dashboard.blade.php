@@ -403,7 +403,13 @@
                         <i data-lucide="user-plus"></i>
                         <span>Pendaftar Anggota Tim Baru</span>
                     </div>
-                    <span class="panel-count-badge" style="background: #ca8a04; color: white; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 2px 8px;">{{ $pendaftarTim->count() }} PENDING</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="panel-count-badge" style="background: #ca8a04; color: white; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 2px 8px;">{{ $pendaftarTim->count() }} PENDING</span>
+                        <button type="button" onclick="openAddMemberModal()" style="display: inline-flex; align-items: center; gap: 4px; background: #006a60; color: white; padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                            <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                            Tambah Anggota Baru
+                        </button>
+                    </div>
                 </div>
                 <div style="overflow-x: auto; max-height: 220px; overflow-y: auto;">
                     <table class="history-table">
@@ -552,6 +558,86 @@
 
         </div>{{-- end .relawan-content-area --}}
     </div>{{-- end .relawan-main-canvas --}}
+
+    {{-- Tambah Anggota Baru Modal --}}
+    <div id="addMemberModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 16px; padding: 24px; width: 90%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <h3 style="margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="user-plus" style="width: 20px; height: 20px; color: var(--brand-teal);"></i>
+                    Tambah Anggota Baru
+                </h3>
+                <button type="button" onclick="closeAddMemberModal()" style="background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px;">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('relawan.member.add') }}" method="POST">
+                @csrf
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <div>
+                        <label style="font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Nama Lengkap *</label>
+                        <input type="text" name="fullname" required style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Nomor HP *</label>
+                        <input type="text" name="phone" required style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;" placeholder="0812xxxx">
+                    </div>
+                    <div>
+                        <label style="font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Email</label>
+                        <input type="email" name="email" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;" placeholder="opsional">
+                    </div>
+                    <div>
+                        <label style="font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Password *</label>
+                        <input type="password" name="password" required style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;" placeholder="Minimal 8 karakter">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Kecamatan *</label>
+                            <select name="kecamatan" id="add_kecamatan" required style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                                <option value="">Pilih</option>
+                                <option value="Pondok Gede">Pondok Gede</option>
+                                <option value="Jatiasih">Jatiasih</option>
+                                <option value="Bekasi Timur">Bekasi Timur</option>
+                                <option value="Bekasi Selatan">Bekasi Selatan</option>
+                                <option value="Bekasi Barat">Bekasi Barat</option>
+                                <option value="Bekasi Utara">Bekasi Utara</option>
+                                <option value="Rawalumbu">Rawalumbu</option>
+                                <option value="Mustikajaya">Mustikajaya</option>
+                                <option value="Bantargebang">Bantargebang</option>
+                                <option value="Medansatria">Medansatria</option>
+                                <option value="Jatisampurna">Jatisampurna</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Kelurahan *</label>
+                            <select name="kelurahan" id="add_kelurahan" required style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                                <option value="">Pilih kecamatan dulu</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Keahlian</label>
+                            <input type="text" name="keahlian" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;" placeholder="Contoh: Evakuasi, Medis">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Organisasi</label>
+                            <input type="text" name="organisasi" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;" placeholder="Opsional">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 24px;">
+                    <button type="button" onclick="closeAddMemberModal()" style="padding: 10px 20px; border: 1px solid #d1d5db; border-radius: 8px; background: white; color: #374151; font-weight: 600; font-size: 14px; cursor: pointer;">Batal</button>
+                    <button type="submit" style="padding: 10px 20px; border: none; border-radius: 8px; background: var(--brand-teal, #006a60); color: white; font-weight: 600; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                        Simpan Anggota
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Review Volunteer Modal -->
     <div id="reviewModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
@@ -1230,6 +1316,48 @@ window.openTeamMembersModal = function(element) {
 
 window.closeEditMemberModal = function() {
     window.closeModal('editMemberModal');
+};
+
+// Tambah Anggota Baru Modal
+const addKelurahanDb = {
+    'Pondok Gede': ['Jatiwaringin', 'Jatibening', 'Jatibening Baru', 'Jaticempaka', 'Jatimakmur'],
+    'Jatiasih': ['Jatiasih', 'Jatikramat', 'Jatiluhur', 'Jatirasa', 'Jatisari', 'Jati Mekar'],
+    'Bekasi Timur': ['Aren Jaya', 'Bekasi Jaya', 'Duren Jaya', 'Margahayu'],
+    'Bekasi Selatan': ['Jakamulya', 'Jakasetia', 'Kayuringin Jaya', 'Marga Jaya', 'Pekayon Jaya'],
+    'Bekasi Barat': ['Bintara', 'Bintara Jaya', 'Jakasampurna', 'Kota Baru', 'Kranji'],
+    'Bekasi Utara': ['Harapan Baru', 'Harapan Jaya', 'Kaliabang Tengah', 'Marga Mulya', 'Perwira', 'Teluk Pucung'],
+    'Rawalumbu': ['Bojong Rawalumbu', 'Bojong Menteng', 'Pengasinan', 'Sepanjang Jaya'],
+    'Mustikajaya': ['Mustikajaya', 'Mustikasari', 'Pedurenan', 'Cimuning'],
+    'Bantargebang': ['Bantargebang', 'Ciketing Udik', 'Cikiwul', 'Sumur Batu', 'Padurenan'],
+    'Medansatria': ['Medansatria', 'Harapan Mulya', 'Kalibaru', 'Pejuang'],
+    'Jatisampurna': ['Jatisampurna', 'Jati Rangga', 'Jati Ranggon', 'Jati Karya', 'Jati Raden'],
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    const kecSelect = document.getElementById('add_kecamatan');
+    const kelSelect = document.getElementById('add_kelurahan');
+    if (kecSelect) {
+        kecSelect.addEventListener('change', function() {
+            kelSelect.innerHTML = '<option value="">Pilih Kelurahan</option>';
+            if (this.value && addKelurahanDb[this.value]) {
+                addKelurahanDb[this.value].forEach(function(k) {
+                    var opt = document.createElement('option');
+                    opt.value = k;
+                    opt.textContent = k;
+                    kelSelect.appendChild(opt);
+                });
+            }
+        });
+    }
+});
+
+window.openAddMemberModal = function() {
+    window.openModal('addMemberModal');
+    lucide.createIcons();
+};
+
+window.closeAddMemberModal = function() {
+    window.closeModal('addMemberModal');
 };
 </script>
 @endsection

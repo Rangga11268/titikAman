@@ -129,6 +129,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::get('/relawan/dismiss-wa', [RelawanController::class, 'dismissWa'])->name('relawan.dismiss.wa');
         Route::get('/relawan/dismiss-approval', [RelawanController::class, 'dismissApproval'])->name('relawan.dismiss.approval');
         
+        Route::post('/relawan/member/add', [RelawanController::class, 'addMember'])->name('relawan.member.add');
         Route::post('/relawan/member/{id}/approve', [RelawanController::class, 'approveMember'])->name('relawan.member.approve');
         Route::post('/relawan/member/{id}/reject', [RelawanController::class, 'rejectMember'])->name('relawan.member.reject');
         Route::post('/relawan/member/{id}/update', [RelawanController::class, 'updateMember'])->name('relawan.member.update');

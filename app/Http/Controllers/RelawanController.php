@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Repositories\SosRepository;
 use App\Repositories\RescueMissionRepository;
 use App\Services\RescueMissionService;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
 use Exception;
 
 class RelawanController extends Controller
@@ -430,5 +433,78 @@ class RelawanController extends Controller
         $member->save();
 
         return redirect()->route('relawan.dashboard')->with('success', 'Anggota berhasil dihapus dari tim.');
+    }
+
+    /**
+     * Tambah anggota baru secara manual.
+     */
+    public function addMember(Request $request)
+    {
+        $request->validate([
+            'fullname' => 'required|string|max:100',
+            'phone' => 'required|string|max:20|unique:users,phone',
+            'email' => 'nullable|email|max:100|unique:users,email',
+            'password' => 'required|string|min:8',
+            'kecamatan' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::in([
+                    'Pondok Gede', 'Jatiasih', 'Bekasi Timur', 'Bekasi Selatan',
+                    'Bekasi Barat', 'Bekasi Utara', 'Rawalumbu', 'Mustikajaya',
+                    'Bantargebang', 'Medansatria', 'Jatisampurna',
+                ]),
+            ],
+            'kelurahan' => 'required|string|max:100',
+            'keahlian' => 'nullable|string|max:255',
+            'organisasi' => 'nullable|string|max:100',
+        ], [
+            'fullname.required' => 'Nama lengkap wajib diisi.',
+            'phone.required' => 'Nomor HP wajib diisi.',
+            'phone.unique' => 'Nomor HP sudah terdaftar.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'kecamatan.required' => 'Kecamatan domisili wajib dipilih.',
+            'kecamatan.in' => 'Kecamatan harus berada di wilayah Kota Bekasi.',
+            'kelurahan.required' => 'Kelurahan domisili wajib dipilih.',
+        ]);
+
+        $user = User::create([
+            'fullname' => $request->fullname,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'Relawan',
+            'kecamatan' => $request->kecamatan,
+            'kelurahan' => $request->kelurahan,
+            'keahlian' => $request->keahlian,
+            'organisasi' => $request->organisasi,
+            'status' => 'approved',
+        ]);
+
+        $kec = $user->kecamatan;
+        $teamName = $kec ? 'Tim ' . $kec : 'Tim Reguler';
+        $groupLink = $this->waGroupLinks['teams'][$kec] ?? $this->waGroupLinks['backup'];
+
+        $raw = preg_replace('/[^0-9]/', '', $user->phone);
+        if (substr($raw, 0, 1) === '0') {
+            $waNumber = '62' . substr($raw, 1);
+        } elseif (substr($raw, 0, 2) !== '62') {
+            $waNumber = '62' . $raw;
+        } else {
+            $waNumber = $raw;
+        }
+        $waText = "Halo *{$user->fullname}*, akun Relawan Anda telah dibuat! 🎉\n\nAnda terdaftar sebagai anggota *{$teamName}*.\n\nBergabung ke grup tim melalui link berikut:\n{$groupLink}\n\nSalam,\nTim Admin Relawan TitikAman";
+        $waUrl = $waNumber ? "https://wa.me/{$waNumber}?text=" . urlencode($waText) : '#';
+
+        session([
+            'approved_member_name' => $user->fullname,
+            'approved_member_team' => $teamName,
+            'approved_wa_group_link' => $groupLink,
+            'approved_wa_send_url' => $waUrl,
+        ]);
+
+        return redirect()->route('relawan.dashboard')->with('success', 'Anggota baru berhasil ditambahkan secara manual.');
     }
 }

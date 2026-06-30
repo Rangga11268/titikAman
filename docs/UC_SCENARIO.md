@@ -192,16 +192,17 @@ Dokumen ini berisi skenario use case yang telah disesuaikan dengan implementasi 
 
 ---
 
-### Tabel 3.3 Skenario Use Case – Review & Approve Anggota Baru (UC-11)
+### Tabel 3.3 Skenario Use Case – Review/Approve/Tambah Anggota Baru (UC-11)
 
 | Elemen | Deskripsi |
 |--------|-----------|
-| **Use Case Name** | Review & Approve Anggota Baru |
+| **Use Case Name** | Review, Approve, & Tambah Anggota Baru |
 | **Use Case ID** | UC-11 |
 | **Actor** | Admin Relawan |
-| **Description** | Admin Relawan meninjau dokumen calon anggota dan mengirim link grup WA ke anggota yang disetujui. |
-| **Precondition** | Terdapat pendaftar baru dengan status **pending**. |
-| **Normal Flow** | 1. Admin melihat card **Pendaftar Baru** di dashboard.<br>2. Admin mengklik **Review** pada pendaftar di tabel.<br>3. Sistem menampilkan modal berisi data diri + pratinjau dokumen KTP.<br>4. Admin memilih **Terima & Masukkan Tim** atau **Tolak**.<br>5. Jika diterima, session approval tersimpan dan banner biru muncul dengan 2 tombol:<br>&nbsp;&nbsp;- **Kirim Info via WA ke [Nama]**: Kirim pesan berisi link grup WA tim ke nomor anggota baru.<br>&nbsp;&nbsp;- **Link Grup [Tim]**: Buka link undangan grup WA tim.<br>6. Relawan login → lihat halaman `/status-verifikasi` dengan status approved → bisa gabung grup WA. |
+| **Description** | Admin Relawan meninjau dokumen calon anggota, menyetujui/menolak pendaftar, atau menambahkan anggota baru secara manual (untuk data relawan existing yang sudah ada sebelumnya). |
+| **Precondition** | Admin sudah login ke dashboard relawan. |
+| **Normal Flow — Review & Approve** | 1. Admin melihat card **Pendaftar Baru** di dashboard.<br>2. Admin mengklik **Review** pada pendaftar di tabel.<br>3. Sistem menampilkan modal berisi data diri + pratinjau dokumen KTP.<br>4. Admin memilih **Terima & Masukkan Tim** atau **Tolak**.<br>5. Jika diterima, session approval tersimpan dan banner biru muncul dengan 2 tombol:<br>&nbsp;&nbsp;- **Kirim Info via WA ke [Nama]**: Kirim pesan berisi link grup WA tim ke nomor anggota baru.<br>&nbsp;&nbsp;- **Link Grup [Tim]**: Buka link undangan grup WA tim.<br>6. Relawan login → lihat halaman `/status-verifikasi` dengan status approved → bisa gabung grup WA. |
+| **Alternative Flow — Tambah Manual** | 1. Admin membuka menu **Tambah Anggota Baru**.<br>2. Admin mengisi form manual: Nama, No HP, Email, Kecamatan, Kelurahan, Keahlian, Organisasi.<br>3. Sistem membuat akun dengan role `Relawan` dan status **approved**.<br>4. Banner muncul dengan tombol **Kirim Info via WA** (link grup tim) ke nomor anggota baru.<br>5. Anggota langsung tercatat di tim sesuai kecamatan, tanpa perlu registrasi mandiri. |
 | **Exception** | - |
 
 ---

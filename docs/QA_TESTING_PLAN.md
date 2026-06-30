@@ -100,9 +100,11 @@ Dokumen ini disusun untuk tim Quality Assurance (QA) dalam melakukan pengujian s
 
 ---
 
-## 📝 2. Usability Testing (Kuesioner)
+## 📝 2. Usability Testing (Kuesioner — Responden Eksternal)
 
-Kuesioner ini diisi oleh responden setelah mencoba sistem. Skala: 1 (Sangat Tidak Setuju) — 5 (Sangat Setuju).
+**Cara kerja:** Kamu suruh **orang lain** (teman, keluarga, calon pengguna) mencoba aplikasi TitikAman, lalu mereka mengisi kuesioner di bawah. Kamu tinggal kumpulkan jawaban dari beberapa responden dan hitung rata-rata skor SUS.
+
+Skala: 1 (Sangat Tidak Setuju) — 5 (Sangat Setuju).
 
 ### 2.1 Pertanyaan System Usability Scale (SUS)
 
@@ -142,7 +144,9 @@ Kuesioner ini diisi oleh responden setelah mencoba sistem. Skala: 1 (Sangat Tida
 
 ---
 
-## 🎨 3. UX Testing (Heuristic Evaluation)
+## 🎨 3. UX Testing (Heuristic Evaluation — Dievaluasi Tim Developer)
+
+**Cara kerja:** Berbeda dengan Usability Test, bagian ini **dievaluasi oleh kamu sendiri/tim developer**. Kamu buka aplikasi lalu periksa satu per satu apakah 10 prinsip Nielsen terpenuhi. Beri centang (✅) jika sudah sesuai atau (❌) jika belum.
 
 Pengujian menggunakan **10 Heuristic Nielsen** untuk mengevaluasi User Experience.
 
