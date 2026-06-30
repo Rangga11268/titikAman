@@ -87,8 +87,8 @@ Dokumen ini disusun untuk tim Quality Assurance (QA) dalam melakukan pengujian s
 | 42 | Update Lokasi SOS | SOS aktif | GPS berubah, sistem kirim update koordinat | Lokasi SOS diperbarui di database | Lulus |
 | 43 | Lapor Genangan Banjir | Form laporan (wizard) | Buka `/warga/lapor`, isi tinggi air (slider), upload foto, pilih akses jalan/listrik, submit | Laporan tersimpan (status pending), menunggu verifikasi Admin BPBD | Lulus |
 | 44 | Submit Donasi Logistik | Pilih barang + upload resi | Buka halaman Posko, scroll ke form donasi, pilih posko & barang, isi jumlah (≤ sisa), upload foto, submit | Donasi tersimpan (status pending), muncul di dashboard Pengelola Posko | Lulus |
-| 45 | Verifikasi Donasi (Accepted) | Donasi status pending | Login Pengelola, buka Hub Logistik, klik "Terima" pada donasi | Status berubah jadi accepted | Lulus |
-| 46 | Verifikasi Donasi (Delivered) | Donasi status accepted | Klik "Selesai" pada donasi yang sudah diterima barangnya | Status berubah jadi delivered, quantity_fulfilled otomatis bertambah | Lulus |
+| 45 | Verifikasi Donasi (Konfirmasi) | Donasi status pending | Login Pengelola, buka panel "Verifikasi Donasi", klik "Konfirmasi" pada donasi | Donasi langsung berubah jadi delivered, quantity_fulfilled otomatis bertambah | Lulus |
+| 46 | Tolak Donasi | Donasi status pending | Klik "Tolak" pada donasi yang tidak sesuai | Donasi ditolak (rejected), tidak mengurangi stok kebutuhan | Lulus |
 | 47 | Auto-Update Kebutuhan | Data kebutuhan posko | Setelah donasi diverifikasi delivered | Kolom quantity_fulfilled pada shelter_needs bertambah sesuai jumlah donasi | Lulus |
 | 48 | Detail Modal Laporan | Klik berita di dashboard | Klik salah satu berita laporan banjir di dashboard | Modal muncul: foto, tinggi air, nama jalan, status akses/listrik/air, pelapor | Lulus |
 | 49 | Peta Evakuasi | Akses `/peta-evakuasi` | Buka halaman Peta Evakuasi | Peta interaktif dengan marker posko (ikon rumah) & marker banjir (ikon tetes air) | Lulus |
