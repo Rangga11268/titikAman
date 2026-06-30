@@ -39,6 +39,29 @@ class LaporBanjirRequest extends FormRequest
     }
 
     /**
+     * Additional validation after base rules pass.
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $lat = $this->input('latitude');
+            $lng = $this->input('longitude');
+
+            // Bekasi City bounding box
+            $minLat = -6.350;
+            $maxLat = -6.100;
+            $minLng = 106.800;
+            $maxLng = 107.100;
+
+            if ($lat && $lng) {
+                if ($lat < $minLat || $lat > $maxLat || $lng < $minLng || $lng > $maxLng) {
+                    $validator->errors()->add('latitude', 'Lokasi laporan berada di luar wilayah Kota Bekasi. TitikAman hanya melayani wilayah Kota Bekasi dan sekitarnya.');
+                }
+            }
+        });
+    }
+
+    /**
      * Get custom error messages for validator errors.
      */
     public function messages(): array

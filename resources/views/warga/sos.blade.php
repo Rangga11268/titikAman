@@ -325,6 +325,13 @@
                         map.setView([currentLat, currentLng], 15);
                         marker.setLatLng([currentLat, currentLng]);
 
+                        // Check if location is within Bekasi area
+                        const bekasiMinLat = -6.350, bekasiMaxLat = -6.100;
+                        const bekasiMinLng = 106.800, bekasiMaxLng = 107.100;
+                        if (currentLat < bekasiMinLat || currentLat > bekasiMaxLat || currentLng < bekasiMinLng || currentLng > bekasiMaxLng) {
+                            document.getElementById('sos-address-text').innerText = '⚠️ Peringatan: Lokasi Anda terdeteksi di luar wilayah Kota Bekasi. Fitur SOS hanya berlaku untuk wilayah Bekasi dan sekitarnya.';
+                        }
+
                         // Update text
                         document.getElementById('sos-accuracy-text').innerText = `Akurasi GPS: ±${accuracy} meter`;
 

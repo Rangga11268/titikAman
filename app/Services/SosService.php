@@ -22,6 +22,18 @@ class SosService
      */
     public function createSos(array $data): SosRequest
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        // Pastikan user memiliki domisili di wilayah Bekasi
+        $bekasiKecamatan = [
+            'Pondok Gede', 'Jatiasih', 'Bekasi Timur', 'Bekasi Selatan',
+            'Bekasi Barat', 'Bekasi Utara', 'Rawalumbu', 'Mustikajaya',
+            'Bantargebang', 'Medansatria', 'Jatisampurna',
+        ];
+        if ($user && !in_array($user->kecamatan, $bekasiKecamatan)) {
+            abort(403, 'Fitur SOS hanya tersedia untuk warga di wilayah Kota Bekasi dan sekitarnya.');
+        }
+
         // Calculate priority automatically
         $peopleTrapped = (int) $data['people_trapped'];
         $vulnerableCount = (int) $data['vulnerable_groups_count'];
