@@ -21,66 +21,82 @@ Dokumen ini disusun untuk tim Quality Assurance (QA) dalam melakukan pengujian s
 
 ### 1.1 Autentikasi & Akun
 
-| ID | Skenario | Langkah | Expected Result |
-|----|----------|---------|----------------|
-| **TC-01** | Login via Email | Buka `/login`, isi email + password, klik Masuk | Redirect ke dashboard sesuai role |
-| **TC-02** | Login via No HP | Buka `/login`, isi nomor HP + password, klik Masuk | Redirect ke dashboard sesuai role |
-| **TC-03** | Login gagal (salah password) | Input email benar + password salah | Pesan error: "Kredensial tidak cocok" |
-| **TC-04** | Register Warga | Pilih role Warga, isi form lengkap | Auto login, redirect ke dashboard |
-| **TC-05** | Register Relawan | Pilih role Relawan/SAR, isi form + upload dokumen | Redirect ke login, status pending |
-| **TC-06** | Register Pengelola Posko | Pilih role Pengelola Posko, isi data posko + foto | Redirect ke login, status pending |
-| **TC-07** | Login akun pending | Login dengan akun Relawan yang masih pending | Redirect ke `/status-verifikasi` (tampilkan jam pasir) |
-| **TC-08** | Login akun rejected | Login dengan akun Relawan yang ditolak | Redirect ke `/status-verifikasi` (tampilkan silang merah) |
-| **TC-09** | Login akun approved (Relawan) | Login dengan akun Relawan yang sudah disetujui | Redirect ke `/status-verifikasi` (tampilkan centang hijau + link grup WA + tombol kirim info ke WA sendiri + tombol Lanjut ke Dashboard) |
-| **TC-10** | Logout | Klik tombol Keluar | Redirect ke halaman login, session dihapus |
+| No | Fungsi / Feature | Input yang Diuji | Langkah Uji | Output yang Diharapkan | Status |
+|----|------------------|-----------------|-------------|------------------------|--------|
+| 1 | Login via Email | Email dan Password valid | Buka form login, masukkan email dan password valid, klik "Login" | Redirect ke dashboard sesuai role | Lulus |
+| 2 | Login via No HP | Nomor HP dan Password valid | Buka form login, masukkan nomor HP dan password valid, klik "Login" | Redirect ke dashboard sesuai role | Lulus |
+| 3 | Login Gagal | Email valid, Password salah | Buka form login, masukkan email valid dan password salah, klik "Login" | Pesan error: "Kredensial tidak cocok" | Lulus |
+| 4 | Register Warga | Form pendaftaran lengkap | Buka form register, pilih role Warga, isi data lengkap, klik "Daftar" | Auto-approve, langsung login ke dashboard Warga | Lulus |
+| 5 | Register Relawan | Form pendaftaran + Upload KTP | Buka form register, pilih role Relawan/SAR, isi data + upload dokumen, klik "Daftar" | Redirect ke login, status akun "Pending" | Lulus |
+| 6 | Register Pengelola Posko | Form pendaftaran + Data Posko | Buka form register, pilih role Pengelola, isi data diri + data posko + lokasi GPS, klik "Daftar" | Redirect ke login, status akun "Pending" | Lulus |
+| 7 | Cek Status Pending | Akun dengan status Pending | Login dengan akun Relawan/Pengelola yang masih pending | Redirect ke `/status-verifikasi`, ikon jam pasir + info menunggu verifikasi | Lulus |
+| 8 | Cek Status Rejected | Akun dengan status Rejected | Login dengan akun yang ditolak Admin | Redirect ke `/status-verifikasi`, ikon silang merah + info penolakan | Lulus |
+| 9 | Cek Status Approved (halaman manual) | Akun Relawan status Approved | Login sebagai Relawan approved → akses manual `/status-verifikasi` | Ikon centang hijau + nama tim + link grup WA + tombol Lanjut ke Dashboard | Lulus |
+| 10 | Login Approved (redirect) | Akun Relawan/role lain status Approved | Login dengan akun yang sudah approved selain Relawan | Redirect ke dashboard sesuai role (bukan ke `/status-verifikasi`) | Lulus |
+| 11 | Logout | Klik tombol logout | Pengguna login, klik tombol "Keluar" | Session dihapus, redirect ke halaman Login | Lulus |
 
 ### 1.2 Dashboard Admin Relawan (Mission Control)
 
-| ID | Skenario | Langkah | Expected Result |
-|----|----------|---------|----------------|
-| **TC-11** | Akses dashboard | Login sebagai `relawan@example.com`, buka `/relawan/dashboard` | Halaman dashboard mission control tampil |
-| **TC-12** | Lihat antrian SOS | Dashboard terbuka | Antrian SOS muncul (status waiting + assigned) |
-| **TC-13** | Tugaskan misi ke tim | Klik TUGASKAN KE TIM pada SOS, pilih tim, klik Tugaskan Misi | Mission created + banner dengan tombol WA + Maps + Share Grup |
-| **TC-14** | Kirim bantuan tim | Klik KIRIM BANTUAN TIM (SOS status assigned) | Modal penugasan terbuka, bisa pilih tim lain |
-| **TC-15** | Review anggota baru | Klik Review pada pendaftar | Modal review muncul dengan pratinjau dokumen |
-| **TC-16** | Approve anggota | Klik Terima & Masukkan Tim | Banner approval muncul + tombol Kirim WA ke anggota + Link Grup |
-| **TC-17** | Selesaikan misi | Klik SELESAI pada misi aktif, konfirmasi | Mission marked completed |
-| **TC-18** | Detail riwayat misi | Klik Detail pada tabel riwayat | Modal detail misi muncul (data lengkap) |
-| **TC-19** | Export CSV | Klik Export CSV | File CSV terdownload |
-| **TC-20** | Fullscreen peta | Klik tombol fullscreen (maximize-2) | Peta membesar ke layar penuh, icon berubah |
-| **TC-21** | Refresh peta | Klik tombol refresh | Marker SOS direfresh dari server |
-| **TC-22** | Kirim WA ke anggota baru | Klik Kirim Info via WA di banner approval | WhatsApp terbuka dengan pesan berisi link grup |
-| **TC-23** | Share misi ke grup tim | Klik Share Grup [Tim] | WhatsApp terbuka dengan pesan terformat |
-| **TC-24** | Minta bantuan backup | Klik Minta Bantuan (Grup Gabungan) | WhatsApp terbuka dengan pesan bantuan |
+| No | Fungsi / Feature | Input yang Diuji | Langkah Uji | Output yang Diharapkan | Status |
+|----|------------------|-----------------|-------------|------------------------|--------|
+| 12 | Akses Dashboard Relawan | Akun Admin_Relawan | Login sebagai `relawan@example.com`, buka `/relawan/dashboard` | Dashboard Mission Control tampil lengkap (statistik, antrian, peta, tim) | Lulus |
+| 13 | Antrian SOS | Data SOS di database | Dashboard terbuka, lihat panel antrian SOS | Daftar SOS tampil dengan badge prioritas (TINGGI/SEDANG/RENDAH), urut by status lalu waktu | Lulus |
+| 14 | Tugaskan Misi ke Tim | SOS status waiting | Klik "Tugaskan ke Tim", pilih tim dari dropdown, klik "Tugaskan Misi" | Misi terbuat, banner hijau muncul: tombol WA ke Relawan, Share Grup, Minta Bantuan, Google Maps | Lulus |
+| 15 | Kirim Bantuan Tim (Backup) | SOS status assigned | Klik "Kirim Bantuan Tim" pada SOS yang sudah ditangani | Modal penugasan terbuka, bisa pilih tim backup (multiple mission per SOS) | Lulus |
+| 16 | Review Anggota Baru | Pendaftar Relawan baru | Klik "Review" pada pendaftar baru di tabel | Modal muncul: data diri + pratinjau dokumen KTP | Lulus |
+| 17 | Terima Anggota Baru | Review modal terbuka | Klik "Terima & Masukkan Tim" | Status berubah approved, banner biru muncul: "Kirim Info via WA ke [Nama]" + "Link Grup [Tim]" | Lulus |
+| 18 | Tolak Anggota Baru | Review modal terbuka | Klik "Tolak" | Status berubah rejected, anggota tidak masuk tim | Lulus |
+| 19 | Selesaikan Misi | Misi berstatus aktif | Klik "Selesai" pada misi aktif, konfirmasi | Misi completed, SOS berubah jadi completed, masuk riwayat | Lulus |
+| 20 | Riwayat Misi | Misi yang telah selesai | Buka tabel Riwayat Misi, klik "Detail" pada salah satu | Modal muncul dengan data lengkap: lokasi, korban, prioritas, tim, lead, waktu | Lulus |
+| 21 | Export CSV Misi | Tabel Riwayat Misi | Klik "Export CSV" | File CSV terdownload otomatis | Lulus |
+| 22 | Fullscreen Peta | Tombol fullscreen peta | Klik ikon maximize-2 pada peta | Peta membesar penuh layar, icon berubah jadi minimize-2 | Lulus |
+| 23 | Refresh Peta | Tombol refresh peta | Klik ikon refresh pada peta | Data SOS di-refresh dari server via AJAX | Lulus |
+| 24 | Kirim WA Anggota Baru | Anggota baru di-approve | Klik "Kirim Info via WA ke [Nama]" di banner approval | WhatsApp terbuka dengan pesan berisi link grup tim | Lulus |
+| 25 | Share Grup WA (Tim) | Misi baru ditugaskan | Klik "Share Grup [Tim]" di banner sukses misi | WhatsApp terbuka dengan pesan instruksi: info SOS + Maps + prioritas | Lulus |
+| 26 | Minta Bantuan Backup | Misi baru ditugaskan | Klik "Minta Bantuan (Grup Gabungan)" | WhatsApp terbuka dengan pesan minta bantuan ke grup gabungan | Lulus |
+| 27 | Dismiss Banner WA | Banner sukses misi | Klik ikon X pada banner hijau setelah tugaskan misi | Banner hilang, session WA dihapus | Lulus |
+| 28 | Dismiss Banner Approval | Banner sukses approve | Klik ikon X pada banner biru setelah approve anggota | Banner hilang, session approval dihapus | Lulus |
 
 ### 1.3 Manajemen Anggota Tim
 
-| ID | Skenario | Langkah | Expected Result |
-|----|----------|---------|----------------|
-| **TC-25** | Lihat anggota tim | Klik card tim pada panel Anggota Tim Aktif | Modal terbuka dengan daftar anggota (nama, no HP, status, aksi) |
-| **TC-26** | Edit anggota | Klik Edit pada anggota di modal | Modal edit terbuka, bisa ubah keahlian/organisasi/pindah tim |
-| **TC-27** | Pindah anggota ke tim lain | Di modal edit, ubah kecamatan tujuan | Anggota pindah ke tim baru |
-| **TC-28** | Hapus anggota | Klik Hapus, konfirmasi | Anggota dinonaktifkan (status rejected) |
+| No | Fungsi / Feature | Input yang Diuji | Langkah Uji | Output yang Diharapkan | Status |
+|----|------------------|-----------------|-------------|------------------------|--------|
+| 29 | Daftar Anggota Tim | Card Tim di dashboard | Klik card "Tim [Kecamatan]" pada panel Anggota Tim Aktif | Modal terbuka menampilkan daftar anggota: nama, no HP, status, tombol aksi | Lulus |
+| 30 | Edit Anggota | Keahlian & Organisasi | Klik "Edit" pada anggota, ubah keahlian/organisasi, simpan | Data anggota berhasil diperbarui | Lulus |
+| 31 | Pindah Anggota Tim | Ubah domisili kecamatan | Di modal edit, ubah pilihan kecamatan, simpan | Anggota pindah ke tim kecamatan baru | Lulus |
+| 32 | Hapus Anggota | Tombol Hapus | Klik "Hapus" pada anggota, konfirmasi | Anggota dinonaktifkan (status rejected) | Lulus |
 
 ### 1.4 Dashboard Admin BPBD
 
-| ID | Skenario | Langkah | Expected Result |
-|----|----------|---------|----------------|
-| **TC-29** | Akses admin dashboard | Login sebagai `admin@example.com`, buka `/admin/dashboard` | Dashboard admin BPBD tampil |
-| **TC-30** | Verifikasi laporan banjir | Klik Verifikasi pada laporan pending | Status berubah jadi verified |
-| **TC-31** | Tolak laporan banjir | Klik Tolak pada laporan pending | Status berubah jadi rejected |
-| **TC-32** | Set Surut | Klik Set Surut pada laporan verified | Water height = 0 cm |
-| **TC-33** | Update TMA | Input tinggi air baru di Kelola TMA | Status bahaya otomatis dihitung |
+| No | Fungsi / Feature | Input yang Diuji | Langkah Uji | Output yang Diharapkan | Status |
+|----|------------------|-----------------|-------------|------------------------|--------|
+| 33 | Akses Dashboard Admin | Akun Admin_BPBD | Login sebagai `admin@example.com`, buka `/admin/dashboard` | Dashboard admin tampil: statistik, peta, log aktivitas, laporan pending | Lulus |
+| 34 | Pilih Shelter (Admin BPBD) | Akun Admin_BPBD | Klik "Pilih Posko", pilih shelter dari dropdown | Session shelter tersimpan, redirect ke halaman kelola posko | Lulus |
+| 35 | Verifikasi Laporan Banjir | Laporan status pending | Klik "Verifikasi" pada laporan banjir yang dikirim warga | Laporan diverifikasi, marker muncul di peta publik | Lulus |
+| 36 | Tolak Laporan Banjir | Laporan status pending | Klik "Tolak" pada laporan banjir | Laporan ditolak (rejected), tidak muncul di peta | Lulus |
+| 37 | Set Surut Banjir | Laporan status verified | Klik "Set Surut" pada laporan yang genangannya sudah hilang | Water height direset menjadi 0 cm | Lulus |
+| 38 | Update TMA | Tinggi air (angka cm) | Buka Kelola TMA, masukkan nilai cm baru, klik "Update" | Status bahaya otomatis (Normal/Siaga 3/2/1) | Lulus |
+| 39 | Verifikasi Pengguna Baru | Pengelola Posko Pending | Buka `/admin/verifikasi-pengguna`, pilih akun, klik "Setujui" | Status akun approved, pengelola bisa login | Lulus |
+| 40 | Export Laporan Banjir | Tabel laporan | Klik "Export CSV" pada tabel laporan banjir | File CSV terdownload | Lulus |
 
-### 1.5 Dashboard Warga & Fitur
+### 1.5 Dashboard Warga & Fitur Publik
 
-| ID | Skenario | Langkah | Expected Result |
-|----|----------|---------|----------------|
-| **TC-34** | Kirim SOS | Buka `/warga/sos`, isi form, kirim | SOS tersimpan, muncul di antrian Admin Relawan |
-| **TC-35** | Lapor banjir | Buka `/warga/lapor`, isi form wizard | Laporan tersimpan dengan status pending |
-| **TC-36** | Donasi logistik | Buka `/donasi`, pilih posko & barang, submit | Donasi tersimpan, muncul di pengelola posko |
-| **TC-37** | Lihat detail berita | Klik berita di dashboard | Modal detail laporan banjir muncul |
-| **TC-38** | Buka peta evakuasi | Buka `/peta-evakuasi` | Peta dengan marker posko (icon rumah) dan laporan (icon tetes air) |
+| No | Fungsi / Feature | Input yang Diuji | Langkah Uji | Output yang Diharapkan | Status |
+|----|------------------|-----------------|-------------|------------------------|--------|
+| 41 | Kirim SOS Darurat | Form SOS | Buka `/warga/sos`, izinkan GPS, isi jumlah orang + kelompok rentan, kirim | SOS tersimpan (status waiting), muncul di antrian Admin Relawan | Lulus |
+| 42 | Update Lokasi SOS | SOS aktif | GPS berubah, sistem kirim update koordinat | Lokasi SOS diperbarui di database | Lulus |
+| 43 | Lapor Genangan Banjir | Form laporan (wizard) | Buka `/warga/lapor`, isi tinggi air (slider), upload foto, pilih akses jalan/listrik, submit | Laporan tersimpan (status pending), menunggu verifikasi Admin BPBD | Lulus |
+| 44 | Submit Donasi Logistik | Pilih barang + upload resi | Buka halaman Posko, scroll ke form donasi, pilih posko & barang, isi jumlah (≤ sisa), upload foto, submit | Donasi tersimpan (status pending), muncul di dashboard Pengelola Posko | Lulus |
+| 45 | Verifikasi Donasi (Accepted) | Donasi status pending | Login Pengelola, buka Hub Logistik, klik "Terima" pada donasi | Status berubah jadi accepted | Lulus |
+| 46 | Verifikasi Donasi (Delivered) | Donasi status accepted | Klik "Selesai" pada donasi yang sudah diterima barangnya | Status berubah jadi delivered, quantity_fulfilled otomatis bertambah | Lulus |
+| 47 | Auto-Update Kebutuhan | Data kebutuhan posko | Setelah donasi diverifikasi delivered | Kolom quantity_fulfilled pada shelter_needs bertambah sesuai jumlah donasi | Lulus |
+| 48 | Detail Modal Laporan | Klik berita di dashboard | Klik salah satu berita laporan banjir di dashboard | Modal muncul: foto, tinggi air, nama jalan, status akses/listrik/air, pelapor | Lulus |
+| 49 | Peta Evakuasi | Akses `/peta-evakuasi` | Buka halaman Peta Evakuasi | Peta interaktif dengan marker posko (ikon rumah) & marker banjir (ikon tetes air) | Lulus |
+| 50 | Data Pintu Air | Akses `/data-pintu-air` | Buka halaman Data Pintu Air | Tabel status pintu air + peta lokasi + status Siaga terkini + tombol Export CSV | Lulus |
+| 51 | Export Data TMA | Tombol Export | Klik "Export CSV" di halaman Data Pintu Air | File CSV terdownload | Lulus |
+| 52 | Info Statistik Posko | Akses `/posko` | Buka halaman direktori Posko | Daftar posko + kapasitas + status + search + pagination + peta sebaran + form donasi | Lulus |
+| 53 | Update Shelter (Pengelola) | Data kapasitas & status | Login Pengelola, update jumlah pengungsi, ubah status (Aktif/Penuh/Tutup) | Data posko tersimpan, status di peta publik menyesuaikan | Lulus |
+| 54 | Export Data Donasi | Tombol Export | Klik "Export CSV" di halaman donasi | File CSV terdownload | Lulus |
 
 ---
 
