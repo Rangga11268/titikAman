@@ -365,7 +365,13 @@
         applyPagination();
 
         // Initialize Map
-        miniMap = L.map('shelter-mini-map').setView([-6.241586, 106.992416], 12); // Bekasi center
+        miniMap = L.map('shelter-mini-map').setView([-6.241586, 106.992416], 12);
+    // Batasi peta ke area Bekasi
+    const bekasiBounds = L.latLngBounds([-6.5, 106.8], [-6.0, 107.3]);
+    if(typeof map !== 'undefined') { map.setMaxBounds(bekasiBounds); map.setMinZoom(10); }
+    if(typeof detailMap !== 'undefined') { detailMap.setMaxBounds(bekasiBounds); detailMap.setMinZoom(10); }
+    if(typeof miniMap !== 'undefined') { miniMap.setMaxBounds(bekasiBounds); miniMap.setMinZoom(10); }
+ // Bekasi center
         
         setTimeout(() => { if(miniMap) miniMap.invalidateSize(); }, 500);
         

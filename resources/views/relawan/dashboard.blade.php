@@ -886,7 +886,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const DEFAULT_LNG = 106.9922;
 
     const map = L.map('volunteer-map', { zoomControl: false }).setView([DEFAULT_LAT, DEFAULT_LNG], 13);
-    L.control.zoom({ position: 'topright' }).addTo(map);
+        const bekasiBounds = L.latLngBounds([
+        [-6.5, 106.8], // South West
+        [-6.0, 107.3]  // North East
+    ]);
+    map.setMaxBounds(bekasiBounds);
+    map.setMinZoom(10);
+L.control.zoom({ position: 'topright' }).addTo(map);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -1043,7 +1049,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelector('.relawan-main-canvas').style.overflow = '';
         }
         lucide.createIcons();
-        setTimeout(function () { map.invalidateSize(); }, 100);
+        let resizeCount = 0; let resizeInterval = setInterval(function() { map.invalidateSize(); resizeCount++; if(resizeCount > 10) clearInterval(resizeInterval); }, 50);
     });
 
     // ---- SOS Queue Auto-Refresh every 30s ----
@@ -1227,3 +1233,5 @@ window.closeEditMemberModal = function() {
 };
 </script>
 @endsection
+
+

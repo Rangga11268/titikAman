@@ -213,7 +213,13 @@
             // Initialize Map
             map = L.map('evacuation-map', {
                 zoomControl: false // Disable standard zoom controls to use our custom buttons
-            }).setView([-6.241586, 106.992416], 13); // Bekasi center
+            }).setView([-6.241586, 106.992416], 13);
+    // Batasi peta ke area Bekasi
+    const bekasiBounds = L.latLngBounds([-6.5, 106.8], [-6.0, 107.3]);
+    if(typeof map !== 'undefined') { map.setMaxBounds(bekasiBounds); map.setMinZoom(10); }
+    if(typeof detailMap !== 'undefined') { detailMap.setMaxBounds(bekasiBounds); detailMap.setMinZoom(10); }
+    if(typeof miniMap !== 'undefined') { miniMap.setMaxBounds(bekasiBounds); miniMap.setMinZoom(10); }
+ // Bekasi center
 
             // CartoDB Voyager tiles (light theme suited for maps)
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {

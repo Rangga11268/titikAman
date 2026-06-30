@@ -425,6 +425,12 @@
 
         // Center on Bekasi
         const map = L.map('map').setView([initialLat, initialLng], 13);
+    // Batasi peta ke area Bekasi
+    const bekasiBounds = L.latLngBounds([-6.5, 106.8], [-6.0, 107.3]);
+    if(typeof map !== 'undefined') { map.setMaxBounds(bekasiBounds); map.setMinZoom(10); }
+    if(typeof detailMap !== 'undefined') { detailMap.setMaxBounds(bekasiBounds); detailMap.setMinZoom(10); }
+    if(typeof miniMap !== 'undefined') { miniMap.setMaxBounds(bekasiBounds); miniMap.setMinZoom(10); }
+
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '© OpenStreetMap contributors © CARTO',
