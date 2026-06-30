@@ -29,10 +29,6 @@
     </div>
 @endsection
 
-@section('topbar-right')
-    <button class="btn-emergency-header">🚨 Emergency Alert</button>
-@endsection
-
 @section('dashboard-content')
     <!-- Main Content -->
     <div class="dashboard-body">
