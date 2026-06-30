@@ -968,6 +968,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // ---- Map Initialization ----
 
     // ---- Leaflet Map ----
+    const mapEl = document.getElementById('volunteer-map');
+    if (!mapEl) {
+        console.warn('Map element #volunteer-map not found, skipping map init');
+        return;
+    }
+
     const DEFAULT_LAT = -6.2383;
     const DEFAULT_LNG = 106.9922;
 

@@ -580,19 +580,29 @@
                     
                     // Step 1: Terkirim
                     const step1 = document.getElementById('timeline-step-1');
-                    step1.classList.remove('inactive');
-                    step1.classList.add('completed');
-                    document.getElementById('step-1-desc').innerHTML = `
-                        SOS dikirim pada ${timeStr} WIB.<br>
-                        ${trappedCount} orang | ${activeVulnerables.size} rentan.<br>
-                        <strong>Prioritas: <span style="color: #e63946;">${activeVulnerables.size > 0 || trappedCount >= 5 ? 'TINGGI' : (trappedCount >= 3 ? 'SEDANG' : 'RENDAH')}</span></strong>
-                    `;
+                    if (step1) {
+                        step1.classList.remove('inactive');
+                        step1.classList.add('completed');
+                    }
+                    const step1Desc = document.getElementById('step-1-desc');
+                    if (step1Desc) {
+                        step1Desc.innerHTML = `
+                            SOS dikirim pada ${timeStr} WIB.<br>
+                            ${trappedCount} orang | ${activeVulnerables.size} rentan.<br>
+                            <strong>Prioritas: <span style="color: #e63946;">${activeVulnerables.size > 0 || trappedCount >= 5 ? 'TINGGI' : (trappedCount >= 3 ? 'SEDANG' : 'RENDAH')}</span></strong>
+                        `;
+                    }
 
                     // Step 2: Mencari Relawan
                     const step2 = document.getElementById('timeline-step-2');
-                    step2.classList.remove('inactive');
-                    step2.classList.add('active');
-                    document.getElementById('step-2-desc').innerText = "Sistem sedang mencocokkan relawan terdekat...";
+                    if (step2) {
+                        step2.classList.remove('inactive');
+                        step2.classList.add('active');
+                    }
+                    const step2Desc = document.getElementById('step-2-desc');
+                    if (step2Desc) {
+                        step2Desc.innerText = "Sistem sedang mencocokkan relawan terdekat...";
+                    }
 
                     // Automatically hide toast after 5s
                     setTimeout(() => {

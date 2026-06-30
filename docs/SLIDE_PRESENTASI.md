@@ -5,7 +5,7 @@
 
 ---
 
-## Slide 1: Judul
+## Slide 1: Judul (Presenter: Darell)
 
 **TitikAman**
 *Sistem Informasi Mitigasi Banjir dan Navigasi Jalur Evakuasi*
@@ -13,7 +13,18 @@
 
 ---
 
-## Slide 2: Latar Belakang & Masalah
+## Slide 2: Anggota Tim (Presenter: Darell)
+
+| Nama | Peran |
+|------|-------|
+| **Darell** | Project Manager & Lead Developer |
+| **Wahyu** | Tim Analis |
+| **Maul** | Tim Analis |
+| **Putri** | Quality Assurance |
+
+---
+
+## Slide 3: Latar Belakang & Masalah (Presenter: Wahyu)
 
 **Banjir Besar Maret 2025 — Bekasi Terparah (18.738 KK terdampak)**
 
@@ -27,7 +38,19 @@
 
 ---
 
-## Slide 3: Solusi — TitikAman
+## Slide 4: Solusi — TitikAman (Presenter: Maul)
+
+| Masalah | Solusi |
+|---------|--------|
+| Evakuasi manual, tidak ada data lokasi & prioritas | **SOS Darurat**: 1 klik, GPS otomatis, prioritas dihitung sistem → langsung ke tim SAR |
+| Koordinasi SAR tumpang tindih, tidak ada penugasan | **Mission Control**: Antrian SOS + peta + tugaskan tim + backup dalam 1 dashboard |
+| Warga bingung cari posko terdekat | **Peta Posko Interaktif**: Lihat kapasitas & status real-time, navigasi Google Maps |
+| Donasi tidak tepat sasaran | **Donasi Publik**: Lihat kebutuhan riil per posko, donasi langsung terverifikasi |
+| Data banjir tidak real-time untuk BPBD | **TMA Real-time** dari pintu air + **Laporan Crowdsource** terverifikasi + **Peta Genangan** |
+
+---
+
+## Slide 5: Fitur Unggulan (Presenter: Maul)
 
 | Fitur | Manfaat |
 |-------|---------|
@@ -36,33 +59,34 @@
 | **Peta Posko Interaktif** | Lihat kapasitas & status real-time, langsung navigasi ke lokasi |
 | **Donasi Publik** | Donasi sesuai kebutuhan riil posko, transparan & terverifikasi |
 | **TMA + Laporan Banjir** | Data tinggi air pintu air real-time + peta genangan crowdsource terverifikasi |
+| **Tambah Anggota Manual** | Admin Relawan bisa input data relawan existing tanpa registrasi mandiri |
 
 **Menghubungkan 4 aktor dalam satu platform:**
 ```
-Warga → [Lapor/SOS] → Relawan → [Evakuasi] → Posko → [Logistik] → BPBD → [Verifikasi & Pantau]
+Warga  →  Lapor/SOS  →  Relawan  →  Evakuasi  →  Posko  →  Logistik  →  BPBD
 ```
 
 ---
 
-## Slide 4: Demo LIVE (5-6 menit)
+## Slide 6: Demo LIVE (Presenter: Putri)
 
-- Buka titikaman.infinityfreeapp.com
-- Login sebagai **Warga** → lapor banjir + kirim SOS
-- Login sebagai **Admin Relawan** → lihat antrian SOS + tugaskan tim
-- Login sebagai **Admin BPBD** → verifikasi laporan + update TMA
-- Login sebagai **Pengelola Posko** → update kapasitas + verifikasi donasi
+- **Warga**: Lapor banjir + upload foto → Kirim SOS darurat (prioritas otomatis)
+- **Admin Relawan**: Lihat antrian SOS → Tugaskan misi ke tim → Kirim WA instruksi
+- **Admin BPBD**: Verifikasi laporan banjir → Update TMA pintu air
+- **Pengelola Posko**: Update kapasitas pengungsi → Tambah kebutuhan logistik
 
-*(Sebutkan tech stack sepintas saat demo: Laravel 12, Tailwind CSS, Leaflet.js, MySQL)*
+> Tech stack: Laravel 12, Tailwind CSS, Leaflet.js, MySQL, Laravel Reverb
 
 ---
 
-## Slide 5: Testing & Hasil
+## Slide 7: Testing & Hasil (Presenter: Darell)
 
 | Jenis | Detail | Hasil |
 |-------|--------|-------|
 | **PHPUnit** | 9 test suites, 200 assertions | **59 passed ✅** (2 pre-existing risky) |
-| **Apa yang di-test** | Login (email & HP), registrasi 3 role, auto-redirect pending/approved/rejected, lapor banjir, SOS + prioritas, tugaskan misi, selesaikan misi, review anggota, export CSV, update shelter, kelola kebutuhan, verifikasi donasi, update TMA, export laporan, akses role (403/404/419/500) | Semua ✅ |
 | **Black Box** | 54 test case — 7 area fitur | **54 ✅** |
+| **Error Handling** | Broadcast event graceful fallback saat WebSocket mati | Tidak 500 |
+| **Scope** | SOS, lapor banjir, registrasi, posko — semua terkunci bounding box Bekasi | Terverifikasi |
 
 **Per Fitur:**
 
@@ -77,11 +101,13 @@ Warga (SOS, lapor, donasi)         14 TC        ✅
 
 ---
 
-## Slide 6: Penutup
+## Slide 8: Penutup (Presenter: Darell)
 
 **Kesimpulan:**
 - TitikAman menyatukan **Warga → Relawan → Posko → BPBD** dalam satu platform real-time
 - Respons evakuasi lebih cepat dengan prioritas otomatis & penugasan terstruktur
 - Data banjir & logistik transparan untuk semua pihak
+
+**Saran & masukan sangat kami harapkan 🙏**
 
 **Repo:** https://github.com/Rangga11268/titikAman
