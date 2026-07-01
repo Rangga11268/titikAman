@@ -704,8 +704,8 @@
                     <select name="volunteer_id" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; outline: none;">
                         <option value="">-- Pilih Tim --</option>
                         @foreach($teams as $team)
-                            <option value="{{ $team['id'] }}" style="{{ in_array($team['id'], $activeVolunteerIds) ? 'color: #b45309; font-weight: 600;' : 'font-weight: 500;' }}">
-                                {{ $team['label'] }} {{ in_array($team['id'], $activeVolunteerIds) ? '(Dalam Misi — Kirim Bantuan)' : '(Tersedia)' }}
+                            <option value="{{ $team['id'] }}" {{ in_array($team['id'], $activeVolunteerIds) ? 'disabled' : '' }} style="{{ in_array($team['id'], $activeVolunteerIds) ? 'color: #9ca3af; font-weight: 500;' : 'font-weight: 500;' }}">
+                                {{ $team['label'] }} {{ in_array($team['id'], $activeVolunteerIds) ? '(Sedang Bertugas)' : '(Tersedia)' }}
                             </option>
                         @endforeach
                     </select>

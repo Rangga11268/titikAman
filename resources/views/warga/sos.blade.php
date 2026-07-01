@@ -640,18 +640,20 @@
 
         // Step 1: always completed once SOS is active
         if (step1) {
-            step1.classList.remove('inactive');
+            step1.classList.remove('inactive', 'active');
             step1.classList.add('completed');
         }
 
         if (data.status === 'waiting') {
-            // Step 2 active
-            if (step2) { step2.classList.remove('inactive'); step2.classList.add('active'); }
+            // Step 2 active, Step 3 & 4 inactive
+            if (step2) { step2.classList.remove('inactive', 'completed'); step2.classList.add('active'); }
+            if (step3) { step3.classList.remove('active', 'completed'); step3.classList.add('inactive'); }
+            if (step4) { step4.classList.remove('active', 'completed'); step4.classList.add('inactive'); }
         } else if (data.status === 'assigned') {
             // Step 2 completed, step 3 & 4 active
             if (step2) { step2.classList.remove('inactive', 'active'); step2.classList.add('completed'); }
-            if (step3) { step3.classList.remove('inactive'); step3.classList.add('active'); }
-            if (step4) { step4.classList.remove('inactive'); step4.classList.add('active'); }
+            if (step3) { step3.classList.remove('inactive', 'completed'); step3.classList.add('active'); }
+            if (step4) { step4.classList.remove('inactive', 'completed'); step4.classList.add('active'); }
 
             // Update step 3 desc with volunteer name
             var step3Desc = document.getElementById('step-3-desc');
