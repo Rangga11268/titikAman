@@ -1316,8 +1316,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 localStorage.setItem('active_wa_banner', bannerHtml);
                 lucide.createIcons();
 
-                // Immediately refresh SOS queue
-                if (typeof pollSosQueue === 'function') pollSosQueue();
+                // Reload the page to refresh the 'Misi Aktif' panel and stats
+                window.location.reload();
             } else {
                 alert(data.message || 'Gagal menugaskan misi. Silakan coba lagi.');
             }
