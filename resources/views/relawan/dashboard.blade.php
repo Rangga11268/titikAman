@@ -1163,8 +1163,10 @@ L.control.zoom({ position: 'topright' }).addTo(map);
 
         var html = '';
         data.items.forEach(function(sos) {
-            var btnColor = sos.priority_level === 'assigned' ? '#b45309' : '#006a60';
-            var btnLabel = sos.priority_level === 'assigned' ? 'KIRIM BANTUAN TIM' : 'TUGASKAN KE TIM';
+            var isAssigned = sos.status === 'assigned';
+            var btnColor = isAssigned ? '#b45309' : '#006a60';
+            var btnLabel = isAssigned ? 'KIRIM BANTUAN TIM' : 'TUGASKAN KE TIM';
+            var assignedBadge = isAssigned ? '<span style="font-size: 9px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 2px 6px; border-radius: 4px;">BANTUAN</span>' : '';
             var tagDesc = sos.description ? `<span class="sos-tag${sos.priority_level === 'high' ? ' danger' : ''}">
                 <i data-lucide="alert-circle"></i>
                 ${sos.description.substring(0, 20)}${sos.description.length > 20 ? '…' : ''}
@@ -1173,7 +1175,10 @@ L.control.zoom({ position: 'topright' }).addTo(map);
             html += `<div class="sos-item">
                 <div class="sos-item-header">
                     <span class="sos-priority-badge ${sos.priority_level}">${sos.priority_label}</span>
-                    <span class="sos-time">${sos.created_at}</span>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        ${assignedBadge}
+                        <span class="sos-time">${sos.created_at}</span>
+                    </div>
                 </div>
                 <div class="sos-location">${(sos.kelurahan !== '-' || sos.kecamatan !== '-') ? sos.kelurahan + ', ' + sos.kecamatan : 'Lokasi belum diisi'}</div>
                 <div class="sos-tags">

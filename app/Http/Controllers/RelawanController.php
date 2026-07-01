@@ -288,6 +288,7 @@ class RelawanController extends Controller
             };
             return [
                 'id'             => $sos->id,
+                'status'         => $sos->status,
                 'priority_level' => $sos->priority_level,
                 'priority_label' => $priorityLabel,
                 'priority_class' => $priorityClass,
