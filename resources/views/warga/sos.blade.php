@@ -556,6 +556,7 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
+                    hasSos = true; // Start realtime polling
                     // Show success toast
                     const toast = document.getElementById('toastSuccess');
                     document.getElementById('toastMessage').innerText = data.message;
@@ -624,5 +625,64 @@
             });
         }
     });
+
+    // ---- Realtime SOS Status Polling (every 7s) ----
+    // Only poll if there's an active SOS (button is active or hasSos flag is true)
+    var hasSos = {{ $activeSos ? 'true' : 'false' }};
+
+    function updateSosTimeline(data) {
+        if (!data.has_sos) return;
+
+        var step1 = document.getElementById('timeline-step-1');
+        var step2 = document.getElementById('timeline-step-2');
+        var step3 = document.getElementById('timeline-step-3');
+        var step4 = document.getElementById('timeline-step-4');
+
+        // Step 1: always completed once SOS is active
+        if (step1) {
+            step1.classList.remove('inactive');
+            step1.classList.add('completed');
+        }
+
+        if (data.status === 'waiting') {
+            // Step 2 active
+            if (step2) { step2.classList.remove('inactive'); step2.classList.add('active'); }
+        } else if (data.status === 'assigned') {
+            // Step 2 completed, step 3 & 4 active
+            if (step2) { step2.classList.remove('inactive', 'active'); step2.classList.add('completed'); }
+            if (step3) { step3.classList.remove('inactive'); step3.classList.add('active'); }
+            if (step4) { step4.classList.remove('inactive'); step4.classList.add('active'); }
+
+            // Update step 3 desc with volunteer name
+            var step3Desc = document.getElementById('step-3-desc');
+            if (step3Desc && data.volunteer_name) {
+                step3Desc.innerHTML = 'Relawan: <strong>' + data.volunteer_name + '</strong> telah ditugaskan ke lokasi Anda.';
+            }
+        }
+
+        // Make sure pulse ring is visible & button shows AKTIF
+        var pulseRing = document.getElementById('pulseRing');
+        if (pulseRing) pulseRing.style.display = 'block';
+
+        if (sosTriggerBtn && !sosTriggerBtn.classList.contains('active')) {
+            sosTriggerBtn.classList.add('active');
+            sosTriggerBtn.disabled = true;
+            sosTriggerBtn.innerHTML = '<span style="font-size: 20px; font-weight: 800; line-height: 1;">SOS</span><span style="font-size: 11px; font-weight: 700; margin-top: 4px; opacity: 0.9; letter-spacing: 1px; line-height: 1;">AKTIF</span>';
+            hasSos = true;
+        }
+    }
+
+    function pollSosStatus() {
+        if (!hasSos) return; // Don't poll if no SOS is active
+        fetch('{{ route("warga.sos.status") }}')
+            .then(function(res) { return res.json(); })
+            .then(updateSosTimeline)
+            .catch(function() {});
+    }
+
+    // Start polling — runs every 7 seconds
+    setInterval(pollSosStatus, 7000);
+
+    // Also trigger a poll right after user submits SOS (hasSos becomes true after submit)
 </script>
 @endsection

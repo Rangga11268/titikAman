@@ -129,4 +129,30 @@ class WargaController extends Controller
             'message' => 'Lokasi GPS terbaru berhasil diperbarui ke sistem SAR.'
         ]);
     }
+
+    /**
+     * Get the current active SOS status for the logged-in user (for polling).
+     */
+    public function getSosStatus(): JsonResponse
+    {
+        $activeSos = $this->sosService->getActiveRequestByUserId(auth()->id());
+
+        if (!$activeSos) {
+            return response()->json(['has_sos' => false]);
+        }
+
+        $volunteer = null;
+        if ($activeSos->rescueMission && $activeSos->rescueMission->volunteer) {
+            $volunteer = $activeSos->rescueMission->volunteer->fullname;
+        }
+
+        return response()->json([
+            'has_sos'        => true,
+            'status'         => $activeSos->status,
+            'priority_level' => $activeSos->priority_level,
+            'people_trapped' => $activeSos->people_trapped,
+            'created_at'     => $activeSos->created_at->format('H:i'),
+            'volunteer_name' => $volunteer,
+        ]);
+    }
 }

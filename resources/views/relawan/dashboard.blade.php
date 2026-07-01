@@ -1144,12 +1144,75 @@ L.control.zoom({ position: 'topright' }).addTo(map);
         let resizeCount = 0; let resizeInterval = setInterval(function() { map.invalidateSize(); resizeCount++; if(resizeCount > 10) clearInterval(resizeInterval); }, 50);
     });
 
-    // ---- SOS Queue Auto-Refresh every 30s ----
-    setInterval(function () {
-        fetch('{{ route("relawan.sos.data") }}')
-            .then(res => res.json())
-            .catch(() => {});
-    }, 30000);
+    // ---- Realtime SOS Queue Polling (every 10s) ----
+    function renderSosQueue(data) {
+        var container = document.getElementById('sos-queue-container');
+        if (!container) return;
+
+        var badge = document.querySelector('.panel-count-badge');
+        if (badge) badge.textContent = data.count + ' REQUEST';
+
+        if (data.count === 0) {
+            container.innerHTML = `<div style="text-align: center; padding: 32px 16px; color: #6b7280; font-size: 14px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                <i data-lucide="smile" style="width: 48px; height: 48px; color: #006a60;"></i>
+                <span>Tidak ada permintaan SOS aktif saat ini. Semua wilayah aman.</span>
+            </div>`;
+            lucide.createIcons();
+            return;
+        }
+
+        var html = '';
+        data.items.forEach(function(sos) {
+            var btnColor = sos.priority_level === 'assigned' ? '#b45309' : '#006a60';
+            var btnLabel = sos.priority_level === 'assigned' ? 'KIRIM BANTUAN TIM' : 'TUGASKAN KE TIM';
+            var tagDesc = sos.description ? `<span class="sos-tag${sos.priority_level === 'high' ? ' danger' : ''}">
+                <i data-lucide="alert-circle"></i>
+                ${sos.description.substring(0, 20)}${sos.description.length > 20 ? '…' : ''}
+            </span>` : '';
+
+            html += `<div class="sos-item">
+                <div class="sos-item-header">
+                    <span class="sos-priority-badge ${sos.priority_level}">${sos.priority_label}</span>
+                    <span class="sos-time">${sos.created_at}</span>
+                </div>
+                <div class="sos-location">${sos.kelurahan}, ${sos.kecamatan}</div>
+                <div class="sos-tags">
+                    <span class="sos-tag"><i data-lucide="users"></i> ${sos.people_trapped} Orang</span>
+                    ${tagDesc}
+                </div>
+                <button type="button" onclick="document.getElementById('assign_sos_id').value = '${sos.id}'; openModal('assignModal');"
+                    style="background-color:${btnColor}; color: white; border: none; border-radius: 8px; font-weight: 700; width: 100%; padding: 10px; cursor: pointer; text-transform: uppercase; margin-top: 8px;">
+                    ${btnLabel}
+                </button>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+        lucide.createIcons();
+
+        // Also update the map markers
+        var mapData = data.items.map(function(s) {
+            return {
+                lat: parseFloat(s.latitude),
+                lng: parseFloat(s.longitude),
+                priority: s.priority_level,
+                location: s.kelurahan + ', ' + s.kecamatan,
+                people: s.people_trapped
+            };
+        });
+        plotSosMarkers(mapData);
+    }
+
+    function pollSosQueue() {
+        fetch('{{ route("relawan.sos.queue") }}')
+            .then(function(res) { return res.json(); })
+            .then(renderSosQueue)
+            .catch(function() {});
+    }
+
+    // Poll immediately then every 10 seconds
+    pollSosQueue();
+    setInterval(pollSosQueue, 10000);
 
     lucide.createIcons();
 });

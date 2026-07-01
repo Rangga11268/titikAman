@@ -117,12 +117,14 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::get('/warga/sos', [WargaController::class, 'showSos'])->name('warga.sos');
         Route::post('/warga/sos', [WargaController::class, 'submitSos'])->name('warga.sos.submit');
         Route::put('/warga/sos/update-location', [WargaController::class, 'updateSosLocation'])->name('warga.sos.update-location');
+        Route::get('/warga/sos-status', [WargaController::class, 'getSosStatus'])->name('warga.sos.status');
     });
 
     // Relawan Portal Routes (Admin Relawan only)
     Route::middleware('role:Admin_Relawan')->group(function () {
         Route::get('/relawan/dashboard', [RelawanController::class, 'dashboard'])->name('relawan.dashboard');
         Route::get('/relawan/sos-data', [RelawanController::class, 'getWaitingSosData'])->name('relawan.sos.data');
+        Route::get('/relawan/sos-queue', [RelawanController::class, 'getSosQueue'])->name('relawan.sos.queue');
         Route::post('/relawan/mission/accept', [RelawanController::class, 'acceptMission'])->name('relawan.mission.accept');
         Route::post('/relawan/mission/complete/{id}', [RelawanController::class, 'completeMission'])->name('relawan.mission.complete');
         Route::get('/relawan/mission/export', [RelawanController::class, 'exportMissions'])->name('relawan.mission.export');

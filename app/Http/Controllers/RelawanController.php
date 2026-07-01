@@ -268,6 +268,48 @@ class RelawanController extends Controller
     }
 
     /**
+     * Get full SOS queue data for realtime card rendering.
+     * @return JsonResponse
+     */
+    public function getSosQueue(): JsonResponse
+    {
+        $waitingSos = $this->sosRepository->getWaitingRequests();
+
+        $data = $waitingSos->map(function ($sos) {
+            $priorityLabel = match($sos->priority_level) {
+                'high'   => 'TINGGI',
+                'medium' => 'SEDANG',
+                default  => 'RENDAH',
+            };
+            $priorityClass = match($sos->priority_level) {
+                'high'   => 'sos-priority-high',
+                'medium' => 'sos-priority-medium',
+                default  => 'sos-priority-low',
+            };
+            return [
+                'id'             => $sos->id,
+                'priority_level' => $sos->priority_level,
+                'priority_label' => $priorityLabel,
+                'priority_class' => $priorityClass,
+                'people_trapped' => $sos->people_trapped,
+                'latitude'       => $sos->latitude,
+                'longitude'      => $sos->longitude,
+                'kelurahan'      => $sos->user->kelurahan ?? '-',
+                'kecamatan'      => $sos->user->kecamatan ?? '-',
+                'phone'          => $sos->user->phone ?? '-',
+                'fullname'       => $sos->user->fullname ?? 'Warga',
+                'description'    => $sos->description ?? '',
+                'created_at'     => $sos->created_at->diffForHumans(),
+            ];
+        });
+
+        return response()->json([
+            'count' => $data->count(),
+            'items' => $data,
+        ]);
+    }
+
+    /**
      * Approve a pending volunteer member.
      */
     public function approveMember($id)
