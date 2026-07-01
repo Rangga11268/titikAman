@@ -69,7 +69,7 @@
         @if(auth()->user()->role == 'Admin_BPBD')
             <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i data-lucide="shield-alert"></i>
-                <span>Kelola Laporan BPBD</span>
+                <span>Dashboard BPBD</span>
             </a>
             <a href="{{ route('admin.tma') }}" class="nav-item {{ request()->routeIs('admin.tma') ? 'active' : '' }}">
                 <i data-lucide="sliders"></i>

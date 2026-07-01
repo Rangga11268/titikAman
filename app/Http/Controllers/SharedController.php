@@ -17,10 +17,6 @@ class SharedController extends Controller
      */
     public function dashboard()
     {
-        // Admin / BPBD redirect to admin dashboard
-        if (auth()->user()->role === 'Admin_BPBD') {
-            return redirect()->route('admin.dashboard');
-        }
 
         // Stat Cards
         $titikBanjir      = FloodReport::where('verification_status', 'verified')->count();
