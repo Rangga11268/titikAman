@@ -63,7 +63,7 @@
                     Keluargamu — <span>Real-Time.</span>
                 </h1>
                 <p class="lp-hero-description">
-                    Integrasi data sensor sungai, curah hujan BMKG, dan laporan warga dalam satu platform untuk meminimalisir risiko bencana.
+                    Integrasi data tinggi muka air pintu air, laporan warga, dan koordinasi SAR dalam satu platform untuk meminimalisir risiko bencana.
                 </p>
                 <div class="lp-hero-actions">
                     <a href="{{ route('peta.evakuasi') }}" class="lp-btn lp-btn-primary">
@@ -77,7 +77,7 @@
                 <div class="lp-hero-stats">
                     <div class="lp-stat-item">
                         <span class="lp-stat-number">142</span>
-                        <span class="lp-stat-label">Sensor Aktif</span>
+                        <span class="lp-stat-label">Posko Aktif</span>
                     </div>
                     <div class="lp-stat-divider"></div>
                     <div class="lp-stat-item">
@@ -117,10 +117,10 @@
                 <!-- Card 1 -->
                 <div class="lp-feature-card">
                     <div class="lp-feature-icon-wrapper">
-                        <img src="{{ asset('assets/landing/feature-iot.svg') }}" alt="Sensor IoT" class="lp-feature-icon">
+                        <img src="{{ asset('assets/landing/feature-iot.svg') }}" alt="Pintu Air" class="lp-feature-icon">
                     </div>
-                    <h3 class="lp-feature-card-title">Sensor IoT Terintegrasi</h3>
-                    <p class="lp-feature-card-desc">Jaringan sensor ultrasonik yang terpasang di ratusan titik sungai utama untuk memantau ketinggian air setiap detik.</p>
+                    <h3 class="lp-feature-card-title">TMA Pintu Air Real-time</h3>
+                    <p class="lp-feature-card-desc">Data tinggi muka air dari pintu air utama (Cikeas, Bekasi, Cakung) yang diinput oleh petugas untuk menentukan status siaga.</p>
                     <div class="lp-feature-bar"></div>
                 </div>
                 
@@ -129,8 +129,8 @@
                     <div class="lp-feature-icon-wrapper">
                         <img src="{{ asset('assets/landing/feature-geofencing.svg') }}" alt="Notifikasi Geo-Fencing" class="lp-feature-icon">
                     </div>
-                    <h3 class="lp-feature-card-title">Notifikasi Geo-Fencing</h3>
-                    <p class="lp-feature-card-desc">Dapatkan peringatan otomatis langsung ke smartphone Anda jika lokasi rumah atau kantor Anda masuk dalam zona bahaya banjir.</p>
+                    <h3 class="lp-feature-card-title">Notifikasi WhatsApp</h3>
+                    <p class="lp-feature-card-desc">Admin Relawan dapat mengirim instruksi evakuasi dan koordinasi tim langsung melalui WhatsApp ke relawan di lapangan.</p>
                     <div class="lp-feature-bar"></div>
                 </div>
                 
@@ -149,8 +149,8 @@
                     <div class="lp-feature-icon-wrapper">
                         <img src="{{ asset('assets/landing/feature-ai.svg') }}" alt="Analisis Prediktif AI" class="lp-feature-icon">
                     </div>
-                    <h3 class="lp-feature-card-title">Analisis Prediktif AI</h3>
-                    <p class="lp-feature-card-desc">Prediksi potensi banjir hingga 6 jam ke depan dengan menggabungkan data historis dan pergerakan awan BMKG.</p>
+                    <h3 class="lp-feature-card-title">Dashboard Terpadu BPBD</h3>
+                    <p class="lp-feature-card-desc">Visualisasi data banjir, statistik posko, dan log aktivitas dalam satu dashboard yang memudahkan pengambilan keputusan.</p>
                     <div class="lp-feature-bar"></div>
                 </div>
             </div>
@@ -175,7 +175,7 @@
                         <img src="{{ asset('assets/landing/step-1.svg') }}" alt="Deteksi & Monitor" class="lp-step-icon">
                     </div>
                     <h3 class="lp-step-title">Deteksi & Monitor</h3>
-                    <p class="lp-step-desc">Data real-time dikumpulkan dari sensor lapangan dan satelit cuaca secara terus menerus.</p>
+                    <p class="lp-step-desc">Data real-time dikumpulkan dari laporan warga, pintu air, dan koordinasi tim SAR secara terus menerus.</p>
                 </div>
                 
                 <!-- Step 2 -->
