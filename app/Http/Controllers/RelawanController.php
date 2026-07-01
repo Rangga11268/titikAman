@@ -178,13 +178,20 @@ class RelawanController extends Controller
             $waUrl = $volWaNumber ? "https://wa.me/{$volWaNumber}?text=" . urlencode($waMessage) : '#';
 
             if ($request->wantsJson() || $request->ajax()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Misi evakuasi berhasil diterima! Silakan menuju lokasi korban.',
-                    'mission' => $mission,
-                    'wa_url' => $waUrl
-                ]);
-            }
+                  return response()->json([
+                      'status'  => 'success',
+                      'message' => 'Misi evakuasi berhasil diterima! Silakan menuju lokasi korban.',
+                      'mission' => [
+                          'volunteer_name' => $volunteer->fullname,
+                          'team_info'      => $teamInfo ?? ('Tim ' . ($volunteer->kecamatan ?? 'Reguler')),
+                          'pelapor'        => $pelapor,
+                          'lokasi'         => $lokasi,
+                          'maps'           => $mapsLink,
+                          'wa_share_team'  => 'https://api.whatsapp.com/send?text=' . urlencode("🚨 *MISI EVAKUASI BARU*\nPelapor: {$pelapor}\nLokasi: {$lokasi}\nGoogle Maps: {$mapsLink}"),
+                      ],
+                      'wa_url'  => $waUrl,
+                  ]);
+              }
 
             $kec = $volunteer->kecamatan;
             $teamInfo = $kec ? 'Tim ' . $kec : 'Tim Reguler';

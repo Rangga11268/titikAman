@@ -692,7 +692,7 @@
                 </button>
             </div>
             
-            <form action="{{ route('relawan.mission.accept') }}" method="POST">
+            <form action="{{ route('relawan.mission.accept') }}" method="POST" id="formAssignMission">
                 @csrf
                 <input type="hidden" name="sos_id" id="assign_sos_id" value="">
                 
@@ -717,6 +717,31 @@
                     <button type="submit" style="padding: 10px 16px; border-radius: 6px; border: none; background: #006a60; color: white; font-weight: 600; cursor: pointer;">Tugaskan Misi</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- WA Popup Modal (AJAX result) -->
+    <div id="waPopupModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:10000; align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:16px; width:100%; max-width:420px; padding:28px; box-shadow:0 20px 40px rgba(0,0,0,0.25); margin:0 16px;">
+            <div style="text-align:center; margin-bottom:20px;">
+                <div style="display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; background:#e0f2f1; border-radius:50%; margin-bottom:12px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#006a60" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h3 style="margin:0 0 4px; color:#006a60; font-size:18px; font-weight:700;">Misi Berhasil Ditugaskan!</h3>
+                <p style="margin:0; color:#6b7280; font-size:13px;">Relawan: <strong id="wa_popup_name"></strong></p>
+            </div>
+            <p style="text-align:center; font-size:14px; color:#374151; margin-bottom:20px;">Kirim notifikasi darurat ke relawan via WhatsApp sekarang:</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <a id="wa_popup_url" href="#" target="_blank"
+                   style="display:flex; align-items:center; justify-content:center; gap:10px; background:#25D366; color:white; padding:12px 20px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Kirim ke WhatsApp Relawan
+                </a>
+                <button type="button" onclick="document.getElementById('waPopupModal').style.display='none';"
+                    style="padding:11px; border-radius:10px; border:1px solid #d1d5db; background:white; color:#374151; font-weight:600; cursor:pointer; font-size:14px;">
+                    Tutup
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1220,6 +1245,64 @@ L.control.zoom({ position: 'topright' }).addTo(map);
     setInterval(pollSosQueue, 10000);
 
     lucide.createIcons();
+});
+
+// ---- AJAX: Assign Mission Form ----
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('formAssignMission');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var sosId     = document.getElementById('assign_sos_id').value;
+        var volSelect = form.querySelector('[name="volunteer_id"]');
+        var volId     = volSelect ? volSelect.value : '';
+
+        if (!sosId || !volId) {
+            alert('Harap pilih tim terlebih dahulu!');
+            return;
+        }
+
+        var submitBtn = form.querySelector('[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Memproses...';
+
+        var formData = new FormData();
+        formData.append('sos_id', sosId);
+        formData.append('volunteer_id', volId);
+        formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+        fetch('{{ route("relawan.mission.accept") }}', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Tugaskan Misi';
+            window.closeModal('assignModal');
+
+            if (data.status === 'success') {
+                // Show WA popup modal
+                document.getElementById('wa_popup_url').href     = data.wa_url;
+                document.getElementById('wa_popup_name').textContent = data.mission.volunteer_name || '';
+                document.getElementById('waPopupModal').style.display = 'flex';
+
+                // Immediately refresh SOS queue
+                if (typeof pollSosQueue === 'function') pollSosQueue();
+            } else {
+                alert(data.message || 'Gagal menugaskan misi. Silakan coba lagi.');
+            }
+        })
+        .catch(function (err) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Tugaskan Misi';
+            console.error(err);
+            alert('Terjadi kesalahan koneksi. Silakan coba lagi.');
+        });
+    });
 });
 
 // Modal Logic
