@@ -1175,7 +1175,7 @@ L.control.zoom({ position: 'topright' }).addTo(map);
                     <span class="sos-priority-badge ${sos.priority_level}">${sos.priority_label}</span>
                     <span class="sos-time">${sos.created_at}</span>
                 </div>
-                <div class="sos-location">${sos.kelurahan}, ${sos.kecamatan}</div>
+                <div class="sos-location">${(sos.kelurahan !== '-' || sos.kecamatan !== '-') ? sos.kelurahan + ', ' + sos.kecamatan : 'Lokasi belum diisi'}</div>
                 <div class="sos-tags">
                     <span class="sos-tag"><i data-lucide="users"></i> ${sos.people_trapped} Orang</span>
                     ${tagDesc}
