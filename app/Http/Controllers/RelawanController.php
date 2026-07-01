@@ -294,7 +294,7 @@ class RelawanController extends Controller
                 default  => 'sos-priority-low',
             };
             return [
-                'id'             => $sos->id,
+                'id'             => $sos->sos_id,
                 'status'         => $sos->status,
                 'priority_level' => $sos->priority_level,
                 'priority_label' => $priorityLabel,
