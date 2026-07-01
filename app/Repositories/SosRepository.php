@@ -51,7 +51,7 @@ class SosRepository
      */
     public function getWaitingRequests(): Collection
     {
-        return SosRequest::with('user:user_id,fullname,phone')
+        return SosRequest::with('user:user_id,fullname,phone,kelurahan,kecamatan')
             ->whereIn('status', ['waiting', 'assigned'])
             ->orderByRaw("FIELD(status, 'waiting', 'assigned')")
             ->orderBy('created_at', 'desc')
