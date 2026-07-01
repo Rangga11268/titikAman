@@ -229,10 +229,10 @@
                         </div>
                         <div class="span-2">
                             <label class="donasi-label" for="proof_photo">FOTO BUKTI PENGIRIMAN / BARANG *</label>
-                            <div class="donasi-file-upload">
+                            <div class="donasi-file-upload" onclick="document.getElementById('proof_photo').click()">
                                 <i data-lucide="upload-cloud"></i>
-                                <span>Klik atau seret foto bukti pengiriman ke sini</span>
-                                <input type="file" name="proof_photo" id="proof_photo" accept="image/*" required>
+                                <span id="proof_photo_label">Klik atau seret foto bukti pengiriman ke sini</span>
+                                <input type="file" name="proof_photo" id="proof_photo" accept="image/*" required onchange="document.getElementById('proof_photo_label').textContent = this.files[0] ? 'Terpilih: ' + this.files[0].name : 'Klik atau seret foto bukti pengiriman ke sini'" style="display: none;">
                             </div>
                         </div>
                     </div>
