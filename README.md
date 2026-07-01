@@ -1,124 +1,294 @@
-# TitikAman - Platform Manajemen Kebencanaan Banjir
+<div align="center">
+  <img src="public/assets/logo-titikaman.png" alt="TitikAman Logo" width="180"/>
+  <h1 align="center" style="margin-top: 12px; font-size: 2.5em; color: #006A60;">TitikAman</h1>
+  <p align="center">
+    <strong>Sistem Informasi Mitigasi Banjir dan Navigasi Jalur Evakuasi</strong>
+    <br>
+    <em>Platform Manajemen Kebencanaan Banjir Terpadu — Kota Bekasi</em>
+  </p>
+  <p align="center">
+    <a href="https://github.com/Rangga11268/titikAman/blob/main/BUKU_PANDUAN.md"><img src="https://img.shields.io/badge/Buku%20Panduan-Lengkap-006A60?style=for-the-badge" alt="Buku Panduan"></a>
+    <a href="https://github.com/Rangga11268/titikAman/blob/main/docs/QA_TESTING_PLAN.md"><img src="https://img.shields.io/badge/QA%20Testing-54%20TC%20%E2%9C%85-006A60?style=for-the-badge" alt="QA Testing"></a>
+    <a href="https://github.com/Rangga11268/titikAman/blob/main/docs/SLIDE_PRESENTASI.md"><img src="https://img.shields.io/badge/Slide%20Presentasi-Siap-006A60?style=for-the-badge" alt="Slide Presentasi"></a>
+  </p>
+  <p align="center">
+    <img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=flat-square&logo=laravel" alt="Laravel 12">
+    <img src="https://img.shields.io/badge/PHP-8.3-777BB4?style=flat-square&logo=php" alt="PHP 8.3">
+    <img src="https://img.shields.io/badge/Tailwind%20CSS-v4-38B2AC?style=flat-square&logo=tailwind-css" alt="Tailwind CSS">
+    <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql" alt="MySQL">
+    <img src="https://img.shields.io/badge/Leaflet.js-199900?style=flat-square&logo=leaflet" alt="Leaflet.js">
+    <img src="https://img.shields.io/badge/59%20Tests-Passing-10B981?style=flat-square" alt="Tests">
+  </p>
+</div>
 
-**TitikAman** adalah platform manajemen kebencanaan banjir terpadu (Jabodetabek & Kota Bekasi) yang menghubungkan warga terdampak, relawan kebencanaan, pengelola posko pengungsian, dan aparatur dinas secara real-time.
+<br>
 
-Aplikasi ini dibangun menggunakan **Laravel 12** secara bersih (*from scratch*) tanpa scaffolding Breeze/Jetstream untuk memastikan kontrol penuh atas struktur data dan keamanan sistem.
+---
+
+## 📋 Daftar Isi
+
+- [Tentang TitikAman](#-tentang-titikaman)
+- [Fitur Unggulan](#-fitur-unggulan)
+- [Aktor & Peran](#-aktor--peran)
+- [Tech Stack](#-tech-stack)
+- [Alur Sistem](#-alur-sistem)
+- [Preview Halaman](#-preview-halaman)
+- [Panduan Instalasi](#-panduan-instalasi)
+- [Akun Demo](#-akun-demo)
+- [Testing](#-testing)
+- [Struktur Database](#-struktur-database)
+- [Dokumentasi](#-dokumentasi)
+- [Lisensi](#-lisensi)
+
+---
+
+## 🏠 Tentang TitikAman
+
+**TitikAman** adalah platform manajemen kebencanaan banjir berbasis web yang dirancang untuk membantu mitigasi, respons, dan evakuasi bencana banjir di **Kota Bekasi dan sekitarnya**. Platform ini menghubungkan **4 aktor utama** — warga terdampak, relawan kebencanaan, pengelola posko pengungsian, dan aparatur BPBD — dalam satu sistem real-time.
+
+<p align="center">
+</p>
+
+### 🎯 Latar Belakang
+
+Berdasarkan data BNPB per Maret 2025, banjir di Jabodetabek merendam **37.058 KK**, di mana **Kota Bekasi menjadi wilayah terdampak paling masif dengan 18.738 KK (61.233 jiwa)** di 25 kelurahan. Sayangnya, koordinasi evakuasi masih dilakukan secara manual melalui telepon dan WhatsApp tanpa sistem terstruktur, menyebabkan respons yang lambat dan tumpang tindih di lapangan.
+
+**TitikAman hadir sebagai solusi untuk:** 
+- Mempercepat respons evakuasi korban banjir
+- Menyediakan data tinggi muka air secara real-time
+- Memudahkan koordinasi antara warga, relawan, dan BPBD
+- Meningkatkan transparansi distribusi bantuan logistik
+
+---
+
+## 🚀 Fitur Unggulan
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="33%">
+        <br>
+        <strong>🚨 SOS Darurat</strong><br>
+        <sub>1 klik kirim sinyal evakuasi<br>dengan GPS otomatis & prioritas<br>berdasarkan jumlah korban</sub>
+      </td>
+      <td align="center" width="33%">
+        <br>
+        <strong>🗺️ Mission Control</strong><br>
+        <sub>Dashboard relawan dengan peta,<br>antrian SOS, & penugasan tim<br>dalam 1 layar</sub>
+      </td>
+      <td align="center" width="33%">
+        <br>
+        <strong>🏕️ Manajemen Posko</strong><br>
+        <sub>Update kapasitas, kebutuhan<br>logistik, & verifikasi donasi<br>real-time</sub>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" width="33%">
+        <br>
+        <strong>🌊 TMA Real-time</strong><br>
+        <sub>Data tinggi muka air dari<br>pintu air (Cikeas, Bekasi,<br>Cakung) + status siaga</sub>
+      </td>
+      <td align="center" width="33%">
+        <br>
+        <strong>📱 Donasi Publik</strong><br>
+        <sub>Donasi langsung ke posko,<br>transparan, & terverifikasi<br>oleh pengelola</sub>
+      </td>
+      <td align="center" width="33%">
+        <br>
+        <strong>📍 Scope Bekasi</strong><br>
+        <sub>Bounding box GPS membatasi<br>wilayah operasional hanya<br>Kota Bekasi</sub>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## 👥 Aktor & Peran
+
+| Role | Deskripsi | Akses Utama |
+|------|-----------|-------------|
+| **Warga** | Masyarakat umum / korban / donatur | Lapor banjir, SOS, donasi, lihat peta & TMA |
+| **Admin Relawan** | Koordinator tim evakuasi (dispatcher) | Mission control, tugaskan misi, kelola anggota, kirim WA |
+| **Pengelola Posko** | Petugas shelter pengungsian | Update kapasitas, kebutuhan logistik, verifikasi donasi |
+| **Admin BPBD** | Super user / administrator | Verifikasi laporan, kelola TMA, verifikasi pengguna |
+
+---
 
 ## 🧰 Tech Stack
 
 | Kategori | Teknologi |
-|---|---|
-| **Framework** | Laravel 12, Bootstrap 5 |
+|----------|-----------|
+| **Framework** | Laravel 12 |
 | **Database** | MySQL / MariaDB / SQLite |
-| **Bahasa Pemrograman** | PHP 8.3, JavaScript, CSS |
-| **Text Editor** | Visual Studio Code |
-| **Server** | Apache / Nginx (Production), `php artisan serve` (Local Development) |
+| **Backend** | PHP 8.3 |
+| **Frontend** | Tailwind CSS v4, JavaScript |
 | **Real-time** | Laravel Reverb (WebSocket) |
-| **Peta** | Leaflet.js + OpenStreetMap / CartoDB |
-| **Icons** | Lucide Icons |
+| **Peta Interaktif** | Leaflet.js + OpenStreetMap / CartoDB |
+| **Ikon** | Lucide Icons |
 | **Font** | Inter, Plus Jakarta Sans |
 
+---
+
+## 🔄 Alur Sistem
+
+```
+    Warga                    Relawan                  Posko                 BPBD
+      │                        │                        │                    │
+      ├─ Lapor Banjir ─────────┤                        │                    │
+      │                        │                        │     ┌─ Verifikasi ─┤
+      ├─ Kirim SOS ────────────┤                        │     │              │
+      │                        ├─ Tugaskan Tim ─────────┤     │              │
+      │                        │                        │     │              │
+      │                        ├─ Kirim WA ke Relawan   │     │              │
+      │                        │                        │     │              │
+      ├─ Donasi ───────────────┤────────────────────────┤     │              │
+      │                        │                        ├─ Verifikasi Donasi │
+      │                        │                        ├─ Update Kapasitas  │
+      │                        │                        │                    │
+      │                        │                        │                    ├─ Update TMA
+      │                        │                        │                    ├─ Verifikasi User
+```
+
 
 ---
 
-## 🚀 Fitur Utama
+## ⚙️ Panduan Instalasi
 
-1. **SOS Kedaruratan & Evakuasi Prioritas**
-   - Mengirimkan sinyal SOS dengan deteksi lokasi GPS otomatis.
-   - Penskalaan prioritas evakuasi otomatis bagi warga kelompok rentan (lansia, balita, ibu hamil).
-   - Penugasan misi penyelamatan langsung ke relawan terdekat.
+### Persyaratan Sistem
 
-2. **Peta Genangan Banjir (Crowdsourcing)**
-   - Warga dapat berkontribusi melaporkan genangan banjir beserta bukti foto, lokasi jalan, dan tinggi genangan air.
-   - Verifikasi laporan secara real-time oleh Admin BPBD sebelum dipublikasikan ke peta interaktif.
+| Komponen | Versi |
+|----------|-------|
+| PHP | 8.2+ |
+| Composer | 2.x |
+| Node.js | 18+ |
+| MySQL / MariaDB | 8.0+ / 10.5+ |
 
-3. **Manajemen Logistik & Donasi Transparan**
-   - Pengelola posko pengungsian mendata kebutuhan logistik spesifik.
-   - Donatur dapat melihat kebutuhan posko secara langsung dan melakukan donasi mandiri tanpa perantara birokrasi yang rumit.
+### Langkah Instalasi
 
-4. **Peringatan Dini Pintu Air**
-   - Integrasi status siaga Tinggi Muka Air (TMA) dari pintu air utama (Sungai Cikeas, Sungai Bekasi, Sungai Cakung).
-   - Sistem otomatisasi peringatan dini berdasarkan aliran air.
+```bash
+# 1. Clone repositori
+git clone https://github.com/Rangga11268/titikAman.git
+cd titikAman
 
----
+# 2. Install dependensi PHP
+composer install
 
-## 🗄️ Rancangan Database
+# 3. Install dependensi Node.js
+npm install
 
-Database menggunakan 8 tabel utama yang sesuai dengan hasil analisis kebutuhan kebencanaan nasional:
+# 4. Copy file environment
+cp .env.example .env
 
-1. **`users`**: Data autentikasi dan peran akses (warga, relawan, pengelola, admin).
-2. **`water_gates`**: Kondisi tinggi muka air (TMA) dan status siaga pintu air.
-3. **`shelters`**: Posko pengungsian, kapasitas tampung, fasilitas kamar mandi, dan status operasional.
-4. **`flood_reports`**: Laporan genangan kontribusi masyarakat (*crowdsourcing*).
-5. **`shelter_needs`**: Kebutuhan logistik darurat dari tiap posko.
-6. **`donations`**: Log pengiriman donasi logistik dari donatur ke posko secara langsung.
-7. **`sos_requests`**: Permintaan evakuasi darurat beserta jumlah kelompok rentan terdampak.
-8. **`rescue_missions`**: Misi koordinasi penyelamatan korban SOS oleh relawan di lapangan.
+# 5. Generate key aplikasi
+php artisan key:generate
 
----
+# 6. Setup database di file .env (MySQL/SQLite)
 
-## 📂 Dokumentasi Proyek
+# 7. Jalankan migrasi
+php artisan migrate
 
-Semua berkas rancangan, riset, dan kebutuhan sistem diletakkan di dalam folder `docs/`:
-- [TAHAP RISET DAN ANALIS PERMASALAHAN BANJIR.md](file:///d:/laragon/www/titikAman/docs/TAHAP%20RISET%20DAN%20ANALIS%20PERMASALAHAN%20BANJIR.md)
-- [Requirements Analisis](file:///d:/laragon/www/titikAman/docs/requirements.md)
-- [Rancangan Database Lengkap](file:///d:/laragon/www/titikAman/docs/database.md)
+# 8. Isi data demo
+php artisan db:seed
 
----
+# 9. Setup storage link
+php artisan storage:link
 
-## 👥 Akun Demo
+# 10. Build asset frontend
+npm run build
 
-Semua akun seeder memiliki password: **`password`**
+# 11. Jalankan server
+php artisan serve
+```
 
-| Email | Role | Kecamatan | Keterangan |
-|---|---|---|---|
-| `admin@example.com` | Admin_BPBD | — | Super admin, akses penuh |
-| `relawan@example.com` | Admin_Relawan | Bekasi Selatan | Koordinator tim relawan |
-| `lead.bekasitimur@example.com` | Admin_Relawan | Bekasi Timur | Ketua Tim Bekasi Timur |
-| `lead.jatiasih@example.com` | Admin_Relawan | Jatiasih | Ketua Tim Jatiasih |
-| `lead.rawalumbu@example.com` | Admin_Relawan | Rawalumbu | Ketua Tim Rawalumbu |
-| `lead.bekasiutara@example.com` | Admin_Relawan | Bekasi Utara | Ketua Tim Bekasi Utara |
-| `pengelola@example.com` | Pengelola_Posko | — | Mengelola Posko Masjid Agung Al-Barkah |
-| `warga@example.com` | Warga | Bekasi Timur | Warga biasa, akses lapor & SOS |
+Buka **http://localhost:8000** di browser.
 
-> **Catatan:** Jalankan `php artisan db:seed` setelah migrasi untuk mengisi data demo.
+### Fitur Real-time (Opsional)
+
+```bash
+# Terminal terpisah
+php artisan reverb:start
+```
 
 ---
 
-## ⚙️ Persyaratan Sistem
+## 👤 Akun Demo
 
-- **PHP** >= 8.2
-- **Composer**
-- Database Engine (MySQL / MariaDB / SQLite)
+Semua password: **`password`**
+
+| Role | Email | Wilayah |
+|------|-------|---------|
+| **Admin BPBD** | `admin@example.com` | — |
+| **Admin Relawan** | `relawan@example.com` | Bekasi Selatan |
+| **Lead Tim** | `lead.bekasitimur@example.com` | Bekasi Timur |
+| **Lead Tim** | `lead.jatiasih@example.com` | Jatiasih |
+| **Lead Tim** | `lead.rawalumbu@example.com` | Rawalumbu |
+| **Lead Tim** | `lead.bekasiutara@example.com` | Bekasi Utara |
+| **Pengelola Posko** | `pengelola@example.com` | Posko Masjid Al-Barkah |
+| **Warga** | `warga@example.com` | Bekasi Timur |
 
 ---
 
-## 🛠️ Langkah Instalasi
+## 🧪 Testing
 
-1. **Clone Repositori**
-   ```bash
-   git clone https://github.com/Rangga11268/titikaman.git
-   cd titikaman
-   ```
+| Jenis | Jumlah | Status |
+|-------|--------|--------|
+| PHPUnit (Unit + Feature) | 59 test cases, 200 assertions | ✅ Pass |
+| Black Box Testing | 54 test case — 7 area fitur | ✅ Pass |
+| Cakupan Role | Warga, Admin Relawan, Pengelola Posko, Admin BPBD | ✅ Tercover |
 
-2. **Instal Dependensi**
-   ```bash
-   composer install
-   ```
+```bash
+# Jalankan semua test
+php artisan test
+```
 
-3. **Konfigurasi Environment**
-   Salin berkas `.env.example` ke `.env` dan sesuaikan pengaturan database Anda:
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
+---
 
-4. **Jalankan Migrasi Database**
-   ```bash
-   php artisan migrate
-   ```
+## 🗄️ Struktur Database
 
-5. **Jalankan Server Lokal**
-   ```bash
-   php artisan serve
-   ```
+| # | Tabel | Fungsi |
+|---|-------|--------|
+| 1 | `users` | Data pengguna (5 role) |
+| 2 | `water_gates` | Data pintu air & TMA |
+| 3 | `shelters` | Data posko pengungsian |
+| 4 | `flood_reports` | Laporan banjir crowdsource |
+| 5 | `shelter_needs` | Kebutuhan logistik posko |
+| 6 | `donations` | Transaksi donasi |
+| 7 | `sos_requests` | Permintaan evakuasi SOS |
+| 8 | `rescue_missions` | Misi penyelamatan |
+
+---
+
+## 📂 Dokumentasi
+
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [📘 Buku Panduan](BUKU_PANDUAN.md) | Panduan lengkap penggunaan sistem |
+| [🧪 QA Testing Plan](docs/QA_TESTING_PLAN.md) | 54 black box test + usability + UX |
+| [🎯 Slide Presentasi](docs/SLIDE_PRESENTASI.md) | Konten PPT presentasi |
+| [📄 Q&A Presentasi](docs/QA_PRESENTASI.md) | 32 pertanyaan + jawaban |
+| [🎬 Script Demo](docs/SCRIPT_DEMO.md) | Skrip demo 6 menit |
+| [📊 Use Case Scenario](docs/UC_SCENARIO.md) | 17 skenario use case |
+| [📐 Analisis Database](docs/database.md) | Struktur & relasi database |
+
+---
+
+## 📜 Lisensi
+
+Hak Cipta © 2026 Tim TitikAman — IT Bootcamp UBSI
+
+---
+
+<div align="center">
+  <p>
+    <sub>Dibuat dengan ❤️ oleh Tim TitikAman</sub>
+    <br>
+    <a href="https://github.com/Rangga11268/titikAman">GitHub</a> •
+    <a href="BUKU_PANDUAN.md">Buku Panduan</a> •
+    <a href="docs/SLIDE_PRESENTASI.md">Slide Presentasi</a>
+  </p>
+  <br>
+  <img src="https://img.shields.io/github/last-commit/Rangga11268/titikAman?color=006A60&style=flat-square" alt="Last Commit">
+  <img src="https://img.shields.io/github/repo-size/Rangga11268/titikAman?color=006A60&style=flat-square" alt="Repo Size">
+  <img src="https://img.shields.io/github/license/Rangga11268/titikAman?color=006A60&style=flat-square" alt="License">
+</div>
