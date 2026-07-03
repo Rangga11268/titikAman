@@ -6,6 +6,14 @@
     <br>
     <em>Platform Manajemen Kebencanaan Banjir Terpadu — Kota Bekasi</em>
   </p>
+
+  <!-- Award Badge -->
+  <p align="center">
+    <a href="https://github.com/Rangga11268/titikAman">
+      <img src="https://img.shields.io/badge/🏆_1st_Place_Winner-IT_Bootcamp_2026-D4AF37?style=for-the-badge&labelColor=1a1a2e" alt="1st Place Winner - IT Bootcamp 2026">
+    </a>
+  </p>
+
   <p align="center">
     <a href="https://github.com/Rangga11268/titikAman/blob/main/BUKU_PANDUAN.md"><img src="https://img.shields.io/badge/Buku%20Panduan-Lengkap-006A60?style=for-the-badge" alt="Buku Panduan"></a>
     <a href="https://github.com/Rangga11268/titikAman/blob/main/docs/QA_TESTING_PLAN.md"><img src="https://img.shields.io/badge/QA%20Testing-54%20TC%20%E2%9C%85-006A60?style=for-the-badge" alt="QA Testing"></a>
@@ -22,6 +30,17 @@
 </div>
 
 <br>
+
+---
+
+## 🏆 Award
+
+**1st Place Winner** — *IT Boot Camp Software Development for Industry*
+"Futurecode : AI-Driven Software Engineering"  
+**Universitas Bina Sarana Informatika — 2026**
+
+> **Project Manager & Lead Developer** for **"TitikAman"**  
+> Led a team of 11 members to design and develop TitikAman, a real-time flood mitigation and evacuation navigation platform. Architected the backend using Laravel 12, PHP 8.3, and MySQL, integrating Laravel Reverb (WebSocket) for real-time SOS alerts and Leaflet.js for spatial mapping. Successfully delivered a highly functional system that achieved a **100% pass rate** in Black Box testing across **54 test cases** and an **88.3% User Experience Questionnaire (UEQ)** score.
 
 ---
 
